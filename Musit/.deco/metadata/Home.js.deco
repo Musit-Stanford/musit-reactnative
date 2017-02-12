@@ -1,0 +1,263 @@
+{
+	"liveValues": [
+		{
+			"range": {
+				"from": {
+					"line": 32,
+					"ch": 22
+				},
+				"to": {
+					"line": 32,
+					"ch": 29
+				}
+			},
+			"editWith": "inputField",
+			"type": "string",
+			"name": "Title",
+			"group": "REACT NATIVE NAVBAR"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 32,
+					"ch": 42
+				},
+				"to": {
+					"line": 32,
+					"ch": 63
+				}
+			},
+			"editWith": "colorPicker",
+			"type": "string",
+			"name": "Title Color",
+			"group": "REACT NATIVE NAVBAR"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 34,
+					"ch": 32
+				},
+				"to": {
+					"line": 34,
+					"ch": 53
+				}
+			},
+			"editWith": "colorPicker",
+			"type": "string",
+			"name": "Background Color",
+			"group": "REACT NATIVE NAVBAR"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 35,
+					"ch": 30
+				},
+				"to": {
+					"line": 35,
+					"ch": 37
+				}
+			},
+			"editWith": "colorPicker",
+			"type": "string",
+			"name": "Status Bar Color",
+			"group": "REACT NATIVE NAVBAR"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 46,
+					"ch": 17
+				},
+				"to": {
+					"line": 46,
+					"ch": 38
+				}
+			},
+			"editWith": "colorPicker",
+			"type": "string",
+			"name": "Color",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 47,
+					"ch": 20
+				},
+				"to": {
+					"line": 47,
+					"ch": 22
+				}
+			},
+			"type": "number",
+			"name": "FontSize",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 48,
+					"ch": 22
+				},
+				"to": {
+					"line": 48,
+					"ch": 28
+				}
+			},
+			"editWith": "dropdown",
+			"dropdownOptions": "FontWeight",
+			"type": "string",
+			"name": "FontWeight",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 49,
+					"ch": 22
+				},
+				"to": {
+					"line": 49,
+					"ch": 30
+				}
+			},
+			"editWith": "dropdown",
+			"dropdownOptions": "FontFamily",
+			"type": "string",
+			"name": "FontFamily",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 65,
+					"ch": 17
+				},
+				"to": {
+					"line": 65,
+					"ch": 38
+				}
+			},
+			"editWith": "colorPicker",
+			"type": "string",
+			"name": "Color",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 66,
+					"ch": 20
+				},
+				"to": {
+					"line": 66,
+					"ch": 22
+				}
+			},
+			"type": "number",
+			"name": "FontSize",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 67,
+					"ch": 22
+				},
+				"to": {
+					"line": 67,
+					"ch": 28
+				}
+			},
+			"editWith": "dropdown",
+			"dropdownOptions": "FontWeight",
+			"type": "string",
+			"name": "FontWeight",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 68,
+					"ch": 22
+				},
+				"to": {
+					"line": 68,
+					"ch": 30
+				}
+			},
+			"editWith": "dropdown",
+			"dropdownOptions": "FontFamily",
+			"type": "string",
+			"name": "FontFamily",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 85,
+					"ch": 17
+				},
+				"to": {
+					"line": 85,
+					"ch": 38
+				}
+			},
+			"editWith": "colorPicker",
+			"type": "string",
+			"name": "Color",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 86,
+					"ch": 20
+				},
+				"to": {
+					"line": 86,
+					"ch": 22
+				}
+			},
+			"type": "number",
+			"name": "FontSize",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 87,
+					"ch": 22
+				},
+				"to": {
+					"line": 87,
+					"ch": 28
+				}
+			},
+			"editWith": "dropdown",
+			"dropdownOptions": "FontWeight",
+			"type": "string",
+			"name": "FontWeight",
+			"group": "TEXT"
+		},
+		{
+			"range": {
+				"from": {
+					"line": 88,
+					"ch": 22
+				},
+				"to": {
+					"line": 88,
+					"ch": 30
+				}
+			},
+			"editWith": "dropdown",
+			"dropdownOptions": "FontFamily",
+			"type": "string",
+			"name": "FontFamily",
+			"group": "TEXT"
+		}
+	]
+}
