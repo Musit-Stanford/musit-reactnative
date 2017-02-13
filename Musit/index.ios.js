@@ -8,9 +8,15 @@ import {
   View,
 } from 'react-native'
 import Home from './Home'
+import realm from './schema.js'
 
 export default class Musit extends Component {
   render() {
+
+    realm.write(() => {
+      //realm.create('User', {name: 'this is my name', imgURL: 'this is the imageURL'});
+    });
+
     return (
       <View>
         <NavigationBar
