@@ -1,6 +1,6 @@
 export default data = [
   {
-    "gender": "male",
+    "hasRead": true,
     "name": {
       "title": "Megan Wilson",
       "first": "Apogee",
@@ -37,7 +37,7 @@ export default data = [
     "nat": "US"
   },
   {
-    "gender": "male",
+    "hasRead": false,
     "name": {
       "title": "Jared Wolens",
       "first": "Migration",
@@ -74,7 +74,7 @@ export default data = [
     "nat": "US"
   },
   {
-    "gender": "male",
+    "hasRead": false,
     "name": {
       "title": "Juan Marroquin",
       "first": "Heaven Is A Place On Earth",

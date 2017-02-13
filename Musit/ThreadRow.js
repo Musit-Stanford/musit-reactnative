@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const Row = (props) => (
+const ThreadRow = (props) => (
   <View style={styles.container}>
     <Image source={{ uri: props.picture.medium}} style={styles.photo} />
     <View style={styles.textBlock}>
@@ -38,4 +38,4 @@ const Row = (props) => (
   </View>
 );
 
-export default Row;
+export default ThreadRow;
