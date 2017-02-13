@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, Image, ScrollView, ListView } from 'react-nativ
 import Row from './Row'
 import ThreadRow from './ThreadRow'
 import data from './demoData.js'
-import MenuBar from './MenuBar'
-var SearchBar = require('react-native-search-bar')
+var SearchBar = require('react-native-search-bar');
 
 const styles = StyleSheet.create({
   container: {
@@ -50,7 +49,7 @@ class Home extends Component {
           fontFamily='Avenir'
         />
         <ScrollView>
-          <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ padding: 10 }}>
             <Text
               style={{
                 color: "rgba(147,147,147,1)",
@@ -62,15 +61,14 @@ class Home extends Component {
               }}>
               RECENT RECOMMENDATIONS
             </Text>
-            <MenuBar></MenuBar>
           </View>
           <ListView
             dataSource={this.state.dataSource}
-            renderRow={(data) => <Row {...data} />}
+            renderRow={(data) => <Row {...data} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
-          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ padding: 10, marginTop: 10 }}>
             <Text
               style={{
                 color: "rgba(147,147,147,1)",
@@ -82,7 +80,6 @@ class Home extends Component {
               }}>
               THREADS
             </Text>
-            <MenuBar></MenuBar>
           </View>
           <ListView
             dataSource={this.state.dataSource}
@@ -90,7 +87,7 @@ class Home extends Component {
             horizontal={true}
             style={{ marginTop: 10 }}
           />
-          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ padding: 10, marginTop: 10 }}>
             <Text
               style={{
                 color: "rgba(147,147,147,1)",
@@ -102,7 +99,6 @@ class Home extends Component {
               }}>
               MUSIT NETWORK
             </Text>
-            <MenuBar></MenuBar>
           </View>
         </ScrollView>
       </View>
