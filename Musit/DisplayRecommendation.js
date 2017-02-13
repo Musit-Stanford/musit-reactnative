@@ -1,11 +1,9 @@
-import React from 'react';
+import React from 'react'
 import { View, Text, StyleSheet, Image, TouchableHighlight } from 'react-native';
-import DisplayRecommendation from './DisplayRecommendation'
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 18,
+    padding: 100,
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'white'
@@ -44,15 +42,9 @@ const styles = StyleSheet.create({
     marginLeft: 10, 
   }
 });
-
-const Row = (props) => (
-  <TouchableHighlight 
-    onPress={() => {props.navigator.push({
-      component: DisplayRecommendation,
-      title: 'Scene Kek',
-      passProps: {...props}
-    })}}>
-  <View style={styles.container}>
+const DisplayRecommendation = (props) => {
+  return (
+    <View style={styles.container}>
     <View style={styles.textBlock}>
       <Text style={styles.trackName}>
         {`${props.name.first}`}
@@ -68,7 +60,10 @@ const Row = (props) => (
     </View>
     <Image source={{ uri: props.picture.large}} style={styles.photo} />
   </View>
-    </TouchableHighlight>
-);
+  )
+}
 
-export default Row;
+DisplayRecommendation.propTypes = {}
+DisplayRecommendation.defaultProps = {}
+
+export default DisplayRecommendation

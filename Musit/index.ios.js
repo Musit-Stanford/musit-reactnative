@@ -1,11 +1,12 @@
 import NavigationBar from 'react-native-navbar'
 import React, { Component } from 'react';
-import {Scene, Router} from 'react-native-router-flux';
 import {
   AppRegistry,
   StyleSheet,
   Text,
   View,
+  NavigatorIOS,
+  TouchableHighlight
 } from 'react-native'
 import Home from './Home'
 import realm from './schema.js'
@@ -18,15 +19,10 @@ export default class Musit extends Component {
     });
 
     return (
-      <View>
-        <NavigationBar
-          title={{ title: 'MUSIT', tintColor: "rgba(170,170,170,1)", }}
-          rightButton={{ title: '+  ', tintColor: "black" }}
-          style={{ backgroundColor: "rgba(251,251,251,1)", }}
-          statusBar={{ tintColor: "white", }}
-        />
-        <Home></Home>
-      </View>
+      <NavigatorIOS
+      initialRoute={{ component: Home, title: 'MUSIT' }}
+        style={{flex: 1}}
+    />
     );
   }
 }
