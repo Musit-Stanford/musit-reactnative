@@ -29,7 +29,7 @@ class MenuBar extends Component {
     if(this.props.name == 'threads') {
       this.props.navigator.push({
         component: Threads,
-        title: 'YOUR THREADS',
+        title: '💬',
         backButtonTitle: ' '
       })
     } 

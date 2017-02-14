@@ -83,6 +83,7 @@ class Home extends Component {
             <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
           </View>
           <ListView
+            pageSize={3}
             dataSource={this.state.dataSource}
             renderRow={(data) => <Row {...data} navigator={this.props.navigator}/>}
             scrollEnabled={false}

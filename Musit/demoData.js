@@ -7,34 +7,14 @@ export default data = [
       "last": "Tycho"
     },
     "location": {
-      "street": "1446 oak lawn ave",
       "city": "Stanford",
       "state": "Electronic",
-      "postcode": 60649
-    },
-    "email": "aiden.lucas@example.com",
-    "login": {
-      "username": "smallostrich903",
-      "password": "kristine",
-      "salt": "r5u9JFIh",
-      "md5": "0e2f37c4b8baafacd62562857e9ecda5",
-      "sha1": "e39a1487902ecc6d54287080c26794504348a4de",
-      "sha256": "96220812c203891d9e7fc287e5fa73275ac8159d277ea088b051e80ec43abc99"
-    },
-    "registered": 1056249168,
-    "dob": 1216516975,
-    "phone": "(661)-131-8187",
-    "cell": "(408)-707-4720",
-    "id": {
-      "name": "SSN",
-      "value": "294-55-5909"
     },
     "picture": {
       "large": "https://i1.sndcdn.com/artworks-000072799973-whg6ba-t500x500.jpg",
       "medium": "https://randomuser.me/api/portraits/med/men/4.jpg",
       "thumbnail": "https://randomuser.me/api/portraits/thumb/men/4.jpg"
     },
-    "nat": "US"
   },
   {
     "hasRead": false,
