@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   Image,
+  NativeModules
 } from 'react-native'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
 
@@ -75,11 +76,21 @@ class Conversation extends Component {
   }
   
   onSend(messages = []) {
-    this.setState((previousState) => {
+              var url = "https://api.spotify.com/v1/search?q=" + messages[0].text + "&type=artist,track";
+              fetch(url)
+              .then((response) => response.json())
+              .then((responseJson) => {
+                console.log(messages)
+                messages[0].image = responseJson.tracks.items[0].album.images[0].url
+                messages[0].track = responseJson.tracks.items[0].name
+                messages[0].artist = responseJson.tracks.items[0].artists[0].name
+                    this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, messages),
       };
     });
+              })
+
   }
   
   renderMessageText(props) {
@@ -88,13 +99,14 @@ class Conversation extends Component {
       color = 'black'
     }
     return(
-      <Text style={{ fontFamily:'Avenir', marginLeft:10, width: 175, paddingRight: 10, color: color }}>
+      <Text style={{ fontFamily:'Avenir', marginLeft:14, paddingRight: 10, color: color, paddingTop: 5, backgroundColor: 'rgba(0,0,0,0)' }}>
         {props.currentMessage.text}
       </Text>
     );
   }
   
   renderComposer(props) {
+    console.log(props); 
     return(
       <TextInput
         style={{
@@ -103,15 +115,18 @@ class Conversation extends Component {
         }}
         placeholder={'Type here'}
         placeholderTextColor={"rgba(198,198,204,1)"}
-        onChangeText={(text) => {this.setState({text})}}
-        onSubmitEditing={() => {this.setState({text: ''})}}
-        value={(this.state && this.state.text) || ''}
+        onChangeText={(text) => {this.parent.setState({text})}}
+        onSubmitEditing={() => {this.parent.setState({text: ''})}}
+        value={(this.parent.state && this.parent.state.text) || ''}
       />
     );
   }
   
   renderMessageImage(props) {
     const url = props.currentMessage.image;
+    const artist = props.currentMessage.artist;
+        const track = props.currentMessage.track;
+
     let color = 'white'
     if(props.currentMessage.user._id != props.user._id) {
       color = 'black'
@@ -136,7 +151,7 @@ class Conversation extends Component {
               fontWeight: 'normal',
               fontFamily:  'Avenir' ,
             }}>
-            Track Name
+            {track}
           </Text>
           <Text
             style={{
@@ -145,11 +160,18 @@ class Conversation extends Component {
               fontWeight: 'normal',
               fontFamily: 'Avenir',
             }}>
-            Artist Name
+            {artist}
           </Text>
         </View>
       </View>
     );
+  }
+  
+  querySpotify(query) {
+              var url = "https://api.spotify.com/v1/search?q=" + query + "&type=artist,track";
+              fetch(url)
+              .then((response) => response.json())
+              .then((responseJson) => console.log(responseJson))
   }
 
   render() {
@@ -162,6 +184,7 @@ class Conversation extends Component {
           </Text>
         </View>
         <GiftedChat
+          parent={this}
           messages={this.state.messages}
           onSend={this.onSend}
           isAnimated={true}
@@ -170,7 +193,8 @@ class Conversation extends Component {
           }}
           renderMessageText={this.renderMessageText}
           renderMessageImage={this.renderMessageImage}
-          renderComposer={this.renderComposer}
+//           renderComposer={this.renderComposer}
+          onInputTextChanged={this.querySpotify}
         />
       </View>
     )
