@@ -60,7 +60,7 @@ class Row extends Component {
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
           component: DisplayRecommendation,
-          title: ' ',
+          title: '🎵',
           passProps: {...this.props},
           backButtonTitle: ' '
         })}}>

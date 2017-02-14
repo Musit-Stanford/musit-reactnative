@@ -39,6 +39,7 @@
 		58C2CC4B30BC4A60872B1732 /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CAC10C4E6748467FA4876231 /* libRealmReact.a */; };
 		5B1F4EFD83C64D33BEE54E54 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A2694F4BEBE4B4D8223191C /* libc++.tbd */; };
 		EC2AAEB5A9EA4E46B5A18B65 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C604FAC423AB4129B25CDF44 /* libz.tbd */; };
+		12D142882B574FAFB7EE5FEB /* libRNOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5284A4AB6DD348C09879EC79 /* libRNOverlay.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -264,6 +265,8 @@
 		CAC10C4E6748467FA4876231 /* libRealmReact.a */ = {isa = PBXFileReference; name = "libRealmReact.a"; path = "libRealmReact.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		0A2694F4BEBE4B4D8223191C /* libc++.tbd */ = {isa = PBXFileReference; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
 		C604FAC423AB4129B25CDF44 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
+		39ECAC280F884872B7455B20 /* RNOverlay.xcodeproj */ = {isa = PBXFileReference; name = "RNOverlay.xcodeproj"; path = "../node_modules/react-native-overlay/RNOverlay.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		5284A4AB6DD348C09879EC79 /* libRNOverlay.a */ = {isa = PBXFileReference; name = "libRNOverlay.a"; path = "libRNOverlay.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -294,6 +297,7 @@
 				58C2CC4B30BC4A60872B1732 /* libRealmReact.a in Frameworks */,
 				5B1F4EFD83C64D33BEE54E54 /* libc++.tbd in Frameworks */,
 				EC2AAEB5A9EA4E46B5A18B65 /* libz.tbd in Frameworks */,
+				12D142882B574FAFB7EE5FEB /* libRNOverlay.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -462,6 +466,7 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				6EE3CD141C08452D9FD9A71C /* RNSearchBar.xcodeproj */,
 				E901FD470DAD4923BDA6E956 /* RealmReact.xcodeproj */,
+				39ECAC280F884872B7455B20 /* RNOverlay.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1002,6 +1007,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1022,6 +1028,7 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Musit.app/Musit";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1090,6 +1097,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1121,6 +1129,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Release;
@@ -1147,6 +1156,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1171,6 +1181,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);

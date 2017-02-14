@@ -6,19 +6,21 @@ import {
   Text,
   TextInput,
   Image,
+  ListView,
 } from 'react-native'
+import Contact from './Contact'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
-
+import data from './demoData.js'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     backgroundColor: 'white'
   },
   directory: {
-    position: 'absolute',
-    top: 70,
+    flex: 0.2,
+    flexDirection: 'row',
     width: Dimensions.get('window').width,
     height: 40,
     backgroundColor: '#F4F4F4',
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'normal',
     fontFamily: 'Avenir',
-    marginTop: 12,
+    marginTop: 80,
     marginLeft: 16,
   },
 });
@@ -41,37 +43,40 @@ class Conversation extends Component {
 
   constructor(props) {
     super(props)
-    this.state = {messages: []};
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this.state = {messages: [], enteringNames: false, dataSource: ds.cloneWithRows(data), message: ''};
     this.onSend = this.onSend.bind(this);
   }
   
   componentWillMount() {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: "This is my bread and butter",
-          createdAt: new Date(Date.UTC(2016, 7, 30, 17, 20, 0)),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
-          },
-          image: 'https://upload.wikimedia.org/wikipedia/en/1/11/Dive_tycho_album.jpg',
-        },
-        {
-          _id: 2,
-          text: "I am in love with Bonobo",
-          createdAt: new Date(Date.UTC(2016, 7, 30, 17, 18, 0)),
-          user: {
+    if(!this.props.new) {
+       this.setState({
+        messages: [
+          {
             _id: 1,
-            name: 'React Native',
-            avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
+            text: "This is my bread and butter",
+            createdAt: new Date(Date.UTC(2016, 7, 30, 17, 20, 0)),
+            user: {
+              _id: 2,
+              name: 'React Native',
+              avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
+            },
+            image: 'https://upload.wikimedia.org/wikipedia/en/1/11/Dive_tycho_album.jpg',
           },
-          image: 'https://s-media-cache-ak0.pinimg.com/originals/27/10/2f/27102fbb71756b46f9979b85529ac882.jpg',
-        },
-      ],
-    });
+          {
+            _id: 2,
+            text: "I am in love with Bonobo",
+            createdAt: new Date(Date.UTC(2016, 7, 30, 17, 18, 0)),
+            user: {
+              _id: 1,
+              name: 'React Native',
+              avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
+            },
+            image: 'https://s-media-cache-ak0.pinimg.com/originals/27/10/2f/27102fbb71756b46f9979b85529ac882.jpg',
+          },
+        ],
+      });
+    }
   }
   
   onSend(messages = []) {
@@ -98,10 +103,13 @@ class Conversation extends Component {
     return(
       <TextInput
         style={{
-          height: 30, 
+          height: 45, 
           width: Dimensions.get('window').width,
+          fontFamily: 'Avenir',
+          marginLeft: 10,
+          
         }}
-        placeholder={'Type here'}
+        placeholder={'Enter a recommendation...'}
         placeholderTextColor={"rgba(198,198,204,1)"}
         onChangeText={(text) => {this.setState({text})}}
         onSubmitEditing={() => {this.setState({text: ''})}}
@@ -151,6 +159,14 @@ class Conversation extends Component {
       </View>
     );
   }
+  
+  submitText() {
+    console.log("hi"); 
+  }
+  
+  onDonePressList() {
+    this.setState({enteringNames: false});
+  }
 
   render() {
     return (
@@ -158,20 +174,58 @@ class Conversation extends Component {
         <View style={styles.directory}>
           <Text
             style={styles.directoryText}>
-            To: Jane Doe
-          </Text>
+            To:           
+          </Text>   
+          {!this.props.new ? (
+              <Text
+               style={{
+                 color: 'black',
+                 fontSize: 14,
+                 fontWeight: 'normal',
+                 fontFamily: 'Avenir',
+                 marginTop: 79, 
+                 marginLeft: 6
+               }}>
+               {this.props.name.first}
+              </Text>
+            ) : (
+              <TextInput
+                style={{
+                  height: 20, 
+                  width:  200 ,
+                  fontFamily: 'Avenir',
+                  fontSize: 14,
+                  marginTop: 78,
+                  marginLeft: 6
+                }}
+                placeholder={ 'Person / Group' }
+                placeholderTextColor={"rgba(198,198,204,1)"}
+                onChangeText={(text) => {this.setState({text, enteringNames: true})}}
+                onSubmitEditing={() => this.submitText()}
+                value={(this.state && this.state.text) || ''}
+              />
+            )}
         </View>
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={this.onSend}
-          isAnimated={true}
-          user={{
-            _id: 1,
-          }}
-          renderMessageText={this.renderMessageText}
-          renderMessageImage={this.renderMessageImage}
-          renderComposer={this.renderComposer}
-        />
+        {this.state.enteringNames ? (
+          <ListView
+            automaticallyAdjustContentInsets={false}
+            dataSource={this.state.dataSource}
+            renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} navigator={this.props.navigator} onDonePress={() => this.onDonePressList()}/>}
+            scrollEnabled={false}
+          />
+        ) : (
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={this.onSend}
+            isAnimated={true}
+            user={{
+              _id: 1,
+            }}
+            renderMessageText={this.renderMessageText}
+            renderMessageImage={this.renderMessageImage}
+            renderComposer={this.renderComposer}
+          />
+        )}
       </View>
     )
   }

@@ -1,3 +1,4 @@
+import Lightbox from 'react-native-lightbox'
 import NavigationBar from 'react-native-navbar'
 import React, { Component } from 'react';
 import {
@@ -6,21 +7,31 @@ import {
   Text,
   View,
   NavigatorIOS,
-  TouchableHighlight
+  TouchableHighlight,
+  Image,
 } from 'react-native'
 import Home from './Home'
 import Realm from './schema'
+import Conversation from './Conversation'
 
 export default class Musit extends Component {
+  _handleNavigationRequest() {
+    this.refs.nav.push({
+      component: Conversation,
+      title: 'New Recommendation',
+      passProps: { new: true }
+    });
+  }
+  
   render() {
-
     Realm.write(() => {
 //       Realm.create('User', {name: 'this is my name', imgURL: 'this is the imageURL'});
     });
 
     return (
       <NavigatorIOS
-        initialRoute={{ component: Home, title: 'MUSIT', backButtonTitle: ' ', }}
+        ref='nav'
+        initialRoute={{ component: Home, title: 'MUSIT', backButtonTitle: ' ', rightButtonTitle: '+', onRightButtonPress: () => this._handleNavigationRequest(), }}
         style={{flex: 1, justifyContent:'center', }}
         titleTextColor='#E4E4E4'
         shadowHidden={true}

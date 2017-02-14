@@ -104,7 +104,7 @@ class Home extends Component {
           </View>
           <ListView
             dataSource={this.state.dataSource}
-            renderRow={(data) => <ThreadRow {...data} navigator={this.props.navigator} />}
+            renderRow={(data) => <ThreadRow {...data} new={false} navigator={this.props.navigator} />}
             horizontal={true}
             style={{ marginTop: 10 }}
           />
