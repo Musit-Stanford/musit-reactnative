@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableHighlight } from 'react-native';
 import DisplayRecommendation from './DisplayRecommendation'
 
@@ -45,30 +45,47 @@ const styles = StyleSheet.create({
   }
 });
 
-const Row = (props) => (
-  <TouchableHighlight 
-    onPress={() => {props.navigator.push({
-      component: DisplayRecommendation,
-      title: 'Scene Kek',
-      passProps: {...props}
-    })}}>
-  <View style={styles.container}>
-    <View style={styles.textBlock}>
-      <Text style={styles.trackName}>
-        {`${props.name.first}`}
-      </Text>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.artistName}>
-          {`${props.name.last}`}
-        </Text>
-        <Text style={styles.donorName}>
-          {`${props.name.title}`}
-        </Text>
-      </View>
-    </View>
-    <Image source={{ uri: props.picture.large}} style={styles.photo} />
-  </View>
-    </TouchableHighlight>
-);
+class Row extends Component {
+  constructor(props) {
+    super(props);
+  }
+  
+  render() {
+    const hasRead = this.props.hasRead; 
+    let notification = null;
+    if(!hasRead) {
+      notification = <View style={{ backgroundColor:"#18B13E", width:8, height:8, borderRadius: 20, marginTop: 24 }}></View>;
+    }
+    return (
+      <TouchableHighlight 
+        onPress={() => {this.props.navigator.push({
+          component: DisplayRecommendation,
+          title: ' ',
+          passProps: {...this.props},
+          backButtonTitle: ' '
+        })}}>
+        <View style={styles.container}>
+          <View style={{ flexDirection: 'row' }}>
+            {notification}
+            <View style={styles.textBlock}>
+              <Text style={styles.trackName}>
+                {`${this.props.name.first}`}
+              </Text>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.artistName}>
+                  {`${this.props.name.last}`}
+                </Text>
+                <Text style={styles.donorName}>
+                  {`${this.props.name.title}`}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <Image source={{ uri: this.props.picture.large}} style={styles.photo} />
+        </View>
+      </TouchableHighlight>
+    );
+  }
+}
 
 export default Row;

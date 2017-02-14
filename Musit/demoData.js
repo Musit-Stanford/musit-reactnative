@@ -9,7 +9,7 @@ export default data = [
     "location": {
       "street": "1446 oak lawn ave",
       "city": "Stanford",
-      "state": "arizona",
+      "state": "Electronic",
       "postcode": 60649
     },
     "email": "aiden.lucas@example.com",
@@ -46,7 +46,7 @@ export default data = [
     "location": {
       "street": "8467 preston rd",
       "city": "Musit Staff",
-      "state": "maine",
+      "state": "Chillwave",
       "postcode": 71108
     },
     "email": "mario.walters@example.com",
@@ -83,7 +83,7 @@ export default data = [
     "location": {
       "street": "2673 w pecan st",
       "city": "CS 194H",
-      "state": "new hampshire",
+      "state": "Female Vocal",
       "postcode": 12183
     },
     "email": "joseph.lambert@example.com",

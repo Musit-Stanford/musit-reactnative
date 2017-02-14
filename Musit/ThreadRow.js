@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import Conversation from './Conversation'
 
 const styles = StyleSheet.create({
   container: {
@@ -28,14 +29,22 @@ const styles = StyleSheet.create({
 });
 
 const ThreadRow = (props) => (
-  <View style={styles.container}>
+  <TouchableOpacity 
+    style={styles.container}
+    onPress={() => {props.navigator.push({
+          component: Conversation,
+          title: props.name.first,
+          passProps: {...props},
+          backButtonTitle: ' ',
+        })}}
+    >
     <Image source={{ uri: props.picture.medium}} style={styles.photo} />
     <View style={styles.textBlock}>
       <Text style={styles.threadName}>
         {`${props.location.city}`}
       </Text>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
 export default ThreadRow;

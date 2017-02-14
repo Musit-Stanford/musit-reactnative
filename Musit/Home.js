@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, Image, ScrollView, ListView } from 'react-nativ
 import Row from './Row'
 import ThreadRow from './ThreadRow'
 import data from './demoData.js'
-var SearchBar = require('react-native-search-bar');
-
+import SearchBar from 'react-native-search-bar';
+import MenuBar from './MenuBar'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -23,10 +23,24 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   separator: {
-    flex: 1,
+    width: 320,
+    marginLeft: 30,
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#8E8E8E',
+    backgroundColor: '#CACACA',
   }
+});
+
+
+const searchStyles = StyleSheet.create({
+  searchContainer: {
+    position: 'absolute',
+    top: 68,
+    paddingTop: 20,
+    width: 375,
+    height: 40,
+    borderBottomColor: '#bbb',
+    backgroundColor: 'white',
+  },
 });
 
 class Home extends Component {
@@ -39,17 +53,22 @@ class Home extends Component {
     };
   }
   
+  componentDidMount() {
+    this.refs.searchBar.focus(); 
+  }
+  
   render() {
     return (
       <View>
         <SearchBar
+          style={searchStyles.searchContainer}
           ref='searchBar'
-          placeholder='Search Recommendations'
           hideBackground={true}
+          placeholder='Search Recommendations'
           fontFamily='Avenir'
         />
-        <ScrollView>
-          <View style={{ padding: 10 }}>
+        <ScrollView style={{ marginTop:40, height: 600}}>
+          <View style={{ padding: 10, backgroundColor:'white', flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
               style={{
                 color: "rgba(147,147,147,1)",
@@ -61,6 +80,7 @@ class Home extends Component {
               }}>
               RECENT RECOMMENDATIONS
             </Text>
+            <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
           </View>
           <ListView
             dataSource={this.state.dataSource}
@@ -68,7 +88,7 @@ class Home extends Component {
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
-          <View style={{ padding: 10, marginTop: 10 }}>
+          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
               style={{
                 color: "rgba(147,147,147,1)",
@@ -80,14 +100,15 @@ class Home extends Component {
               }}>
               THREADS
             </Text>
+            <MenuBar name='threads' navigator={this.props.navigator}></MenuBar>
           </View>
           <ListView
             dataSource={this.state.dataSource}
-            renderRow={(data) => <ThreadRow {...data} />}
+            renderRow={(data) => <ThreadRow {...data} navigator={this.props.navigator} />}
             horizontal={true}
             style={{ marginTop: 10 }}
           />
-          <View style={{ padding: 10, marginTop: 10 }}>
+          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
               style={{
                 color: "rgba(147,147,147,1)",
@@ -99,6 +120,7 @@ class Home extends Component {
               }}>
               MUSIT NETWORK
             </Text>
+            <MenuBar name='musitNetwork' navigator={this.props.navigator}></MenuBar>
           </View>
         </ScrollView>
       </View>

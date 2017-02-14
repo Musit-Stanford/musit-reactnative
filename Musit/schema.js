@@ -30,6 +30,6 @@ const threadSchema = {
   }
 };
 
-let realm = new Realm({schema: [userSchema, recSchema, threadSchema]});
+let realm = new Realm({schema: [userSchema, recSchema, threadSchema]});;
 
 export default realm;

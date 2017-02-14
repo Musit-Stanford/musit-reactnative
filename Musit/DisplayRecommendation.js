@@ -1,11 +1,17 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, TouchableHighlight } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableHighlight,
+  Dimensions,
+} from 'react-native'
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 100,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flex: 2,
+    marginTop: 60,
+    flexDirection: 'column',
     backgroundColor: 'white'
   },
   text: {
@@ -13,53 +19,83 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   photo: {
-    height: 45,
-    width: 45,
+    flex: 4,
+    width: Dimensions.get('window').width,
     alignItems: 'flex-end',
-    borderRadius: 4,
-    marginRight: 8,
   },
   textBlock: {
+    flex: 2,
     flexDirection: 'column',
+    paddingTop: 60,
     marginLeft: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   trackName: {
-    fontSize: 18,
+    fontSize: 22,
+    color: '#9C9C9C',
     letterSpacing: 0.5, 
+    marginTop: 10,
     marginBottom: 10,
     fontFamily: 'Avenir',
   },
   artistName: {
-    fontSize: 12,
-    color: '#8B8B8B',
+    fontSize: 14,
+    color: '#CD5C6A',
     fontFamily: 'Avenir',
   },
   donorName: {
     fontSize: 10, 
     fontFamily: 'Avenir',
-    color: '#61A7F8',
-    marginTop: 1.5,
-    marginLeft: 10, 
+    color: '#9BAFB1',
+    marginTop: 4,
+    marginLeft: 6, 
+  },
+  messageBlock: {
+    backgroundColor: '#F5F5F5',
+    flex: 1,
+  },
+  sharing: {
+    fontSize: 12,
+    fontFamily: 'Avenir',
+    color: '#DBDBDB',
+  },
+  chips: {
+    backgroundColor: '#D8D8D8',
+    marginLeft: 5,
+    width: 50,
+    height: 20,
+    borderRadius: 30,
   }
 });
 const DisplayRecommendation = (props) => {
   return (
     <View style={styles.container}>
-    <View style={styles.textBlock}>
-      <Text style={styles.trackName}>
-        {`${props.name.first}`}
-      </Text>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.artistName}>
-          {`${props.name.last}`}
+      <Image source={{ uri: props.picture.large}} style={styles.photo} />
+      <View style={styles.textBlock}>
+        <Text style={styles.trackName}>
+          {`${props.name.first}`}
         </Text>
-        <Text style={styles.donorName}>
-          {`${props.name.title}`}
-        </Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.artistName}>
+            {`${props.name.last} `}
+          </Text>
+          <Text style={styles.donorName}>
+           from {`${props.name.title}`}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row', marginTop: 50 }}>
+          <Text style={styles.sharing}>
+            Shared by 31 others:
+          </Text>
+          <View style={styles.chips}>
+          </View>
+          <View style={styles.chips}></View>
+        </View>
+      </View>
+      <View style={styles.messageBlock}>
       </View>
     </View>
-    <Image source={{ uri: props.picture.large}} style={styles.photo} />
-  </View>
   )
 }
 

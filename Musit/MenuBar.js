@@ -1,5 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { Component } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native'
+import Threads from './Threads'
 
 const styles = StyleSheet.create({
   menuButton: {
@@ -12,12 +20,36 @@ const styles = StyleSheet.create({
   }
 });
 
-const MenuBar = (props) => (
-  <View style={{ flexDirection:'row', marginRight: 14 }}>
-    <View style={styles.menuButton}></View>
-    <View style={styles.menuButton}></View>
-    <View style={styles.menuButton}></View>
-  </View>
-);
+class MenuBar extends Component {
+  constructor(props) {
+    super(props);
+  }
+  
+  goToMenu() {
+    if(this.props.name == 'threads') {
+      this.props.navigator.push({
+        component: Threads,
+        title: 'YOUR THREADS',
+        backButtonTitle: ' '
+      })
+    } 
+  }
+  
+  render() {
+    return (
+      <TouchableOpacity
+        onPress={() => {this.goToMenu()}}
+        activeOpacity={ 100  / 100}
+        underlayColor={"rgb(210,210,210)"}
+        style={{marginRight: 15}}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={styles.menuButton}></View>
+          <View style={styles.menuButton}></View>
+          <View style={styles.menuButton}></View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}
 
 export default MenuBar; 

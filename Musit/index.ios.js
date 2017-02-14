@@ -9,19 +9,24 @@ import {
   TouchableHighlight
 } from 'react-native'
 import Home from './Home'
-import realm from './schema.js'
+import Realm from './schema'
 
 export default class Musit extends Component {
   render() {
 
-    realm.write(() => {
-      //realm.create('User', {name: 'this is my name', imgURL: 'this is the imageURL'});
+    Realm.write(() => {
+//       Realm.create('User', {name: 'this is my name', imgURL: 'this is the imageURL'});
     });
 
     return (
       <NavigatorIOS
-      initialRoute={{ component: Home, title: 'MUSIT' }}
-        style={{flex: 1}}
+        initialRoute={{ component: Home, title: 'MUSIT', backButtonTitle: ' ', }}
+        style={{flex: 1, justifyContent:'center', }}
+        titleTextColor='#E4E4E4'
+        shadowHidden={true}
+        tintColor='#DCDCDC'
+        barTintColor='white'
+        interactivePopGestureEnabled={true}
     />
     );
   }
