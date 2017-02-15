@@ -5,6 +5,7 @@ import ThreadRow from './ThreadRow'
 import data from './demoData.js'
 import SearchBar from 'react-native-search-bar';
 import MenuBar from './MenuBar'
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
