@@ -31,7 +31,8 @@ class Login  extends Component {
     return (
       <View>
         <LoginButton
-          publishPermissions={["publish_actions"]}
+          publishPermissions={[]}
+          emailPermissions={["true"]}
           onLoginFinished={
             (error, result) => {
               if (error) {
