@@ -11,7 +11,6 @@ import {
   Image,
 } from 'react-native'
 import Home from './Home'
-import Realm from './schema'
 import Conversation from './Conversation'
 
 export default class Musit extends Component {
@@ -24,9 +23,6 @@ export default class Musit extends Component {
   }
   
   render() {
-    Realm.write(() => {
-//       Realm.create('User', {name: 'this is my name', imgURL: 'this is the imageURL'});
-    });
 
     return (
       <NavigatorIOS

@@ -11,8 +11,11 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+//  AppDelegate.m
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 @implementation AppDelegate
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -31,6 +34,9 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [[FBSDKApplicationDelegate sharedInstance] application:application
+    didFinishLaunchingWithOptions:launchOptions];
+  // Add any custom logic here.
   return YES;
 }
 
