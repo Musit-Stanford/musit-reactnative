@@ -71,7 +71,7 @@ class Home extends Component {
         <ScrollView style={{ marginTop:40, height: 600}}>
           <View style={{ padding: 10, backgroundColor:'white', flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
-              style={{
+              style={{ 
                 color: "rgba(147,147,147,1)",
                 fontSize: 12,
                 fontWeight: "bold",
@@ -92,7 +92,7 @@ class Home extends Component {
           />
           <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
-              style={{
+              style={{ 
                 color: "rgba(147,147,147,1)",
                 fontSize: 12,
                 fontWeight: "bold",
@@ -112,7 +112,7 @@ class Home extends Component {
           />
           <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
-              style={{
+              style={{ 
                 color: "rgba(147,147,147,1)",
                 fontSize: 12,
                 fontWeight: "bold",
