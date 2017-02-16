@@ -9,7 +9,7 @@ import {
   ListView,
   NativeModules,
   TouchableOpacity,
-  Linking
+  Linking,
 } from 'react-native'
 import Contact from './Contact'
 import Result from './Result'
@@ -64,7 +64,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     position: 'absolute',
     top: 15,
-    marginLeft: 20
+    marginLeft: 40
+  },
+  listContent: {
+    flex: 0.2,
+    flexDirection: 'row',
+    backgroundColor: '#4A90E2',
+    justifyContent:'flex-start'
   },
 });
 
@@ -85,7 +91,8 @@ class Conversation extends Component {
       editing: false, 
       spotifyQueries: ds.cloneWithRows([]), 
       recommendation: {}, 
-      recChosen: false
+      recChosen: false,
+      input: '',
     };
     this.onSend = this.onSend.bind(this);
   }
@@ -127,26 +134,40 @@ class Conversation extends Component {
     }
   }
   
+  componentDidMount() {
+    if(this.refs.trackName) {
+      this.refs.trackName.focus(); 
+    }
+  }
+  
   onSend(messages = []) {
-              var url = "https://api.spotify.com/v1/search?q=" + messages[0].text + "&type=artist,track";
-              fetch(url)
-              .then((response) => response.json())
-              .then((responseJson) => {
-                console.log(messages)
-                this.setState({
-                  spotifyQueries: ds.cloneWithRows(responseJson.tracks.items)
-                })
-                messages[0].image = responseJson.tracks.items[0].album.images[0].url
-                messages[0].track = responseJson.tracks.items[0].name
-                messages[0].artist = responseJson.tracks.items[0].artists[0].name
-                messages[0].url = responseJson.tracks.items[0].external_urls.spotify
-                    this.setState((previousState) => {
+    let url = "https://api.spotify.com/v1/search?q=" + messages[0].text + "&type=artist,track";
+    fetch(url)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(messages)
+      this.setState({
+        spotifyQueries: ds.cloneWithRows(responseJson.tracks.items)
+      })
+      messages[0].image = responseJson.tracks.items[0].album.images[0].url
+      messages[0].track = responseJson.tracks.items[0].name
+      messages[0].artist = responseJson.tracks.items[0].artists[0].name
+      messages[0].url = responseJson.tracks.items[0].external_urls.spotify
+      this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, messages),
       };
     });
-              })
-
+    })
+  }
+  
+  inputMessage() {
+    this.setState({
+      recChosen: true,
+      editing: false,
+    });
+    console.log(this.refs); 
+    this.refs.trackName.setNativeProps({text: '', placeholder: 'Enter a message...'});
   }
   
   renderMessageText(props) {
@@ -169,7 +190,6 @@ class Conversation extends Component {
           width: Dimensions.get('window').width,
           fontFamily: 'Avenir',
           marginLeft: 10,
-
         }}
         placeholder={'Enter a recommendation...'}
         placeholderTextColor={"rgba(198,198,204,1)"}
@@ -178,36 +198,80 @@ class Conversation extends Component {
     );
   }
   
+  removeRec() {
+    this.setState({
+      recChosen: false, 
+      rec: {}
+    });
+  }
+  
+  listStyle() {
+    if(this.state.recChosen) {
+      return {
+        position: 'absolute',
+        top: 62,
+        flexDirection: 'row',
+        width: Dimensions.get('window').width,
+        height: 50,
+        backgroundColor: '#F4F4F4',
+      }
+    } else {
+      return styles.directory;
+    }
+  }
+  
+  listTrick() {
+    if(this.state.recChosen) {
+      return {
+        position: 'absolute',
+        top: 110,
+        height: 85,
+        width: Dimensions.get('window').width,
+        flexDirection: 'row',
+        backgroundColor: '#4A90E2',
+        justifyContent:'flex-start'
+      }
+    } else {
+      return styles.listContent; 
+    }
+  }
+  
   renderSpotify(props) {
-    console.log(this.state.rec);
     return(
       <View>
         {this.state.recChosen ? (
           <View
-            style={{
-              flex: 0.2,
-              flexDirection: 'row',
-              backgroundColor: '#4A90E2',
-            }}
+            style={this.listTrick()}
           >
+            <TouchableOpacity
+              onPress={() => {this.removeRec()}}
+              activeOpacity={75 / 100}>
+              <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 30, marginLeft: 15}}>X</Text>
+            </TouchableOpacity>
             <Image source={{ uri: this.state.rec.album.images[0].url }} style={styles.photo} />
             <View style={{ flexDirection:'column' }}>
-              <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 90, marginTop: 20, fontSize: 18 }}>{this.state.rec.name}</Text>
-              <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 90, marginTop: 4, fontSize: 12 }}>{this.state.rec.artists[0].name}</Text>
+              <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 20, fontSize: 18 }}>{this.state.rec.name}</Text>
+              <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 4, fontSize: 12 }}>{this.state.rec.artists[0].name}</Text>
             </View>
           </View>
         ): (
           null
         )}
-        <ListView
+        {this.state.recChosen ? (
+          null
+        ) : (
+          <ListView
               style={{ maxHeight: 510, backgroundColor: '#FCFCFC' }}
               automaticallyAdjustContentInsets={false}
               enableEmptySections={true}
               dataSource={this.state.spotifyQueries}
-              renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this} navigator={this.props.navigator}/>}
+              renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this} navigator={this.props.navigator} onDonePress={() => this.onDone()}/>}
               scrollEnabled={true}
             />
+        )}
         <TextInput
+          ref='trackName'
+          autoFocus={true}
           style={{
             height: 45, 
             width: Dimensions.get('window').width,
@@ -215,9 +279,10 @@ class Conversation extends Component {
             marginLeft: 10,
 
           }}
-          placeholder={'Enter a recommendation...'}
+          value={this.state.input}
           placeholderTextColor={"rgba(198,198,204,1)"}
           onChangeText={(text) => {this.querySpotify({text})}}
+          onSubmitEditing={() => {this.inputMessage()}}
         />
       </View>
     );
@@ -288,14 +353,18 @@ class Conversation extends Component {
   }
   
   onDonePressList() {
+    console.log("here")
     this.setState({enteringNames: false});
   }
   
+  onDonePressSong() {
+    this.setState({enteringNames: false, editing: false});
+  }
+  
   querySpotify(query) {
-    console.log(this.state);
-    console.log(query.text); 
     this.setState({
-      editing: true
+      editing: true,
+      input: query.text,
     })
     var url = "https://api.spotify.com/v1/search?q=" + query.text + "&type=track";
     fetch(url)
@@ -321,18 +390,49 @@ class Conversation extends Component {
       }
     }
   }
+  
+  userTitle() {
+    if(this.state.recChosen) {
+      return {
+        color: 'black',
+        fontSize: 14,
+        fontWeight: 'normal',
+        fontFamily: 'Avenir',
+        marginTop: 17,
+        marginLeft: 6,
+      }
+    } else {
+      return styles.userTitle; 
+    }
+  }
+  
+  directoryText() {
+    if(this.state.recChosen) {
+      return {
+        color: 'black',
+        fontSize: 12,
+        fontWeight: 'normal',
+        fontFamily: 'Avenir',
+        marginTop: 18,
+        marginLeft: 16
+        
+      }
+    } else {
+      return styles.directoryText; 
+    }
+  }
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.directory}>
+        <View style={this.listStyle()}>
           <Text
-            style={styles.directoryText}>
+            style={this.directoryText()}>
             To:           
           </Text>   
           {!this.props.new ? (
               <Text
-               style={styles.userTitle}>
+               style={this.userTitle()}>
                {this.props.name.first}
               </Text>
             ) : (

@@ -48,7 +48,7 @@ class Result extends Component {
   pressHandler() {
     this.props.parent.setState({
       rec: this.props,
-//       editing: false,
+      editing: false,
       recChosen: true
     });
   }

@@ -31,7 +31,7 @@ export default class Musit extends Component {
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Home, title: 'MUSIT', backButtonTitle: ' ', rightButtonTitle: '+', onRightButtonPress: () => this._handleNavigationRequest(), }}
+        initialRoute={{ component: Home, title: 'Musit', backButtonTitle: ' ', rightButtonTitle: '+', onRightButtonPress: () => this._handleNavigationRequest(), }}
         style={{flex: 1, justifyContent:'center', }}
         titleTextColor='#E4E4E4'
         shadowHidden={true}
