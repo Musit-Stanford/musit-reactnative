@@ -85,8 +85,8 @@ export default data = [
     },
     "picture": {
       "large": "https://images-na.ssl-images-amazon.com/images/I/41H4ZC9TQWL.jpg",
-      "medium": "https://randomuser.me/api/portraits/med/men/13.jpg",
-      "thumbnail": "https://randomuser.me/api/portraits/thumb/men/13.jpg"
+      "medium": "https://randomuser.me/api/portraits/med/men/83.jpg",
+      "thumbnail": "https://randomuser.me/api/portraits/thumb/men/83.jpg"
     },
     "nat": "US"
   },

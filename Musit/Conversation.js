@@ -93,6 +93,7 @@ class Conversation extends Component {
       recommendation: {}, 
       recChosen: false,
       input: '',
+      recepients: {},
     };
     this.onSend = this.onSend.bind(this);
   }
@@ -265,7 +266,7 @@ class Conversation extends Component {
               automaticallyAdjustContentInsets={false}
               enableEmptySections={true}
               dataSource={this.state.spotifyQueries}
-              renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this} navigator={this.props.navigator} onDonePress={() => this.onDone()}/>}
+              renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this} navigator={this.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
               scrollEnabled={true}
             />
         )}
@@ -422,6 +423,14 @@ class Conversation extends Component {
     }
   }
 
+  addRecepients(text) {
+    if(text.length == 0) {
+      this.setState({text: "", enteringNames: false}); 
+    } else {
+      this.setState({text, enteringNames: true});
+    }
+  }
+  
   render() {
     return (
       <View style={styles.container}>
@@ -440,7 +449,7 @@ class Conversation extends Component {
                 style={[styles.userEntry, this.textColor()]}
                 placeholder={ 'Person / Group' }
                 placeholderTextColor={"rgba(198,198,204,1)"}
-                onChangeText={(text) => {this.setState({text, enteringNames: true})}}
+                onChangeText={(text) => this.addRecepients(text)}
                 onSubmitEditing={() => this.submitText()}
                 value={(this.state && this.state.text) || ''}
               />

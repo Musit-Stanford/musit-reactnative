@@ -11,34 +11,41 @@ import {
   Image,
 } from 'react-native'
 import Home from './Home'
-import Realm from './schema'
+import Login from './Login'
 import Conversation from './Conversation'
+import * as firebase from 'firebase';
+import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 
-export default class Musit extends Component {
-  _handleNavigationRequest() {
+export default class Musit extends React.Component {
+  _navigateToConversation() {
     this.refs.nav.push({
       component: Conversation,
       title: 'New Recommendation',
       passProps: { new: true }
     });
   }
+  _navigateToHome() {
+    this.refs.nav.replace({
+      component: Home, title: 'MUSIT', 
+      backButtonTitle: ' ', 
+      rightButtonTitle: '+',
+      onRightButtonPress: () => this._navigateToConversation(),
+    });
+  }
   
   render() {
-    Realm.write(() => {
-//       Realm.create('User', {name: 'this is my name', imgURL: 'this is the imageURL'});
-    });
 
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Home, title: 'Musit', backButtonTitle: ' ', rightButtonTitle: '+', onRightButtonPress: () => this._handleNavigationRequest(), }}
-        style={{flex: 1, justifyContent:'center', }}
+        initialRoute={{ component: Login, title: 'MUSIT', backButtonTitle: ' ', rightButtonTitle: ' ', passProps: {onSuccessfulLogin: () => this._navigateToHome()}}}
         titleTextColor='#E4E4E4'
         shadowHidden={true}
+        style={{flex: 1}}
         tintColor='#DCDCDC'
         barTintColor='white'
         interactivePopGestureEnabled={true}
-    />
+      />
     );
   }
 }
