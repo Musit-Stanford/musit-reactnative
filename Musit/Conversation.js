@@ -301,8 +301,15 @@ class Conversation extends Component {
   }
   
   onDonePressList(data) {
-    console.log(data);
-    this._enterParticipants.setNativeProps({text: data.name});
+    var currentText = this.state.text
+    var lastCommaIndex = currentText.lastIndexOf(",");
+    var establishedNames = ""
+    if (lastCommaIndex !== -1) {
+      var establishedNames = currentText.slice(0, currentText.lastIndexOf(",") + 1) + " ";
+    }
+    var newText = establishedNames + data.name + ", "
+    this._enterParticipants.setNativeProps({text: newText});
+    this.setState({text: newText})
     this.setState({enteringNames: false});
   }
   
@@ -357,6 +364,11 @@ class Conversation extends Component {
                 placeholderTextColor={"rgba(198,198,204,1)"}
                 onChangeText={(text) => {
                 this.setState({text, enteringNames: true})
+                var lastCommaIndex = text.lastIndexOf(",")
+                if (lastCommaIndex !== -1) {
+                  text = text.slice(lastCommaIndex + 1, text.length)
+                }
+                text = text.trim();
                 var matchingFriends = this.state.friends.filter(function(friend){
                   return friend.name.toLowerCase().startsWith(text.toLowerCase())
                 });
