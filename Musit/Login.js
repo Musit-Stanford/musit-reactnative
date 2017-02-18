@@ -12,19 +12,25 @@ import {
 } from 'react-native'
 import Home from './Home'
 import Conversation from './Conversation'
-import * as firebase from 'firebase';
 import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 
-// Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyDn-HyzRU2ohuLSUvIbp0D5GZURTrXuxjA",
-  authDomain: "musit-ebe2c.firebaseapp.com",
-  databaseURL: "https://musit-ebe2c.firebaseio.com",
-  storageBucket: "musit-ebe2c.appspot.com",
-  messagingSenderId: "1033927783710"
-};
-firebase.initializeApp(firebaseConfig);
-var provider = new firebase.auth.FacebookAuthProvider();
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function seedWithUsers(count) {
+  fetch('https://randomuser.me/api/?results=' + count)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      responseJson.results.forEach(function(rando) {
+        database.ref('usersData').push({
+        name: capitalizeFirstLetter(rando.name.first) + " " + capitalizeFirstLetter(rando.name.last),
+        photoURL: rando.picture.thumbnail
+      })
+      });
+    })
+}
 
 class Login  extends Component {
   render() {
@@ -44,11 +50,23 @@ class Login  extends Component {
                 this.props.onSuccessfulLogin();
                 AccessToken.getCurrentAccessToken().then(
                   (data) => {
+                    var firebase = this.props.firebase;
+                    // Initialize Firebase
+                    var database = firebase.database();
                     // Build Firebase credential with the Facebook access token.
                     var credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
-                    console.log(credential);
                     // Sign in with credential from the Google user.
-                    firebase.auth().signInWithCredential(credential).catch(function(error) {
+                    firebase.auth().signInWithCredential(credential).then(function(user) {
+                      database.ref('usersData').child(user.uid).once('value', function(snapshot) {
+                      var exists = (snapshot.val() !== null);
+                      if (!exists) {
+                        database.ref('usersData/' + user.uid).set({
+                          name: user.displayName,
+                          photoURL: user.photoURL,
+                        });
+                      }
+                    })
+                    }, function(error) {
                       // Handle Errors here.
                       var errorCode = error.code;
                       var errorMessage = error.message;
@@ -58,6 +76,7 @@ class Login  extends Component {
                       var credential = error.credential;
                       // ...
                     });
+//                     firebase.ref('\')
                   }
                 )
               }

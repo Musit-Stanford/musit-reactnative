@@ -78,7 +78,8 @@ class Conversation extends Component {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      messages: [], 
+      ds: ds,
+      messages: [],
       enteringNames: false, 
       dataSource: ds.cloneWithRows(data), 
       message: '', 
@@ -133,9 +134,9 @@ class Conversation extends Component {
               .then((response) => response.json())
               .then((responseJson) => {
                 console.log(messages)
-                this.setState({
-                  spotifyQueries: ds.cloneWithRows(responseJson.tracks.items)
-                })
+//                 this.setState({
+//                   spotifyQueries: ds.cloneWithRows(responseJson.tracks.items)
+//                 })
                 messages[0].image = responseJson.tracks.items[0].album.images[0].url
                 messages[0].track = responseJson.tracks.items[0].name
                 messages[0].artist = responseJson.tracks.items[0].artists[0].name
@@ -340,7 +341,19 @@ class Conversation extends Component {
                 style={[styles.userEntry, this.textColor()]}
                 placeholder={ 'Person / Group' }
                 placeholderTextColor={"rgba(198,198,204,1)"}
-                onChangeText={(text) => {this.setState({text, enteringNames: true})}}
+                onChangeText={(text) => {
+                this.setState({text, enteringNames: true})
+                var database = this.props.firebase.database();
+                database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
+                  console.log("Look here!")
+                  var users = [];
+                  snapshot.forEach(function(user) {
+                    users.push(user.val())
+                  })
+                  console.log(users)
+                  this.setState({dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}).cloneWithRows(users)})
+                }, function(error) {}, this)
+              }}
                 onSubmitEditing={() => this.submitText()}
                 value={(this.state && this.state.text) || ''}
               />
@@ -364,8 +377,8 @@ class Conversation extends Component {
             }}
             renderMessageText={this.renderMessageText}
             renderMessageImage={this.renderMessageImage}
-            renderComposer={this.renderComposer}
-            onInputTextChanged={this.querySpotify}
+//             renderComposer={this.renderComposer}
+//             onInputTextChanged={this.querySpotify}
           />
         ) : (
           this.renderSpotify(this.props)

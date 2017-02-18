@@ -49,9 +49,9 @@ class Contact extends Component {
       style={styles.container}
       onPress={() => this.pressHandler()}
       >
-        <Image source={{ uri: this.props.picture.medium}} style={styles.photo} />
+        <Image source={{ uri: this.props.photoURL}} style={styles.photo} />
         <Text style={styles.threadName}>
-          {`${this.props.location.city}`}
+          {`${this.props.name}`}
         </Text>
       </TouchableOpacity>
     );
