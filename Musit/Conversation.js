@@ -300,7 +300,9 @@ class Conversation extends Component {
     console.log("hi"); 
   }
   
-  onDonePressList() {
+  onDonePressList(data) {
+    console.log(data);
+    this._enterParticipants.setNativeProps({text: data.name});
     this.setState({enteringNames: false});
   }
   
@@ -349,6 +351,7 @@ class Conversation extends Component {
               </Text>
             ) : (
               <TextInput
+                ref={component => this._enterParticipants = component}
                 style={[styles.userEntry, this.textColor()]}
                 placeholder={ 'Person / Group' }
                 placeholderTextColor={"rgba(198,198,204,1)"}
@@ -369,7 +372,7 @@ class Conversation extends Component {
           <ListView
             automaticallyAdjustContentInsets={false}
             dataSource={this.state.dataSource}
-            renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} navigator={this.props.navigator} onDonePress={() => this.onDonePressList()}/>}
+            renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} navigator={this.props.navigator} onDonePress={(data) => this.onDonePressList(data)}/>}
             scrollEnabled={false}
           />
         ) : (!this.state.editing ? (

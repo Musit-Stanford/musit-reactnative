@@ -40,7 +40,7 @@ class Contact extends Component {
   }
   
   pressHandler() {
-    this.props.onDonePress();
+    this.props.onDonePress(this.props);
   }
   
   render () {
