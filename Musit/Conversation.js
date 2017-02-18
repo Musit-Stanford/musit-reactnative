@@ -77,14 +77,27 @@ class Conversation extends Component {
   constructor(props) {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+    var database = this.props.firebase.database();
+
+    var users = [];
+    database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
+      snapshot.forEach(function(user) {
+        users.push(user.val())
+      })
+      console.log(users)
+      this.setState({dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}).cloneWithRows(users)})
+    }, function(error) {}, this)
+
     this.state = {
       ds: ds,
       messages: [],
+      friends: users,
       enteringNames: false, 
       dataSource: ds.cloneWithRows(data), 
       message: '', 
       editing: false, 
-      spotifyQueries: ds.cloneWithRows([]), 
+      spotifyQueries: ds.cloneWithRows([]),
       recommendation: {}, 
       recChosen: false
     };
@@ -170,7 +183,6 @@ class Conversation extends Component {
           width: Dimensions.get('window').width,
           fontFamily: 'Avenir',
           marginLeft: 10,
-
         }}
         placeholder={'Enter a recommendation...'}
         placeholderTextColor={"rgba(198,198,204,1)"}
@@ -313,10 +325,9 @@ class Conversation extends Component {
   
   textColor() {
     if(!this.state.enteringNames) {
-      return {
+      return 
         color: '#0073F9'
-      }
-    } else {
+      } else {
       return {
         color: 'black'
       }
@@ -343,16 +354,11 @@ class Conversation extends Component {
                 placeholderTextColor={"rgba(198,198,204,1)"}
                 onChangeText={(text) => {
                 this.setState({text, enteringNames: true})
-                var database = this.props.firebase.database();
-                database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
-                  console.log("Look here!")
-                  var users = [];
-                  snapshot.forEach(function(user) {
-                    users.push(user.val())
-                  })
-                  console.log(users)
-                  this.setState({dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}).cloneWithRows(users)})
-                }, function(error) {}, this)
+                var matchingFriends = this.state.friends.filter(function(friend){
+                  return friend.name.toLowerCase().startsWith(text.toLowerCase())
+                });
+                console.log(matchingFriends);
+                this.setState({dataSource: this.state.ds.cloneWithRows(matchingFriends)})
               }}
                 onSubmitEditing={() => this.submitText()}
                 value={(this.state && this.state.text) || ''}
