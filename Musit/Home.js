@@ -60,12 +60,12 @@ class Home extends Component {
   }
   
   componentDidMount() {
-    this.refs.searchBar.focus(); 
+    // this.refs.searchBar.focus(); 
   }
   
   render() {
     return (
-      <View>
+      <View style={{paddingTop: 70}}>
         <SearchBar
           style={searchStyles.searchContainer}
           ref='searchBar'
