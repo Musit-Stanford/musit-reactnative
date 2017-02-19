@@ -48,8 +48,9 @@ class Result extends Component {
   pressHandler() {
     this.props.parent.setState({
       rec: this.props,
-      editing: false,
-      recChosen: true
+      recChosen: true,
+      guide: 'Enter a message...',
+      input:'',
     });
   }
   

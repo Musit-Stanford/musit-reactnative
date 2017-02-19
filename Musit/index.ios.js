@@ -17,6 +17,7 @@ import * as firebase from 'firebase';
 import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 
 export default class Musit extends React.Component {
+  
   _navigateToConversation() {
     this.refs.nav.push({
       component: Conversation,
@@ -34,7 +35,6 @@ export default class Musit extends React.Component {
   }
   
   render() {
-
     return (
       <NavigatorIOS
         ref='nav'

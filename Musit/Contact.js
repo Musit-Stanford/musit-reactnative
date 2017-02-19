@@ -40,7 +40,19 @@ class Contact extends Component {
   }
   
   pressHandler() {
-    this.props.onDonePress();
+    let receipients = this.props.parent.state.recepients; 
+    receipients.push({ name: this.props.location.city });
+    this.props.parent.setState({
+      receipients: receipients,
+      enteringNames: false, 
+    });
+    let input = receipients[0].name; 
+    if(receipients.length > 1) {
+      for(let i = 1; i < receipients.length; i++) {
+        input += ", " + receipients[i].name;
+      }
+    }
+    this.props.parent.refs.names.setNativeProps({text: input, multi: true});
   }
   
   render () {

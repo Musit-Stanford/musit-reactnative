@@ -55,7 +55,7 @@ class Home extends Component {
   }
   
   componentDidMount() {
-    this.refs.searchBar.focus(); 
+//     this.refs.searchBar.focus(); 
   }
   
   render() {
@@ -68,7 +68,7 @@ class Home extends Component {
           placeholder='Search Recommendations'
           fontFamily='Avenir'
         />
-        <ScrollView style={{ marginTop:40, height: 600}}>
+        <ScrollView style={{ marginTop:50, height: 600}}>
           <View style={{ padding: 10, backgroundColor:'white', flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
               style={{ 

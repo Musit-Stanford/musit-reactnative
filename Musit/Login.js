@@ -9,6 +9,7 @@ import {
   NavigatorIOS,
   TouchableHighlight,
   Image,
+  Animated
 } from 'react-native'
 import Home from './Home'
 import Conversation from './Conversation'
@@ -27,17 +28,57 @@ import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 // var provider = new firebase.auth.FacebookAuthProvider();
 
 class Login  extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      bounceValue: new Animated.Value(0),
+    };
+  }
+
+  _navigateToConversation() {
+    this.props.navigator.push({
+      component: Conversation,
+      title: 'New Recommendation',
+      passProps: { new: true }
+    });
+  }
+
+  componentDidMount() {
+    this.state.bounceValue.setValue(1.5);     // Start large
+    Animated.spring(                          // Base: spring, decay, timing
+      this.state.bounceValue,                 // Animate `bounceValue`
+      {
+        toValue: 0.9,                         // Animate to smaller size
+        friction: 0.8,                          // Bouncier spring
+      }
+    ).start();                                // Start the animation
+
+    if(AccessToken.getCurrentAccessToken() != null) {
+      console.log(this);
+      this.props.navigator.replace({
+      component: Home, title: 'MUSIT', 
+      backButtonTitle: ' ', 
+      rightButtonTitle: '+',
+      onRightButtonPress: () => this._navigateToConversation(),
+    });; 
+    }
+  }
+
   render() {
     return (
       <View>
         <View>
-          <Image 
+          <Animated.Image 
             style={{
               width:  350 ,
               height:  250 ,
               position: 'absolute',
               top: 110,
-              left: 20
+              left: 20,
+              transform: [                        // `transform` is an ordered array
+                {scale: this.state.bounceValue},  // Map `bounceValue` to `scale`
+              ]
             }}
             resizeMode={"contain"}
             source={require('./images/logo.png')}
@@ -45,6 +86,7 @@ class Login  extends Component {
           <Text
             style={{
               color: '#468EE5',
+              backgroundColor: 'rgba(0,0,0,0)',
               fontSize:  42 ,
               position: 'absolute',
               top: 340,
@@ -97,11 +139,11 @@ class Login  extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: 120, 
-    height: 30,
+    width: 240, 
+    height: 40,
     position: 'absolute',
     top: 490,
-    left: 128
+    left: 65
   }
 });
 

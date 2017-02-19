@@ -67,11 +67,13 @@ const styles = StyleSheet.create({
     marginLeft: 40
   },
   listContent: {
-    flex: 0.2,
     flexDirection: 'row',
     backgroundColor: '#4A90E2',
     justifyContent:'flex-start'
   },
+  messageContainer: {
+    flex: 1,
+  }
 });
 
 class Conversation extends Component {
@@ -86,14 +88,16 @@ class Conversation extends Component {
     this.state = {
       messages: [], 
       enteringNames: false, 
-      dataSource: ds.cloneWithRows(data), 
       message: '', 
+      guide: 'Enter a recommendation...',
+      dataSource: ds.cloneWithRows(data),
       editing: false, 
       spotifyQueries: ds.cloneWithRows([]), 
       recommendation: {}, 
       recChosen: false,
       input: '',
-      recepients: {},
+      query: '',
+      recepients: [],
     };
     this.onSend = this.onSend.bind(this);
   }
@@ -136,30 +140,40 @@ class Conversation extends Component {
   }
   
   componentDidMount() {
-    if(this.refs.trackName) {
-      this.refs.trackName.focus(); 
+    console.log(this.refs);
+    if(this.refs.recSpace) {
+      this.refs.recSpace.focus(); 
     }
   }
   
   onSend(messages = []) {
-    let url = "https://api.spotify.com/v1/search?q=" + messages[0].text + "&type=artist,track";
+    let url = "https://api.spotify.com/v1/search?q=" + this.state.recChosen.name + "&type=artist,track";
     fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
-      console.log(messages)
+      let message = {
+        _id: 3,
+        text: this.state.input,
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: 'React Native',
+          avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
+        },
+        image: this.state.rec.album.images[0].url,
+        track: this.state.rec.name,
+        artist: this.state.rec.artists[0].name,
+        url: this.state.rec.external_urls.spotify
+      }
+      let result = []
+      result.push(message); 
       this.setState({
-        spotifyQueries: ds.cloneWithRows(responseJson.tracks.items)
+        input: '',
+        rec: {},
+        recommendation: {},
+        messages: GiftedChat.append(this.state.messages, result),
       })
-      messages[0].image = responseJson.tracks.items[0].album.images[0].url
-      messages[0].track = responseJson.tracks.items[0].name
-      messages[0].artist = responseJson.tracks.items[0].artists[0].name
-      messages[0].url = responseJson.tracks.items[0].external_urls.spotify
-      this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, messages),
-      };
     });
-    })
   }
   
   inputMessage() {
@@ -168,7 +182,6 @@ class Conversation extends Component {
       editing: false,
     });
     console.log(this.refs); 
-    this.refs.trackName.setNativeProps({text: '', placeholder: 'Enter a message...'});
   }
   
   renderMessageText(props) {
@@ -183,110 +196,11 @@ class Conversation extends Component {
     );
   }
   
-  renderComposer(props) {
-    return(
-      <TextInput
-        style={{
-          height: 45, 
-          width: Dimensions.get('window').width,
-          fontFamily: 'Avenir',
-          marginLeft: 10,
-        }}
-        placeholder={'Enter a recommendation...'}
-        placeholderTextColor={"rgba(198,198,204,1)"}
-        onChangeText={(text) => {this.parent.querySpotify({text})}}
-      />
-    );
-  }
-  
   removeRec() {
     this.setState({
       recChosen: false, 
       rec: {}
     });
-  }
-  
-  listStyle() {
-    if(this.state.recChosen) {
-      return {
-        position: 'absolute',
-        top: 62,
-        flexDirection: 'row',
-        width: Dimensions.get('window').width,
-        height: 50,
-        backgroundColor: '#F4F4F4',
-      }
-    } else {
-      return styles.directory;
-    }
-  }
-  
-  listTrick() {
-    if(this.state.recChosen) {
-      return {
-        position: 'absolute',
-        top: 110,
-        height: 85,
-        width: Dimensions.get('window').width,
-        flexDirection: 'row',
-        backgroundColor: '#4A90E2',
-        justifyContent:'flex-start'
-      }
-    } else {
-      return styles.listContent; 
-    }
-  }
-  
-  renderSpotify(props) {
-    return(
-      <View>
-        {this.state.recChosen ? (
-          <View
-            style={this.listTrick()}
-          >
-            <TouchableOpacity
-              onPress={() => {this.removeRec()}}
-              activeOpacity={75 / 100}>
-              <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 30, marginLeft: 15}}>X</Text>
-            </TouchableOpacity>
-            <Image source={{ uri: this.state.rec.album.images[0].url }} style={styles.photo} />
-            <View style={{ flexDirection:'column' }}>
-              <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 20, fontSize: 18 }}>{this.state.rec.name}</Text>
-              <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 4, fontSize: 12 }}>{this.state.rec.artists[0].name}</Text>
-            </View>
-          </View>
-        ): (
-          null
-        )}
-        {this.state.recChosen ? (
-          null
-        ) : (
-          <ListView
-              style={{ maxHeight: 510, backgroundColor: '#FCFCFC' }}
-              automaticallyAdjustContentInsets={false}
-              enableEmptySections={true}
-              dataSource={this.state.spotifyQueries}
-              renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this} navigator={this.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
-              scrollEnabled={true}
-            />
-        )}
-        <TextInput
-          ref='trackName'
-          autoFocus={true}
-          style={{
-            height: 45, 
-            width: Dimensions.get('window').width,
-            fontFamily: 'Avenir',
-            marginLeft: 10,
-
-          }}
-          value={this.state.input}
-          placeholderTextColor={"rgba(198,198,204,1)"}
-          onChangeText={(text) => {this.querySpotify({text})}}
-          onSubmitEditing={() => {this.inputMessage()}}
-        />
-      </View>
-    );
   }
   
   openTrack(uri) {
@@ -300,66 +214,14 @@ class Conversation extends Component {
     });
   }
   
-  renderMessageImage(props) {
-    const url = props.currentMessage.image;
-    const artist = props.currentMessage.artist;
-    const track = props.currentMessage.track;
-    const uri = props.currentMessage.url; 
-    console.log(uri); 
-    let color = 'white'
-    if(props.currentMessage.user._id != props.user._id) {
-      color = 'black'
-    }
-    return(
-      <TouchableOpacity
-        activeOpacity={75 / 100}
-        style={{ flexDirection: 'row' }}
-        onPress={() => this.parent.openTrack(uri)}>
-        <Image 
-          style={{
-            width: 60,
-            height: 60 ,
-            borderRadius: 8,
-            margin: 10,
-          }}
-          resizeMode={"contain"}
-          source={{url}}
-        />
-        <View style={{ marginTop: 20 }}>
-          <Text
-            style={{
-              color: color,
-              fontSize: 14,
-              fontWeight: 'normal',
-              fontFamily:  'Avenir' ,
-            }}>
-            {track}
-          </Text>
-          <Text
-            style={{
-              color: color,
-              fontSize: 12,
-              fontWeight: 'normal',
-              fontFamily: 'Avenir',
-            }}>
-            {artist}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-  
-  submitText() {
-    console.log("hi"); 
-  }
-  
   onDonePressList() {
-    console.log("here")
     this.setState({enteringNames: false});
   }
   
   onDonePressSong() {
-    this.setState({enteringNames: false, editing: false});
+    console.log(this.refs.recSpace);
+    this.refs.recSpace.value = ''; 
+    this.setState({enteringNames: false, editing: true, recChosen: true});
   }
   
   querySpotify(query) {
@@ -371,10 +233,11 @@ class Conversation extends Component {
     fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
-          console.log(responseJson)
+          console.log(responseJson);
           const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          let tracks = responseJson.tracks.items.reverse(); 
           this.setState({
-            spotifyQueries: ds.cloneWithRows(responseJson.tracks.items)
+            spotifyQueries: ds.cloneWithRows(tracks)
           })
       }
     )
@@ -406,22 +269,6 @@ class Conversation extends Component {
       return styles.userTitle; 
     }
   }
-  
-  directoryText() {
-    if(this.state.recChosen) {
-      return {
-        color: 'black',
-        fontSize: 12,
-        fontWeight: 'normal',
-        fontFamily: 'Avenir',
-        marginTop: 18,
-        marginLeft: 16
-        
-      }
-    } else {
-      return styles.directoryText; 
-    }
-  }
 
   addRecepients(text) {
     if(text.length == 0) {
@@ -430,13 +277,147 @@ class Conversation extends Component {
       this.setState({text, enteringNames: true});
     }
   }
+
+  commas() {
+    if(this.state.recepients.length >= 1) {
+      let val = this.state.recepients[0].name + ", ";
+      for(let i = 1; i < this.state.receipients.length; i++) {
+        val += this.state.receipients[i].name + ", "
+      }
+      this.refs.names.setNativeProps({text: val});
+    }
+  }
+
+  renderResult() {
+    if(!this.parent.state.recChosen) return (<Text style={{ top: 50 }}>Hello</Text>);
+    console.log(this.state); 
+    return(
+      <TouchableOpacity
+        onPress={() => {this.removeRec()}}
+        activeOpacity={75 / 100}>
+        <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 30, marginLeft: 15}}>X</Text>
+        <Image source={{ uri: this.state.rec.album.images[0].url }} style={styles.photo} />
+        <View style={{ flexDirection:'column' }}>
+          <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 20, fontSize: 18 }}>{this.state.rec.name}</Text>
+          <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 4, fontSize: 12 }}>{this.state.rec.artists[0].name}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  
+  renderComposer(props) {
+    let width = Dimensions.get('window').width;
+    return(
+      <View style={{ flex: 1 }}>
+        <TextInput
+          style={{
+            height: 45,
+            width: width,
+            fontFamily: 'Avenir',
+            marginLeft: 10,
+            position: 'absolute',
+          }}
+          ref='recSpace'
+          onSubmitEditing={() => {this.parent.onSend()}}
+          placeholder={this.parent.state.guide}
+          placeholderTextColor={"rgba(198,198,204,1)"}
+          onChangeText={(text) => {this.parent.querySpotify({text})}}
+          value={this.parent.state.input}
+        />
+        {this.parent.state.recChosen ? (
+        <TouchableOpacity
+          style={{
+            height: 45,
+            left: width/2,
+            width: width/2,
+            marginLeft: 10,
+            position: 'absolute',
+          }}
+          onPress={() => {this.parent.removeRec()}}
+          activeOpacity={75 / 100}>
+          <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 30, marginLeft: 15}}>X</Text>
+          <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
+            height: 30,
+            width: 30,
+            borderRadius: 5,
+            position: 'absolute',
+            top: 8,
+            left: 100,
+            marginLeft: 40}} />
+            <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'black', height: 10, left: 10, top: 10 }}>{this.parent.state.rec.name}</Text>
+            <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'black', marginLeft: 85, marginTop: 4, fontSize: 12 }}>{this.parent.state.rec.artists[0].name}</Text>
+        </TouchableOpacity>):(null)}
+      </View>
+    );
+  }
+  
+  renderMessageImage(props) {
+    const url = props.currentMessage.image;
+    const artist = props.currentMessage.artist;
+    const track = props.currentMessage.track;
+    const uri = props.currentMessage.url; 
+    console.log(uri); 
+    let color = 'white'
+    if(props.currentMessage.user._id != props.user._id) {
+      color = 'black'
+    }
+    return(
+      <TouchableOpacity
+        activeOpacity={75 / 100}
+        style={{ flexDirection: 'row' }}
+        onPress={() => this.parent.openTrack(uri)}>
+        <Image 
+          style={{
+            width: 60,
+            height: 60 ,
+            borderRadius: 8,
+            margin: 10,
+          }}  
+          resizeMode={"contain"}
+          source={{url}}
+        />
+        <View style={{ marginTop: 20 }}>
+          <Text
+            style={{
+              color: color,
+              fontSize: 14,
+              fontWeight: 'normal',
+              fontFamily:  'Avenir' ,
+            }}>
+            {track}
+          </Text>
+          <Text
+            style={{
+              color: color,
+              fontSize: 12,
+              fontWeight: 'normal',
+              fontFamily: 'Avenir',
+            }}>
+            {artist}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  
+  renderBelow() {
+    if(this.parent.state.recChosen) return null; 
+    return(
+      <ListView
+        style={{ backgroundColor: 'white' }}
+        enableEmptySections={true}
+        dataSource={this.parent.state.spotifyQueries}
+        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+        scrollEnabled={true}
+    />);
+  }
   
   render() {
     return (
       <View style={styles.container}>
-        <View style={this.listStyle()}>
+        <View style={styles.directory}>
           <Text
-            style={this.directoryText()}>
+            style={styles.directoryText}>
             To:           
           </Text>   
           {!this.props.new ? (
@@ -446,9 +427,12 @@ class Conversation extends Component {
               </Text>
             ) : (
               <TextInput
+                ref='names'
+                multi={false}
                 style={[styles.userEntry, this.textColor()]}
                 placeholder={ 'Person / Group' }
                 placeholderTextColor={"rgba(198,198,204,1)"}
+                onFocus={() => {this.commas()}}
                 onChangeText={(text) => this.addRecepients(text)}
                 onSubmitEditing={() => this.submitText()}
                 value={(this.state && this.state.text) || ''}
@@ -459,26 +443,25 @@ class Conversation extends Component {
           <ListView
             automaticallyAdjustContentInsets={false}
             dataSource={this.state.dataSource}
-            renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} navigator={this.props.navigator} onDonePress={() => this.onDonePressList()}/>}
+            renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} parent={this} navigator={this.props.navigator}/>}
             scrollEnabled={false}
           />
-        ) : (!this.state.editing ? (
-          <GiftedChat
-            parent={this}
-            messages={this.state.messages}
-            onSend={this.onSend}
-            isAnimated={true}
-            user={{
-              _id: 1,
-            }}
-            renderMessageText={this.renderMessageText}
-            renderMessageImage={this.renderMessageImage}
-            renderComposer={this.renderComposer}
-            onInputTextChanged={this.querySpotify}
-          />
         ) : (
-          this.renderSpotify(this.props)
-        ))}
+            <GiftedChat
+              parent={this}
+              messages={this.state.messages}
+              onSend={this.onSend}
+              isAnimated={true}
+              user={{
+                _id: 1,
+              }}
+              renderMessageText={this.renderMessageText}
+              renderMessageImage={this.renderMessageImage}
+              renderComposer={this.renderComposer}
+              onInputTextChanged={this.querySpotify}
+              renderFooter={this.renderBelow}
+            />
+          )}
       </View>
     )
   }
