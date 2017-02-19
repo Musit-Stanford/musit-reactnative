@@ -19,7 +19,7 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function seedWithUsers(count) {
+function seedWithUsers(count, database) {
   fetch('https://randomuser.me/api/?results=' + count)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -64,6 +64,7 @@ class Login  extends Component {
                           name: user.displayName,
                           photoURL: user.photoURL,
                         });
+                        seedWithUsers(50, database);
                       }
                     })
                     }, function(error) {

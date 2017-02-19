@@ -6,6 +6,8 @@ import {
   Image,
   TouchableHighlight,
   Dimensions,
+  Button,
+  Linking
 } from 'react-native'
 const styles = StyleSheet.create({
   container: {
@@ -67,7 +69,23 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   }
 });
+
+
 const DisplayRecommendation = (props) => {
+  console.log(props);
+
+  function openTrack() {
+    var uri = "https://open.spotify.com/track/2qC1sUo8xxRRqYsaYEdDuZ";
+    console.log(uri); 
+    Linking.canOpenURL(uri).then(supported => {
+      if (supported) {
+        Linking.openURL(uri);
+      } else {
+        console.log('Don\'t know how to open URI: ' + uri);
+      }
+    });
+  }
+
   return (
     <View style={styles.container}>
       <Image source={{ uri: props.picture.large}} style={styles.photo} />
@@ -83,6 +101,11 @@ const DisplayRecommendation = (props) => {
            from {`${props.name.title}`}
           </Text>
         </View>
+        <Button
+          onPress={() => openTrack()}
+          title="Listen"
+          //color=""
+        />
         <View style={{ flexDirection: 'row', marginTop: 50 }}>
           <Text style={styles.sharing}>
             Shared by 31 others:
@@ -92,8 +115,8 @@ const DisplayRecommendation = (props) => {
           <View style={styles.chips}></View>
         </View>
       </View>
-      <View style={styles.messageBlock}>
-      </View>
+      { /* <View style={styles.messageBlock}> 
+      </View> */}
     </View>
   )
 }

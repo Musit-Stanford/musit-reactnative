@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, ListView } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
-import data from './demoData.js'
+// import data from './demoData.js'
 import SearchBar from 'react-native-search-bar';
 import MenuBar from './MenuBar'
 
@@ -52,6 +52,11 @@ class Home extends Component {
     this.state = {
         dataSource: ds.cloneWithRows(data),
     };
+    // var database = this.props.firebase.database();
+    // var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
+    // database.ref(currentUsersDataPath + "conversations/").on('child_added', function(data) {
+
+    // });
   }
   
   componentDidMount() {

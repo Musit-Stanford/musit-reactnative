@@ -35,10 +35,12 @@ export default class Musit extends React.Component {
   }
   _navigateToHome() {
     this.refs.nav.replace({
-      component: Home, title: 'MUSIT', 
-      backButtonTitle: ' ', 
+      component: Home, 
+      title: 'MUSIT', 
+      backButtonTitle: ' ',
       rightButtonTitle: '+',
       onRightButtonPress: () => this._navigateToConversation(),
+      passProps: { firebase: firebase }
     });
   }
   
@@ -52,7 +54,7 @@ export default class Musit extends React.Component {
         */
           <NavigatorIOS
             ref='nav'
-            initialRoute={{ component: Login, title: 'MUSIT LOGIN', backButtonTitle: ' ', rightButtonTitle: ' ', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
+            initialRoute={{ component: Login, title: 'MUSIT LOGIN', backButtonTitle: ' ', rightButtonTitle: '+', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
             titleTextColor='#E4E4E4'
             shadowHidden={true}
             style={{flex: 1}}
