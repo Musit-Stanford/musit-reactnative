@@ -41,7 +41,7 @@ class Contact extends Component {
   
   pressHandler() {
     let receipients = this.props.parent.state.recepients; 
-    receipients.push({ name: this.props.location.city });
+    receipients.push({ name: this.props.name });
     this.props.parent.setState({
       receipients: receipients,
       enteringNames: false, 
@@ -61,9 +61,9 @@ class Contact extends Component {
       style={styles.container}
       onPress={() => this.pressHandler()}
       >
-        <Image source={{ uri: this.props.picture.medium}} style={styles.photo} />
+        <Image source={{ uri: this.props.photoURL}} style={styles.photo} />
         <Text style={styles.threadName}>
-          {`${this.props.location.city}`}
+          {`${this.props.name}`}
         </Text>
       </TouchableOpacity>
     );

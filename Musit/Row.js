@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   photo: {
-    height: 45,
-    width: 45,
+    height: 55,
+    width: 55,
     alignItems: 'flex-end',
     borderRadius: 4,
     marginRight: 8,
@@ -54,13 +54,14 @@ class Row extends Component {
     const hasRead = this.props.hasRead; 
     let notification = null;
     if(!hasRead) {
-      notification = <View style={{ backgroundColor:"#18B13E", width:8, height:8, borderRadius: 20, marginTop: 24 }}></View>;
+      notification = <View style={{ backgroundColor:"#3498db", width:8, height:8, borderRadius: 20, marginTop: 24 }}></View>;
     }
+    console.log(this.props); 
     return (
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
           component: DisplayRecommendation,
-          title: '🎵',
+          title: this.props.name.last,
           passProps: {...this.props},
           backButtonTitle: ' '
         })}}>

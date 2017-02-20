@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, ListView } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
-import data from './demoData.js'
+// import data from './demoData.js'
 import SearchBar from 'react-native-search-bar';
 import MenuBar from './MenuBar'
 
@@ -52,15 +52,20 @@ class Home extends Component {
     this.state = {
         dataSource: ds.cloneWithRows(data),
     };
+    console.log(this.props);
+    // var database = this.props.firebase.database();
+    // var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
+    // database.ref(currentUsersDataPath + "conversations/").on('child_added', function(data) {
+
+    // });
   }
   
   componentDidMount() {
-//     this.refs.searchBar.focus(); 
   }
   
   render() {
     return (
-      <View>
+      <View style={{paddingTop: 0}}>
         <SearchBar
           style={searchStyles.searchContainer}
           ref='searchBar'
@@ -86,7 +91,7 @@ class Home extends Component {
           <ListView
             pageSize={3}
             dataSource={this.state.dataSource}
-            renderRow={(data) => <Row {...data} navigator={this.props.navigator}/>}
+            renderRow={(data) => <Row {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />

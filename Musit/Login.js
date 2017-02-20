@@ -13,19 +13,25 @@ import {
 } from 'react-native'
 import Home from './Home'
 import Conversation from './Conversation'
-// import * as firebase from 'firebase';
 import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 
-// Initialize Firebase
-// const firebaseConfig = {
-//   apiKey: "AIzaSyDn-HyzRU2ohuLSUvIbp0D5GZURTrXuxjA",
-//   authDomain: "musit-ebe2c.firebaseapp.com",
-//   databaseURL: "https://musit-ebe2c.firebaseio.com",
-//   storageBucket: "musit-ebe2c.appspot.com",
-//   messagingSenderId: "1033927783710"
-// };
-// firebase.initializeApp(firebaseConfig);
-// var provider = new firebase.auth.FacebookAuthProvider();
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function seedWithUsers(count, database) {
+  fetch('https://randomuser.me/api/?results=' + count)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      responseJson.results.forEach(function(rando) {
+        database.ref('usersData').push({
+        name: capitalizeFirstLetter(rando.name.first) + " " + capitalizeFirstLetter(rando.name.last),
+        photoURL: rando.picture.thumbnail
+      })
+      });
+    })
+}
 
 class Login  extends Component {
 
@@ -40,7 +46,7 @@ class Login  extends Component {
     this.props.navigator.push({
       component: Conversation,
       title: 'New Recommendation',
-      passProps: { new: true }
+      passProps: { new: true, firebase: this.props.firebase }
     });
   }
 
@@ -55,13 +61,13 @@ class Login  extends Component {
     ).start();                                // Start the animation
 
     if(AccessToken.getCurrentAccessToken() != null) {
-      console.log(this);
       this.props.navigator.replace({
-      component: Home, title: 'MUSIT', 
-      backButtonTitle: ' ', 
-      rightButtonTitle: '+',
-      onRightButtonPress: () => this._navigateToConversation(),
-    });; 
+        component: Home, title: 'MUSIT', 
+        backButtonTitle: ' ', 
+        rightButtonTitle: '+',
+        passProps: { firebase: this.props.firebase },
+        onRightButtonPress: () => this._navigateToConversation(),
+      });
     }
   }
 
@@ -99,39 +105,49 @@ class Login  extends Component {
         </View>
 
         <LoginButton
-            style={styles.container}
-            publishPermissions={[]}
-            emailPermissions={["true"]}
-            onLoginFinished={
-              (error, result) => {
-                if (error) {
-                  alert("login has error: " + result.error);
-                } else if (result.isCancelled) {
-                  alert("login is cancelled.");
-                } else {
-                  this.props.onSuccessfulLogin();
-                  AccessToken.getCurrentAccessToken().then(
-                    (data) => {
-                      // Build Firebase credential with the Facebook access token.
-                      var credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
-                      console.log(credential);
-                      // Sign in with credential from the Google user.
-                      firebase.auth().signInWithCredential(credential).catch(function(error) {
-                        // Handle Errors here.
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
-                        // The email of the user's account used.
-                        var email = error.email;
-                        // The firebase.auth.AuthCredential type that was used.
-                        var credential = error.credential;
-                        // ...
-                      });
-                    }
-                  )
-                }
+          style={styles.container}
+          publishPermissions={[]}
+          emailPermissions={["true"]}
+          onLogoutFinished={() => console.log("logout.")}
+          onLoginFinished={
+            (error, result) => {
+              if (error) {
+                alert("login has error: " + result.error);
+              } else if (result.isCancelled) {
+                alert("login is cancelled.");
+              } else {
+                this.props.onSuccessfulLogin();
+                AccessToken.getCurrentAccessToken().then(
+                  (data) => {
+                    var firebase = this.props.firebase;
+                    var database = firebase.database();                    
+                    var credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
+                    firebase.auth().signInWithCredential(credential).then(function(user) { 
+                      database.ref('usersData').child(user.uid).once('value', function(snapshot) {
+                      var exists = (snapshot.val() !== null);
+                      if (!exists) {
+                        database.ref('usersData/' + user.uid).set({
+                          name: user.displayName,
+                          photoURL: user.photoURL,
+                        });
+                        seedWithUsers(50, database);
+                      }
+                    })
+                    }, function(error) {
+                      // Handle Errors here.
+                      var errorCode = error.code;
+                      var errorMessage = error.message;
+                      // The email of the user's account used.
+                      var email = error.email;
+                      // The firebase.auth.AuthCredential type that was used.
+                      var credential = error.credential;
+                      // ...
+                    });
+//                     firebase.ref('\')
+                  }
+                )
               }
-            }
-            onLogoutFinished={() => console.log("logout.")}/>
+            }}/>
       </View>
     );
   }

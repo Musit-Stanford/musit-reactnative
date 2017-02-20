@@ -10,11 +10,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   photo: {
-    height: 45,
-    width: 45,
+    height: 55,
+    width: 55,
     alignItems: 'flex-end',
-    borderRadius: 20,
-    marginLeft: 22,
+    borderRadius: 25,
+    marginLeft: 16,
   },
   textBlock: {
     flexDirection: 'column',

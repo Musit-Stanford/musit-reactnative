@@ -15,6 +15,7 @@ import Contact from './Contact'
 import Result from './Result'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
 import data from './demoData.js'
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -85,14 +86,33 @@ class Conversation extends Component {
   constructor(props) {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+    if (this.props.firebase === undefined) return;
+
+    var database = this.props.firebase.database();
+    var users = [];
+    database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
+      snapshot.forEach(function(userSnapshot) {
+        var user = userSnapshot.val()
+        user.id = userSnapshot.key;
+        users.push(user)
+      })
+      this.setState({userSource: ds.cloneWithRows(users)});
+    }, function(error) {}, this)
+
+
     this.state = {
-      messages: [], 
+      ds: ds,
+      messages: [],
+      friends: users,
+      selectedFriends: [],
       enteringNames: false, 
       message: '', 
       guide: 'Enter a recommendation...',
       dataSource: ds.cloneWithRows(data),
       editing: false, 
-      spotifyQueries: ds.cloneWithRows([]), 
+      spotifyQueries: ds.cloneWithRows([]),
+      userSource: ds.cloneWithRows(data),
       recommendation: {}, 
       recChosen: false,
       input: '',
@@ -140,7 +160,6 @@ class Conversation extends Component {
   }
   
   componentDidMount() {
-    console.log(this.refs);
     if(this.refs.recSpace) {
       this.refs.recSpace.focus(); 
     }
@@ -167,6 +186,7 @@ class Conversation extends Component {
       }
       let result = []
       result.push(message); 
+      this.createNewConversation(this.state.recepients); 
       this.setState({
         input: '',
         rec: {},
@@ -183,17 +203,40 @@ class Conversation extends Component {
     });
     console.log(this.refs); 
   }
-  
-  renderMessageText(props) {
-    let color = 'white'
-    if(props.currentMessage.user._id != props.user._id) {
-      color = 'black'
-    }
-    return(
-      <Text style={{ fontFamily:'Avenir', marginLeft:14, paddingRight: 10, color: color, paddingTop: 5, backgroundColor: 'rgba(0,0,0,0)', minWidth: 150 }}>
-        {props.currentMessage.text}
-      </Text>
-    );
+
+ createNewConversation(selectedFriends) {
+  var database = this.props.firebase.database();
+  var newConversationKey = database.ref().child('conversations').push().key;
+  var updates = {};
+  var usersDataPath = "/usersData/";
+  var newConversationPath = "/conversations/" + newConversationKey+ "/";
+  var currentUserId = this.props.firebase.auth().currentUser.uid;
+  database.ref(usersDataPath + currentUserId).once('value').then(function(snapshot) {
+    var username = snapshot.val().name;
+    var currentUser = snapshot.val();
+    currentUser.id = snapshot.key;
+    var users = selectedFriends.concat(currentUser);
+    users.forEach(function (user) {
+      var userID = user.id
+      updates[newConversationPath + "users/" + userID] = true;
+      updates[usersDataPath + userID + '/conversations/' + newConversationKey] = true;
+    });
+    updates[newConversationPath + "updatedTime"] = new Date();
+    updates[newConversationPath + "name"] = users.map((user) => user.name).join(", ");
+    database.ref().update(updates);
+  });
+ }
+
+renderMessageText(props) {
+  let color = 'white'
+  if(props.currentMessage.user._id != props.user._id) {
+    color = 'black'
+  }
+  return(
+    <Text style={{ fontFamily:'Avenir', marginLeft:14, paddingRight: 10, color: color, paddingTop: 5, backgroundColor: 'rgba(0,0,0,0)', minWidth: 150 }}>
+      {props.currentMessage.text}
+    </Text>
+  );
   }
   
   removeRec() {
@@ -336,6 +379,7 @@ class Conversation extends Component {
           onPress={() => {this.parent.removeRec()}}
           activeOpacity={75 / 100}>
           <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 30, marginLeft: 15}}>X</Text>
+          {this.parent.state.rec.album ? (
           <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
             height: 30,
             width: 30,
@@ -343,9 +387,7 @@ class Conversation extends Component {
             position: 'absolute',
             top: 8,
             left: 100,
-            marginLeft: 40}} />
-            <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'black', height: 10, left: 10, top: 10 }}>{this.parent.state.rec.name}</Text>
-            <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'black', marginLeft: 85, marginTop: 4, fontSize: 12 }}>{this.parent.state.rec.artists[0].name}</Text>
+            marginLeft: 40}} />):(null)}
         </TouchableOpacity>):(null)}
       </View>
     );
@@ -441,10 +483,11 @@ class Conversation extends Component {
         </View>
         {this.state.enteringNames ? (
           <ListView
+            enableEmptySections={true}
             automaticallyAdjustContentInsets={false}
-            dataSource={this.state.dataSource}
+            dataSource={this.state.userSource}
             renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} parent={this} navigator={this.props.navigator}/>}
-            scrollEnabled={false}
+            scrollEnabled={true}
           />
         ) : (
             <GiftedChat
