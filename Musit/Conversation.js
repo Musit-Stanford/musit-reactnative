@@ -162,6 +162,37 @@ class Conversation extends Component {
       this.refs.recSpace.focus(); 
     }
   }
+
+  subscribeToConversation(conversationId) {
+    var database = this.props.firebase.database();
+    database.ref("conversations/" + conversationId + "/messages").on("child_added", (messageKeySnapshot, previousKey) => {
+      database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
+        var message = messageDataSnapshot.val();
+        message.id = messageDataSnapshot.key;
+        this.setState((previousState) => {
+          var newMessages = previousState.messages.concat(message);
+          return {
+            messages: GiftedChat.append(previousState.messages, [message]),
+          };
+        });
+      });
+    });
+  }
+
+  sendMessage(message) {
+    let database = this.props.firebase.database();
+    var conversationId = "-KdIlOcjnvnhz13bjIpf";
+    var newMessageKey = database.ref().child("messages").push().key;
+    message.id = newMessageKey;
+    var updates = {};
+    var newMessagePath = "/messages/" + message.id + "/";
+    var newMessageConversationIndex = "conversations/" + conversationId + "/messages/" + message.id;
+    var currentUserId = this.props.firebase.auth().currentUser.uid;
+    message.userId = currentUserId;
+    updates[newMessagePath] = message;
+    updates[newMessageConversationIndex] = true;
+    database.ref().update(updates);
+  }
   
   onSend(messages = []) {
     let url = "https://api.spotify.com/v1/search?q=" + this.state.recChosen.name + "&type=artist,track";

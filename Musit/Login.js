@@ -59,8 +59,10 @@ class Login  extends Component {
         friction: 0.8,                          // Bouncier spring
       }
     ).start();                                // Start the animation
-
-    if(AccessToken.getCurrentAccessToken() != null) {
+    AccessToken.getCurrentAccessToken().then(
+      (data) => {
+        if (data !== undefined) {
+          if (data.accessToken !== undefined) {
       this.props.navigator.replace({
         component: Home, title: 'MUSIT', 
         backButtonTitle: ' ', 
@@ -69,6 +71,8 @@ class Login  extends Component {
         onRightButtonPress: () => this._navigateToConversation(),
       });
     }
+  }
+  })
   }
 
   render() {
