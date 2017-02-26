@@ -61,7 +61,7 @@ class Login  extends Component {
     ).start();                                // Start the animation
     AccessToken.getCurrentAccessToken().then(
       (data) => {
-        if (data !== undefined) {
+        if (data !== null) {
           if (data.accessToken !== undefined) {
       this.props.navigator.replace({
         component: Home, title: 'MUSIT', 
