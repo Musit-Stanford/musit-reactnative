@@ -14,7 +14,6 @@ import {
 import Contact from './Contact'
 import Result from './Result'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
-import data from './demoData.js'
 
 const styles = StyleSheet.create({
   container: {
@@ -96,10 +95,9 @@ class Conversation extends Component {
       enteringNames: false, 
       message: '', 
       guide: '  Search Spotify for Track...',
-      dataSource: ds.cloneWithRows(data),
       editing: false, 
       spotifyQueries: ds.cloneWithRows([]),
-      userSource: ds.cloneWithRows(data),
+      userSource: ds.cloneWithRows([]),
       recommendation: {}, 
       recChosen: false,
       input: '',
@@ -447,17 +445,19 @@ renderMessageText(props) {
   
   renderBelow() {
     if(this.parent.state.recChosen) return null; 
+    let data = this.parent.state.spotifyQueries;
     return(
       <ListView
         style={{ backgroundColor: 'white' }}
         enableEmptySections={true}
-        dataSource={this.parent.state.spotifyQueries}
+        dataSource={data}
         renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
         scrollEnabled={true}
     />);
   }
   
   render() {
+    let data = this.state.userSource;
     return (
       <View style={styles.container}>
         <View style={styles.directory}>
@@ -488,7 +488,7 @@ renderMessageText(props) {
           <ListView
             enableEmptySections={true}
             automaticallyAdjustContentInsets={false}
-            dataSource={this.state.userSource}
+            dataSource={data}
             renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} parent={this} navigator={this.props.navigator}/>}
             scrollEnabled={true}
           />
