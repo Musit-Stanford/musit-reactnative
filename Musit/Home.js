@@ -58,6 +58,21 @@ class Home extends Component {
     // database.ref(currentUsersDataPath + "conversations/").on('child_added', function(data) {
 
     // });
+
+    database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
+      database.ref("conversations/" + conversationKeySnapshot.key).once("value", (conversationDataSnapshot) => {
+        let conversation = conversationDataSnapshot.val();
+        conversation.id = conversationDataSnapshot.key;
+        console.log(conversation);
+        this.setState((previousState) => {
+          let newThreads = previousState.threads.concat(conversation);
+          return {
+            threads: newThreads,
+            threadDataSource: ds.cloneWithRows(newThreads)
+          };
+        });
+      });
+    });
   }
   
   componentDidMount() {
