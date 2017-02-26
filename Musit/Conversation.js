@@ -14,6 +14,7 @@ import {
 import Contact from './Contact'
 import Result from './Result'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
+import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 
 const styles = StyleSheet.create({
   container: {
@@ -204,9 +205,7 @@ class Conversation extends Component {
         text: this.state.input,
         createdAt: new Date(),
         user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
+          avatar: this.props.firebase.auth().currentUser.photoURL,
         },
         image: this.state.rec.album.images[0].url,
         track: this.state.rec.name,
@@ -215,7 +214,9 @@ class Conversation extends Component {
       }
       let result = []
       result.push(message); 
-      this.createNewConversation(this.state.recepients); 
+      if(this.props.new) {
+        this.createNewConversation(this.state.recepients); 
+      }
       this.setState({
         input: '',
         rec: {},
