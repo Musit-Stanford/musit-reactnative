@@ -346,6 +346,7 @@ renderMessageText(props) {
     );
   }
   
+  // ScrollView inside a View 
   renderComposer(props) {
     let width = Dimensions.get('window').width;
     return(
