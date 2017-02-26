@@ -86,20 +86,7 @@ class Conversation extends Component {
   constructor(props) {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-
-    if (this.props.firebase === undefined) return;
-
-    var database = this.props.firebase.database();
     var users = [];
-    database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
-      snapshot.forEach(function(userSnapshot) {
-        var user = userSnapshot.val()
-        user.id = userSnapshot.key;
-        users.push(user)
-      })
-      this.setState({userSource: ds.cloneWithRows(users)});
-    }, function(error) {}, this)
-
 
     this.state = {
       ds: ds,
@@ -108,7 +95,7 @@ class Conversation extends Component {
       selectedFriends: [],
       enteringNames: false, 
       message: '', 
-      guide: 'Enter a recommendation...',
+      guide: '  Search Spotify for Track...',
       dataSource: ds.cloneWithRows(data),
       editing: false, 
       spotifyQueries: ds.cloneWithRows([]),
@@ -120,9 +107,22 @@ class Conversation extends Component {
       recepients: [],
     };
     this.onSend = this.onSend.bind(this);
+
+    if (this.props.firebase === undefined) return;
+    var database = this.props.firebase.database();
+
+    database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
+      snapshot.forEach(function(userSnapshot) {
+        var user = userSnapshot.val()
+        user.id = userSnapshot.key;
+        users.push(user)
+      })
+      this.setState({userSource: ds.cloneWithRows(users)});
+    }, function(error) {}, this)
   }
   
   componentWillMount() {
+    console.log(this); 
     if(!this.props.new) {
        this.setState({
         messages: [
@@ -357,13 +357,15 @@ renderMessageText(props) {
             height: 45,
             width: width,
             fontFamily: 'Avenir',
-            marginLeft: 10,
             position: 'absolute',
+            backgroundColor: 'rgba(0,0,0,0)',
+            marginLeft: 10,
+            color: '#95a5a6',
           }}
           ref='recSpace'
           onSubmitEditing={() => {this.parent.onSend()}}
           placeholder={this.parent.state.guide}
-          placeholderTextColor={"rgba(198,198,204,1)"}
+          placeholderTextColor={"#95a5a6"}
           onChangeText={(text) => {this.parent.querySpotify({text})}}
           value={this.parent.state.input}
         />
@@ -371,22 +373,23 @@ renderMessageText(props) {
         <TouchableOpacity
           style={{
             height: 45,
-            left: width/2,
-            width: width/2,
+            right: 0,
+            width: width/3,
             marginLeft: 10,
+            backgroundColor: 'rgba(0,0,0,0)',
             position: 'absolute',
           }}
           onPress={() => {this.parent.removeRec()}}
           activeOpacity={75 / 100}>
-          <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 30, marginLeft: 15}}>X</Text>
+          <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 0, marginLeft: 0}}>X</Text>
           {this.parent.state.rec.album ? (
           <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
             height: 30,
             width: 30,
             borderRadius: 5,
             position: 'absolute',
-            top: 8,
-            left: 100,
+            top: 7,
+            left: 10,
             marginLeft: 40}} />):(null)}
         </TouchableOpacity>):(null)}
       </View>
@@ -465,7 +468,7 @@ renderMessageText(props) {
           {!this.props.new ? (
               <Text
                style={this.userTitle()}>
-               {this.props.name.first}
+               {this.props.location.city}
               </Text>
             ) : (
               <TextInput

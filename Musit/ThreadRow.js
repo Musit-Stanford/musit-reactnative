@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textAlign: 'center',
     color: '#7C7C7C',
+    backgroundColor: 'rgba(0,0,0,0)',
     marginTop: 10,
   }
 });
@@ -33,13 +34,16 @@ const ThreadRow = (props) => (
     style={styles.container}
     onPress={() => {props.navigator.push({
           component: Conversation,
-          title: props.name.first,
+          title: props.location.city,
           passProps: {...props},
           backButtonTitle: ' ',
         })}}
     >
     <Image source={{ uri: props.picture.medium}} style={styles.photo} />
     <View style={styles.textBlock}>
+      {props.location.city == 'Stanford' ? (
+        <View style={{ backgroundColor: '#3498db', width: 5, height: 5, left: 15, top: 19, borderRadius: 10}}></View>
+      ):(null)}
       <Text style={styles.threadName}>
         {`${props.location.city}`}
       </Text>
