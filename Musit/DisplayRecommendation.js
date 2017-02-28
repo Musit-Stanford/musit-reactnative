@@ -103,17 +103,17 @@ const DisplayRecommendation = (props) => {
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: props.picture.large}} style={styles.photo} />
+      <Image source={{ uri: props.image}} style={styles.photo} />
       <View style={styles.textBlock}>
         <Text style={styles.trackName}>
-          {`${props.name.first}`}
+          {`${props.track}`}
         </Text>
         <View style={{ flexDirection: 'row' }}>
           <Text style={styles.artistName}>
-            {`${props.name.last} `}
+            {`${props.artist} `}
           </Text>
           <Text style={styles.donorName}>
-           from {`${props.name.title}`}
+           from {`${props.userId}`}
           </Text>
         </View>
         <TouchableOpacity 
@@ -140,7 +140,7 @@ const DisplayRecommendation = (props) => {
         </View>
       </View>
       <View style={styles.messageBlock}> 
-        <Text style={{ color: 'white', textAlign: 'center', fontFamily:'Avenir', paddingTop: 16, fontSize: 16  }}>Recommend to {`${props.name.title}`}</Text>
+        <Text style={{ color: 'white', textAlign: 'center', fontFamily:'Avenir', paddingTop: 16, fontSize: 16  }}>Recommend to {`${props.id}`}</Text>
       </View> 
     </View>
   )

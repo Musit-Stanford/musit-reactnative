@@ -44,17 +44,24 @@ const searchStyles = StyleSheet.create({
   },
 });
 
+
 class Home extends Component {
   constructor(props) {
     super(props);
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
     this.state = {
-        dataSource: ds.cloneWithRows(data),
+        ds: ds,
         threads: [],
-        threadDataSource: ds.cloneWithRows([])
+        threadDataSource: ds.cloneWithRows([]),
+        messages: [],
+        messagesDataSource: ds.cloneWithRows([])
     };
-    console.log(this.props);
+    this.subscribeToConversations()
+    this.subscribeToRecommendations()
+  }
+
+  subscribeToConversations() {
     var database = this.props.firebase.database();
     var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
     database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
@@ -66,7 +73,27 @@ class Home extends Component {
           let newThreads = previousState.threads.concat(conversation);
           return {
             threads: newThreads,
-            threadDataSource: ds.cloneWithRows(newThreads)
+            threadDataSource: this.state.ds.cloneWithRows(newThreads)
+          };
+        });
+      });
+    });
+  }
+
+  subscribeToRecommendations() {
+    // Recommendations get displayed in the order that they are retrieved from the db, which means new messages are added to the end.
+    var userId = this.props.firebase.auth().currentUser.uid
+    var database = this.props.firebase.database();
+    database.ref("usersData/" + userId + "/messages").on("child_added", (messageKeySnapshot, previousKey) => {
+      database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
+        var message = messageDataSnapshot.val();
+        message.id = messageDataSnapshot.key;
+        console.log(message);
+        this.setState((previousState) => {
+          previousState.messages.push(message);
+          return {
+            messages: previousState.messages,
+            messagesDataSource: this.state.ds.cloneWithRows(previousState.messages)
           };
         });
       });
@@ -103,7 +130,7 @@ class Home extends Component {
           </View>
           <ListView
             pageSize={3}
-            dataSource={this.state.dataSource}
+            dataSource={this.state.messagesDataSource}
             renderRow={(data) => <Row {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}

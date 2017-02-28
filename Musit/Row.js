@@ -61,7 +61,7 @@ class Row extends Component {
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
           component: DisplayRecommendation,
-          title: this.props.name.last,
+          title: this.props.track,
           passProps: {...this.props},
           backButtonTitle: ' '
         })}}>
@@ -70,19 +70,19 @@ class Row extends Component {
             {notification}
             <View style={styles.textBlock}>
               <Text style={styles.trackName}>
-                {`${this.props.name.first}`}
+                {`${this.props.track}`}
               </Text>
               <View style={{ flexDirection: 'row' }}>
                 <Text style={styles.artistName}>
-                  {`${this.props.name.last}`}
+                  {`${this.props.artist}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.name.title}`}
+                  {`${this.props.userId}`}
                 </Text>
               </View>
             </View>
           </View>
-          <Image source={{ uri: this.props.picture.large}} style={styles.photo} />
+          <Image source={{ uri: this.props.image}} style={styles.photo} />
         </View>
       </TouchableHighlight>
     );
