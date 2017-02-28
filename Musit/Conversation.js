@@ -87,6 +87,8 @@ class Conversation extends Component {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     var users = [];
 
+    console.log(props)
+
     this.state = {
       ds: ds,
       messages: [],
@@ -257,6 +259,14 @@ renderMessageText(props) {
       }
     });
   }
+
+  forwardTrack(message) {
+    this.props.navigator.push({
+          component: Conversation,
+          passProps: {new: true, prepopulatedMessage: message, firebase: this.props.firebase},
+          backButtonTitle: ' ',
+        });
+  }
   
   onDonePressList() {
     this.setState({enteringNames: false});
@@ -398,6 +408,7 @@ renderMessageText(props) {
   }
   
   renderMessageImage(props) {
+    const message = props.currentMessage;
     const url = props.currentMessage.image;
     const artist = props.currentMessage.artist;
     const track = props.currentMessage.track;
@@ -411,7 +422,8 @@ renderMessageText(props) {
       <TouchableOpacity
         activeOpacity={75 / 100}
         style={{ flexDirection: 'row' }}
-        onPress={() => this.parent.openTrack(uri)}>
+        onPress={() => this.parent.openTrack(uri)}
+        onLongPress={() => this.parent.forwardTrack(message)}>
         <Image 
           style={{
             width: 60,
