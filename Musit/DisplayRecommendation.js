@@ -90,7 +90,7 @@ const DisplayRecommendation = (props) => {
   console.log(props);
 
   function openTrack() {
-    var uri = "https://open.spotify.com/track/2qC1sUo8xxRRqYsaYEdDuZ";
+    var uri = props.url;
     console.log(uri); 
     Linking.canOpenURL(uri).then(supported => {
       if (supported) {
