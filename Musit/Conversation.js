@@ -108,7 +108,6 @@ class Conversation extends Component {
     if (this.props.firebase === undefined) return;
     var database = this.props.firebase.database();
     var conversationId = this.props.id;
-    console.log(conversationId);
     this.subscribeToConversation(conversationId);
 
     // Get all users in the db
@@ -152,7 +151,7 @@ class Conversation extends Component {
 
   sendMessage(message) {
     let database = this.props.firebase.database();
-    var conversationId = "-KdIlOcjnvnhz13bjIpf";
+    var conversationId = this.props.id;
     var newMessageKey = database.ref().child("messages").push().key;
     message.id = newMessageKey;
     var updates = {};
@@ -187,6 +186,8 @@ class Conversation extends Component {
       let result = []
       result.push(message); 
       this.createNewConversation(this.state.recepients); 
+
+      this.sendMessage(message);
       this.setState({
         input: '',
         rec: {},
