@@ -47,14 +47,15 @@ class Home extends Component {
   constructor(props) {
     super(props);
 
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
     this.state = {
         dataSource: ds.cloneWithRows(data),
+        threads: [],
+        threadDataSource: ds.cloneWithRows([])
     };
     console.log(this.props);
     var database = this.props.firebase.database();
     var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
-
     database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
       database.ref("conversations/" + conversationKeySnapshot.key).once("value", (conversationDataSnapshot) => {
         let conversation = conversationDataSnapshot.val();
@@ -76,7 +77,7 @@ class Home extends Component {
   
   render() {
     return (
-      <View style={{paddingTop: 0}}>
+      <View style={{paddingTop: 60}}>
         <SearchBar
           style={searchStyles.searchContainer}
           ref='searchBar'
@@ -116,13 +117,13 @@ class Home extends Component {
                 letterSpacing: 1,
                 marginLeft: 10,
               }}>
-              THREADS
+              CONVERSATIONS
             </Text>
             <MenuBar name='threads' navigator={this.props.navigator}></MenuBar>
           </View>
           <ListView
-            dataSource={this.state.dataSource}
-            renderRow={(data) => <ThreadRow {...data} new={false} navigator={this.props.navigator} />}
+            dataSource={this.state.threadDataSource}
+            renderRow={(data) => <ThreadRow {...data} firebase={this.props.firebase} new={false} navigator={this.props.navigator} />}
             horizontal={true}
             style={{ marginTop: 10 }}
           />

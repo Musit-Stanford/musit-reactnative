@@ -90,6 +90,7 @@ class Conversation extends Component {
 
     this.state = {
       ds: ds,
+      allUsers: ds.cloneWithRows([]),
       messages: [],
       friends: users,
       selectedFriends: [],
@@ -106,56 +107,24 @@ class Conversation extends Component {
       recepients: [],
     };
     this.onSend = this.onSend.bind(this);
-
     if (this.props.firebase === undefined) return;
     var database = this.props.firebase.database();
+    var conversationId = this.props.id;
+    this.subscribeToConversation(conversationId);
 
+    // Get all users in the db
     database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
       snapshot.forEach(function(userSnapshot) {
         var user = userSnapshot.val()
         user.id = userSnapshot.key;
         users.push(user)
       })
-      this.setState({userSource: ds.cloneWithRows(users)});
+      this.setState({userSource: ds.cloneWithRows(users), allUsers: users});
     }, function(error) {}, this)
   }
   
   componentWillMount() {
-    console.log(this); 
-    if(!this.props.new) {
-       this.setState({
-        messages: [
-          {
-            _id: 1,
-            text: "This is my bread and butter",
-            createdAt: new Date(Date.UTC(2016, 7, 30, 17, 20, 0)),
-            user: {
-              _id: 2,
-              name: 'React Native',
-              avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
-            },
-            track: 'Epoch',
-            artist: 'Tycho',
-            image: 'https://upload.wikimedia.org/wikipedia/en/1/11/Dive_tycho_album.jpg',
-            url: 'https://open.spotify.com/track/5EeNRe6Fi29tTrssVzl4dw'
-          },
-          {
-            _id: 2,
-            text: "I am in love with Bonobo",
-            createdAt: new Date(Date.UTC(2016, 7, 30, 17, 18, 0)),
-            user: {
-              _id: 1,
-              name: 'React Native',
-              avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
-            },
-            track: 'Cirrus',
-            artist: 'Bonobo',
-            image: 'https://s-media-cache-ak0.pinimg.com/originals/27/10/2f/27102fbb71756b46f9979b85529ac882.jpg',
-            url: 'https://open.spotify.com/track/2lJ4d8MCT6ZlDRHKJ1br14'
-          },
-        ],
-      });
-    }
+    console.log(this);
   }
   
   componentDidMount() {
@@ -165,11 +134,13 @@ class Conversation extends Component {
   }
 
   subscribeToConversation(conversationId) {
+    console.log(conversationId);
     var database = this.props.firebase.database();
     database.ref("conversations/" + conversationId + "/messages").on("child_added", (messageKeySnapshot, previousKey) => {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
         var message = messageDataSnapshot.val();
         message.id = messageDataSnapshot.key;
+        console.log(message);
         this.setState((previousState) => {
           var newMessages = previousState.messages.concat(message);
           return {
@@ -182,7 +153,7 @@ class Conversation extends Component {
 
   sendMessage(message) {
     let database = this.props.firebase.database();
-    var conversationId = "-KdIlOcjnvnhz13bjIpf";
+    var conversationId = this.props.id;
     var newMessageKey = database.ref().child("messages").push().key;
     message.id = newMessageKey;
     var updates = {};
@@ -217,6 +188,7 @@ class Conversation extends Component {
       if(this.props.new) {
         this.createNewConversation(this.state.recepients); 
       }
+      this.sendMessage(message);
       this.setState({
         input: '',
         rec: {},
@@ -344,10 +316,20 @@ renderMessageText(props) {
   }
 
   addRecepients(text) {
+    var curName = text.substring(text.lastIndexOf(",") + 2);
+    console.log(curName); 
+    var users = this.state.allUsers;
+    var filteredUsers = users.filter(function(el) {
+      if(el.id == 'undefined') return false;
+      console.log(curName + " " + el.name); 
+      console.log(el.name.includes(curName)); 
+      return el.name.includes(curName); 
+    });
+    console.log(filteredUsers); 
     if(text.length == 0) {
       this.setState({text: "", enteringNames: false}); 
     } else {
-      this.setState({text, enteringNames: true});
+      this.setState({text, enteringNames: true, userSource: this.state.ds.cloneWithRows(filteredUsers)});
     }
   }
 
@@ -501,7 +483,7 @@ renderMessageText(props) {
           {!this.props.new ? (
               <Text
                style={this.userTitle()}>
-               {this.props.location.city}
+               {this.props.name}
               </Text>
             ) : (
               <TextInput

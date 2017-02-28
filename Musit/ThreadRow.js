@@ -34,18 +34,16 @@ const ThreadRow = (props) => (
     style={styles.container}
     onPress={() => {props.navigator.push({
           component: Conversation,
-          title: props.location.city,
+          title: props.name,
           passProps: {...props},
+          firebase: props.firebase,
           backButtonTitle: ' ',
         })}}
     >
-    <Image source={{ uri: props.picture.medium}} style={styles.photo} />
+    <Image source={{ uri: 'https://facebook.github.io/react/img/logo_og.png'}} style={styles.photo} />
     <View style={styles.textBlock}>
-      {props.location.city == 'Stanford' ? (
-        <View style={{ backgroundColor: '#3498db', width: 5, height: 5, left: 15, top: 19, borderRadius: 10}}></View>
-      ):(null)}
       <Text style={styles.threadName}>
-        {`${props.location.city}`}
+        {`${props.name}`}
       </Text>
     </View>
   </TouchableOpacity>
