@@ -283,6 +283,18 @@ renderMessageText(props) {
       editing: true,
       input: query.text,
     })
+
+    var SC_URL = 'https://api.soundcloud.com/tracks.json';
+    var SC_CLIENT_ID = '1c3aeb3f91390630d351f3c708148086';
+    var soundCloudUrl = SC_URL + "?client_id=" + SC_CLIENT_ID + "q=" + query;
+
+    fetch(soundCloudUrl)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson)
+    });
+
+
     var url = "https://api.spotify.com/v1/search?q=" + query.text + "&type=track";
     fetch(url)
     .then((response) => response.json())
