@@ -113,7 +113,7 @@ const DisplayRecommendation = (props) => {
             {`${props.artist} `}
           </Text>
           <Text style={styles.donorName}>
-           from {`${props.userId}`}
+           from {`${props.userName}`}
           </Text>
         </View>
         <TouchableOpacity 

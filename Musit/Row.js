@@ -77,7 +77,7 @@ class Row extends Component {
                   {`${this.props.artist}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.userId}`}
+                  {`${this.props.userName}`}
                 </Text>
               </View>
             </View>
