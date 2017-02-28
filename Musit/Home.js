@@ -88,12 +88,12 @@ class Home extends Component {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
         var message = messageDataSnapshot.val();
         message.id = messageDataSnapshot.key;
-        console.log(message);
         this.setState((previousState) => {
-          previousState.messages.push(message);
+          var newMessages = [message];
+          newMessages.push(...previousState.messages.slice(0, 3))
           return {
-            messages: previousState.messages,
-            messagesDataSource: this.state.ds.cloneWithRows(previousState.messages)
+            messages: newMessages,
+            messagesDataSource: this.state.ds.cloneWithRows(newMessages)
           };
         });
       });
