@@ -49,7 +49,7 @@ export default class Musit extends React.Component {
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Login, title: 'MUSIT LOGIN', backButtonTitle: ' ', rightButtonTitle: '+', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
+        initialRoute={{ component: Login, title: 'MUSIT', backButtonTitle: ' ', rightButtonTitle: '+', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
         titleTextColor='#E4E4E4'
         shadowHidden={true}
         style={{flex: 1}}

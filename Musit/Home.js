@@ -53,14 +53,12 @@ class Home extends Component {
         threads: [],
         threadDataSource: ds.cloneWithRows([])
     };
-    console.log(this.props);
     var database = this.props.firebase.database();
     var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
     database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
       database.ref("conversations/" + conversationKeySnapshot.key).once("value", (conversationDataSnapshot) => {
         let conversation = conversationDataSnapshot.val();
         conversation.id = conversationDataSnapshot.key;
-        console.log(conversation);
         this.setState((previousState) => {
           let newThreads = previousState.threads.concat(conversation);
           return {
@@ -102,6 +100,7 @@ class Home extends Component {
           </View>
           <ListView
             pageSize={3}
+            enableEmptySections={true}
             dataSource={this.state.dataSource}
             renderRow={(data) => <Row {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
@@ -122,6 +121,7 @@ class Home extends Component {
             <MenuBar name='threads' navigator={this.props.navigator}></MenuBar>
           </View>
           <ListView
+            enableEmptySections={true}
             dataSource={this.state.threadDataSource}
             renderRow={(data) => <ThreadRow {...data} firebase={this.props.firebase} new={false} navigator={this.props.navigator} />}
             horizontal={true}

@@ -109,8 +109,11 @@ class Conversation extends Component {
     this.onSend = this.onSend.bind(this);
     if (this.props.firebase === undefined) return;
     var database = this.props.firebase.database();
-    var conversationId = this.props.id;
-    this.subscribeToConversation(conversationId);
+
+    if(!this.props.new) {
+      var conversationId = this.props.id;
+      this.subscribeToConversation(conversationId);
+    }
 
     // Get all users in the db
     database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
@@ -153,7 +156,7 @@ class Conversation extends Component {
 
   sendMessage(message) {
     let database = this.props.firebase.database();
-    var conversationId = this.props.id;
+    var conversationId = this.state.id;
     var newMessageKey = database.ref().child("messages").push().key;
     message.id = newMessageKey;
     var updates = {};
@@ -161,9 +164,24 @@ class Conversation extends Component {
     var newMessageConversationIndex = "conversations/" + conversationId + "/messages/" + message.id;
     var currentUserId = this.props.firebase.auth().currentUser.uid;
     message.userId = currentUserId;
+    message.userName = this.props.firebase.auth().currentUser.displayName;
     updates[newMessagePath] = message;
     updates[newMessageConversationIndex] = true;
     database.ref().update(updates);
+    this.subscribeRecepients(message.id);
+  }
+
+  subscribeRecepients(messageId) {
+    console.log("here"); 
+    var database = this.props.firebase.database();
+    var recepients = this.state.recepients; 
+    var usersDataPath = "/usersData/";
+    var updates = {};
+    recepients.forEach(function(user) {
+      var recepientUserId = user.id; 
+      updates[usersDataPath + recepientUserId + '/messageList/' + messageId] = true;
+      database.ref().update(updates);
+    });
   }
   
   onSend(messages = []) {
@@ -176,7 +194,7 @@ class Conversation extends Component {
         text: this.state.input,
         createdAt: new Date(),
         user: {
-          avatar: this.props.firebase.auth().currentUser.photoURL,
+          avatar: this.props.firebase.auth().currentUser.photoURL
         },
         image: this.state.rec.album.images[0].url,
         track: this.state.rec.name,
@@ -187,6 +205,7 @@ class Conversation extends Component {
       result.push(message); 
       if(this.props.new) {
         this.createNewConversation(this.state.recepients); 
+        this.props.new = false; 
       }
       this.sendMessage(message);
       this.setState({
@@ -209,6 +228,7 @@ class Conversation extends Component {
  createNewConversation(selectedFriends) {
   var database = this.props.firebase.database();
   var newConversationKey = database.ref().child('conversations').push().key;
+  this.state.id = newConversationKey
   var updates = {};
   var usersDataPath = "/usersData/";
   var newConversationPath = "/conversations/" + newConversationKey+ "/";
@@ -317,15 +337,11 @@ renderMessageText(props) {
 
   addRecepients(text) {
     var curName = text.substring(text.lastIndexOf(",") + 2);
-    console.log(curName); 
     var users = this.state.allUsers;
     var filteredUsers = users.filter(function(el) {
       if(el.id == 'undefined') return false;
-      console.log(curName + " " + el.name); 
-      console.log(el.name.includes(curName)); 
       return el.name.includes(curName); 
     });
-    console.log(filteredUsers); 
     if(text.length == 0) {
       this.setState({text: "", enteringNames: false}); 
     } else {
@@ -473,6 +489,10 @@ renderMessageText(props) {
   
   render() {
     let data = this.state.userSource;
+    let prompt = "Person / Group";
+    if(!this.props.new) {
+      prompt = this.props.name; 
+    }
     return (
       <View style={styles.container}>
         <View style={styles.directory}>
@@ -480,24 +500,17 @@ renderMessageText(props) {
             style={styles.directoryText}>
             To:           
           </Text>   
-          {!this.props.new ? (
-              <Text
-               style={this.userTitle()}>
-               {this.props.name}
-              </Text>
-            ) : (
-              <TextInput
+          <TextInput
                 ref='names'
                 multi={false}
                 style={[styles.userEntry, this.textColor()]}
-                placeholder={ 'Person / Group' }
+                placeholder={ prompt }
                 placeholderTextColor={"rgba(198,198,204,1)"}
                 onFocus={() => {this.commas()}}
                 onChangeText={(text) => this.addRecepients(text)}
                 onSubmitEditing={() => this.submitText()}
                 value={(this.state && this.state.text) || ''}
               />
-            )}
         </View>
         {this.state.enteringNames ? (
           <ListView
@@ -513,6 +526,7 @@ renderMessageText(props) {
               messages={this.state.messages}
               onSend={this.onSend}
               isAnimated={true}
+              enableEmptySections={true}
               user={{
                 _id: 1,
               }}
