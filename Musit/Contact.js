@@ -38,10 +38,21 @@ class Contact extends Component {
   constructor(props) {
     super(props); 
   }
+
+  checkForExistentConversation() {
+    var database = this.props.firebase.database();
+    database.ref("usersData").orderByChild("name").equalTo(this.props.name).once("value", function(snapshot) {
+      snapshot.forEach(function(userSnapshot) {
+        var user = userSnapshot.val()
+        console.log(user); 
+      })
+    }, function(error) {}, this);
+  }
   
   pressHandler() {
     let receipients = this.props.parent.state.recepients; 
     console.log(this.props); 
+    this.checkForExistentConversation(this.props); 
     receipients.push({ name: this.props.name, id: this.props.id });
     this.props.parent.setState({
       receipients: receipients,

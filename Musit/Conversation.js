@@ -517,7 +517,7 @@ renderMessageText(props) {
             enableEmptySections={true}
             automaticallyAdjustContentInsets={false}
             dataSource={data}
-            renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} parent={this} navigator={this.props.navigator}/>}
+            renderRow={(data, sectionID, rowID) => <Contact {...data} firebase={this.props.firebase} row={rowID} parent={this} navigator={this.props.navigator}/>}
             scrollEnabled={true}
           />
         ) : (
