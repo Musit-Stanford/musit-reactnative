@@ -98,7 +98,7 @@ class Conversation extends Component {
       message: '', 
       guide: '  Search Spotify for Track...',
       editing: false, 
-      spotifyQueries: ds.cloneWithRows([]),
+      trackResults: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
       recommendation: {}, 
       recChosen: false,
@@ -167,24 +167,20 @@ class Conversation extends Component {
   }
   
   onSend(messages = []) {
-    let url = "https://api.spotify.com/v1/search?q=" + this.state.recChosen.name + "&type=artist,track";
-    fetch(url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      let message = {
-        _id: 3,
-        text: this.state.input,
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
-        },
-        image: this.state.rec.album.images[0].url,
-        track: this.state.rec.name,
-        artist: this.state.rec.artists[0].name,
-        url: this.state.rec.external_urls.spotify
-      }
+    let message = {
+      _id: 3,
+      text: this.state.input,
+      createdAt: new Date(),
+      user: {
+        _id: 2,
+        name: 'React Native',
+        avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
+      },
+      image: this.state.rec.album.images[0].url,
+      track: this.state.rec.name,
+      artist: this.state.rec.artists[0].name,
+      url: this.state.rec.external_urls.spotify
+    }
       let result = []
       result.push(message); 
       this.createNewConversation(this.state.recepients); 
@@ -196,7 +192,6 @@ class Conversation extends Component {
         recommendation: {},
         messages: GiftedChat.append(this.state.messages, result),
       })
-    });
   }
   
   inputMessage() {
@@ -277,8 +272,10 @@ renderMessageText(props) {
     this.refs.recSpace.value = ''; 
     this.setState({enteringNames: false, editing: true, recChosen: true});
   }
+
+
   
-  querySpotify(query) {
+  queryForTracks(query) {
     this.setState({
       editing: true,
       input: query.text,
@@ -286,27 +283,70 @@ renderMessageText(props) {
 
     var SC_URL = 'https://api.soundcloud.com/tracks.json';
     var SC_CLIENT_ID = '1c3aeb3f91390630d351f3c708148086';
-    var soundCloudUrl = SC_URL + "?client_id=" + SC_CLIENT_ID + "&q=" + query;
+    var soundCloudUrl = SC_URL + "?client_id=" + SC_CLIENT_ID + "&q=" + query.text;
 
-    fetch(soundCloudUrl)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      console.log(responseJson)
-    });
+    var soundCloudResponse = fetch(soundCloudUrl).then((response) => response.json())
+    // .then((responseJson) => {
+    //   console.log(responseJson);
+    //   const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
+    //   let tracks = responseJson.reverse(); 
+    //   tracks.map(function(track){
+    //     track.album = {};
+    //     track.album.images = [{}];
+    //     track.album.images[0].url = track.artwork_url;
+    //     track.name = track.title;
+    //     track.artists = [{}];
+    //     track.artists[0].name = track.user.username;
+    //     track._id = track.id
+    //     track.external_urls = {}
+    //     track.external_urls.spotify = track.permalink_url
+    //   })
+    //   this.setState({
+    //     trackResults: ds.cloneWithRows(tracks)
+    //   })
+    // });
 
 
     var url = "https://api.spotify.com/v1/search?q=" + query.text + "&type=track";
-    fetch(url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-          console.log(responseJson);
-          const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-          let tracks = responseJson.tracks.items.reverse(); 
-          this.setState({
-            spotifyQueries: ds.cloneWithRows(tracks)
-          })
-      }
-    )
+    var spotifyResponse = fetch(url).then((response) => response.json())
+    // .then((responseJson) => {
+    //       console.log(responseJson);
+    //       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    //       let tracks = responseJson.tracks.items.reverse(); 
+    //       this.setState({
+    //         trackResults: ds.cloneWithRows(tracks)
+    //       })
+    //   }
+    // )
+    var mergedTracks = []
+    const placeholderImage = "https://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/032013/soundcloud_logo_0.png?itok=xO8Oaxwr"
+    Promise.all([soundCloudResponse, spotifyResponse]).then(values => {
+      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1._id !== r2._id});
+      // SoundCloud
+      values[0].map(function(track){
+        track.album = {};
+        track.album.images = [{}];
+        track.album.images[0].url = track.artwork_url === null ? placeholderImage : track.artwork_url;
+        track.name = track.title;
+        track.artists = [{}];
+        track.artists[0].name = track.user.username;
+        track._id = track.id
+        track.external_urls = {}
+        track.external_urls.spotify = track.permalink_url
+      })
+      var trackNum = 0;
+      values[0].forEach(function(track) {
+        mergedTracks.push(track)
+      })
+      // Spotify
+      values[1].tracks.items.forEach(function(track) {
+        mergedTracks.push(track)
+      })
+      mergedTracks = mergedTracks.reverse();
+      this.setState({
+        trackResults: ds.cloneWithRows(mergedTracks)
+      })
+    })
   }
   
   textColor() {
@@ -389,7 +429,7 @@ renderMessageText(props) {
           onSubmitEditing={() => {this.parent.onSend()}}
           placeholder={this.parent.state.guide}
           placeholderTextColor={"#95a5a6"}
-          onChangeText={(text) => {this.parent.querySpotify({text})}}
+          onChangeText={(text) => {this.parent.queryForTracks({text})}}
           value={this.parent.state.input}
         />
         {this.parent.state.recChosen ? (
@@ -472,7 +512,7 @@ renderMessageText(props) {
   
   renderBelow() {
     if(this.parent.state.recChosen) return null; 
-    let data = this.parent.state.spotifyQueries;
+    let data = this.parent.state.trackResults;
     return(
       <ListView
         style={{ backgroundColor: 'white' }}
@@ -531,7 +571,7 @@ renderMessageText(props) {
               renderMessageText={this.renderMessageText}
               renderMessageImage={this.renderMessageImage}
               renderComposer={this.renderComposer}
-              onInputTextChanged={this.querySpotify}
+              onInputTextChanged={this.queryForTracks}
               renderFooter={this.renderBelow}
             />
           )}
