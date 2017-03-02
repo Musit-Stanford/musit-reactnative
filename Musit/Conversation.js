@@ -14,6 +14,7 @@ import {
 import Contact from './Contact'
 import Result from './Result'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
+import Swiper from 'react-native-swiper';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,6 +22,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     backgroundColor: 'white'
+  },
+  inActive: {
+    color: 'gray'
   },
   directory: {
     flex: 0.2,
@@ -76,6 +80,29 @@ const styles = StyleSheet.create({
   }
 });
 
+function getMergedArray(arr1, arr2) {
+  var shorterArray;
+  var longerArray;
+  if (arr1.length > arr2) {
+    longerArray = arr1;
+    shorterArray = arr2;
+  } else {
+    longerArray = arr2;
+    shorterArray = arr1;
+  }
+  var shorterArrayLength = shorterArray.length;
+  var mergedArray = []
+  for (var i = 0; i < shorterArrayLength; i++) {
+    mergedArray.push(longerArray[i]);
+    mergedArray.push(shorterArray[i]);
+  }  
+  var longerArrayLength = longerArray.length
+  for (var i = shorterArrayLength; i < longerArrayLength; i++) {
+    mergedArray.push(longerArray[i])
+  }
+  return mergedArray.reverse();
+}
+
 class Conversation extends Component {
 
   static propTypes = {}
@@ -98,7 +125,8 @@ class Conversation extends Component {
       message: '', 
       guide: '  Search Spotify for Track...',
       editing: false, 
-      trackResults: ds.cloneWithRows([]),
+      spotifyResults: ds.cloneWithRows([]),
+      soundCloudResults: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
       recommendation: {}, 
       recChosen: false,
@@ -323,7 +351,8 @@ renderMessageText(props) {
     Promise.all([soundCloudResponse, spotifyResponse]).then(values => {
       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1._id !== r2._id});
       // SoundCloud
-      values[0].map(function(track){
+      var soundCloudTracks = values[0];
+      soundCloudTracks.map(function(track){
         track.album = {};
         track.album.images = [{}];
         track.album.images[0].url = track.artwork_url === null ? placeholderImage : track.artwork_url;
@@ -334,17 +363,10 @@ renderMessageText(props) {
         track.external_urls = {}
         track.external_urls.spotify = track.permalink_url
       })
-      var trackNum = 0;
-      values[0].forEach(function(track) {
-        mergedTracks.push(track)
-      })
-      // Spotify
-      values[1].tracks.items.forEach(function(track) {
-        mergedTracks.push(track)
-      })
-      mergedTracks = mergedTracks.reverse();
+      var spotifyTracks = values[1].tracks.items;
       this.setState({
-        trackResults: ds.cloneWithRows(mergedTracks)
+        spotifyResults: ds.cloneWithRows(spotifyTracks.reverse()),
+        soundCloudResults: ds.cloneWithRows(soundCloudTracks.reverse())
       })
     })
   }
@@ -509,18 +531,51 @@ renderMessageText(props) {
       </TouchableOpacity>
     );
   }
+
+  renderPagination(index, total, context) {
+    if (index == 0) {
+      return (
+        <View>
+          <Text>Spotify <Text style={styles.inActive}>SoundCloud</Text></Text>
+        </View>
+        )
+    } else {
+      return (
+        <View>
+          <Text><Text style={styles.inActive}>Spotify</Text> SoundCloud</Text>
+        </View>
+        )
+    }
+  }
   
   renderBelow() {
     if(this.parent.state.recChosen) return null; 
-    let data = this.parent.state.trackResults;
+    let spotifyData = this.parent.state.spotifyResults;
+    let soundCloudData = this.parent.state.soundCloudResults;
     return(
-      <ListView
+      <Swiper showsButtons={false} renderPagination={(index, total, context) => this.parent.renderPagination(index, total, context)}>
+        <View>
+          <ListView
         style={{ backgroundColor: 'white' }}
         enableEmptySections={true}
-        dataSource={data}
+        dataSource={spotifyData}
         renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
         scrollEnabled={true}
-    />);
+    />
+        </View>
+        <View>
+          <ListView
+        style={{ backgroundColor: 'white' }}
+        enableEmptySections={true}
+        dataSource={soundCloudData}
+        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+        scrollEnabled={true}
+    />
+        </View>
+      </Swiper>
+
+      
+    );
   }
   
   render() {
