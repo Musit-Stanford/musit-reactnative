@@ -41,7 +41,7 @@ class Contact extends Component {
   
   pressHandler() {
     let receipients = this.props.parent.state.recepients; 
-    receipients.push({ name: this.props.name });
+    receipients.push({ name: this.props.name, id: this.props.id });
     this.props.parent.setState({
       receipients: receipients,
       enteringNames: false, 

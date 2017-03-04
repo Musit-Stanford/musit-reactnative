@@ -86,7 +86,6 @@ class Conversation extends Component {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     var users = [];
-
     this.state = {
       ds: ds,
       messages: [],
@@ -94,22 +93,25 @@ class Conversation extends Component {
       selectedFriends: [],
       enteringNames: false, 
       message: '', 
-      guide: '  Search Spotify for Track...',
+      guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
       editing: false, 
       spotifyQueries: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
       recommendation: {}, 
-      recChosen: false,
+      rec: props.prepopulatedMessage === undefined ? undefined : props.prepopulatedMessage,
+      recChosen: props.prepopulatedMessage === undefined ? false : true,
       input: '',
       query: '',
       recepients: [],
+      id: this.props.id === undefined ? undefined : this.props.id
     };
     this.onSend = this.onSend.bind(this);
     if (this.props.firebase === undefined) return;
     var database = this.props.firebase.database();
-    var conversationId = this.props.id;
-    this.subscribeToConversation(conversationId);
-
+    if (this.state.id !== undefined) {
+      var conversationId = this.state.id;
+      this.subscribeToConversation(conversationId);
+    }
     // Get all users in the db
     database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
       snapshot.forEach(function(userSnapshot) {
@@ -122,7 +124,6 @@ class Conversation extends Component {
   }
   
   componentWillMount() {
-    console.log(this);
   }
   
   componentDidMount() {
@@ -132,13 +133,11 @@ class Conversation extends Component {
   }
 
   subscribeToConversation(conversationId) {
-    console.log(conversationId);
     var database = this.props.firebase.database();
     database.ref("conversations/" + conversationId + "/messages").on("child_added", (messageKeySnapshot, previousKey) => {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
         var message = messageDataSnapshot.val();
         message.id = messageDataSnapshot.key;
-        console.log(message);
         this.setState((previousState) => {
           var newMessages = previousState.messages.concat(message);
           return {
@@ -151,7 +150,8 @@ class Conversation extends Component {
 
   sendMessage(message) {
     let database = this.props.firebase.database();
-    var conversationId = this.props.id;
+    console.log(this.state.id)
+    var conversationId = this.state.id;
     var newMessageKey = database.ref().child("messages").push().key;
     message.id = newMessageKey;
     var updates = {};
@@ -178,22 +178,35 @@ class Conversation extends Component {
           name: 'React Native',
           avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
         },
-        image: this.state.rec.album.images[0].url,
-        track: this.state.rec.name,
-        artist: this.state.rec.artists[0].name,
-        url: this.state.rec.external_urls.spotify
+        image: this.state.rec.image,
+        track: this.state.rec.track,
+        artist: this.state.rec.artist,
+        url: this.state.rec.url
       }
       let result = []
       result.push(message); 
-      this.createNewConversation(this.state.recepients); 
-
-      this.sendMessage(message);
-      this.setState({
-        input: '',
-        rec: {},
-        recommendation: {},
-        messages: GiftedChat.append(this.state.messages, result),
-      })
+      console.log(this.state.recepients);
+      if(this.props.new) {
+        this.createNewConversation(this.state.recepients).then(() => {
+          console.log(this.props);
+          this.sendMessage(message);
+          this.setState({
+            input: '',
+            rec: {},
+            recommendation: {},
+            messages: GiftedChat.append(this.state.messages, result),
+          })
+          this.props.new = false; 
+        }); 
+      } else {
+        this.sendMessage(message);
+        this.setState({
+          input: '',
+          rec: {},
+          recommendation: {},
+          messages: GiftedChat.append(this.state.messages, result),
+        })
+    }
     });
   }
   
@@ -202,17 +215,19 @@ class Conversation extends Component {
       recChosen: true,
       editing: false,
     });
-    console.log(this.refs); 
   }
 
  createNewConversation(selectedFriends) {
   var database = this.props.firebase.database();
   var newConversationKey = database.ref().child('conversations').push().key;
+  this.state.id = newConversationKey;
+  this.subscribeToConversation(newConversationKey);
+  console.log(this.props)
   var updates = {};
   var usersDataPath = "/usersData/";
   var newConversationPath = "/conversations/" + newConversationKey+ "/";
   var currentUserId = this.props.firebase.auth().currentUser.uid;
-  database.ref(usersDataPath + currentUserId).once('value').then(function(snapshot) {
+  return database.ref(usersDataPath + currentUserId).once('value').then(function(snapshot) {
     var username = snapshot.val().name;
     var currentUser = snapshot.val();
     currentUser.id = snapshot.key;
@@ -224,7 +239,7 @@ class Conversation extends Component {
     });
     updates[newConversationPath + "updatedTime"] = new Date();
     updates[newConversationPath + "name"] = users.map((user) => user.name).join(", ");
-    database.ref().update(updates);
+    return database.ref().update(updates);
   });
  }
 
@@ -248,7 +263,6 @@ renderMessageText(props) {
   }
   
   openTrack(uri) {
-    console.log(uri); 
     Linking.canOpenURL(uri).then(supported => {
       if (supported) {
         Linking.openURL(uri);
@@ -257,13 +271,20 @@ renderMessageText(props) {
       }
     });
   }
+
+  forwardTrack(message) {
+    this.props.navigator.push({
+          component: Conversation,
+          passProps: {new: true, prepopulatedMessage: message, firebase: this.props.firebase},
+          backButtonTitle: ' ',
+        });
+  }
   
   onDonePressList() {
     this.setState({enteringNames: false});
   }
   
   onDonePressSong() {
-    console.log(this.refs.recSpace);
     this.refs.recSpace.value = ''; 
     this.setState({enteringNames: false, editing: true, recChosen: true});
   }
@@ -277,7 +298,6 @@ renderMessageText(props) {
     fetch(url)
     .then((response) => response.json())
     .then((responseJson) => {
-          console.log(responseJson);
           const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
           let tracks = responseJson.tracks.items.reverse(); 
           this.setState({
@@ -334,7 +354,6 @@ renderMessageText(props) {
 
   renderResult() {
     if(!this.parent.state.recChosen) return (<Text style={{ top: 50 }}>Hello</Text>);
-    console.log(this.state); 
     return(
       <TouchableOpacity
         onPress={() => {this.removeRec()}}
@@ -383,8 +402,8 @@ renderMessageText(props) {
           onPress={() => {this.parent.removeRec()}}
           activeOpacity={75 / 100}>
           <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 0, marginLeft: 0}}>X</Text>
-          {this.parent.state.rec.album ? (
-          <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
+          {this.parent.state.rec ? (
+          <Image source={{ uri: this.parent.state.rec.image }} style={{ 
             height: 30,
             width: 30,
             borderRadius: 5,
@@ -398,11 +417,11 @@ renderMessageText(props) {
   }
   
   renderMessageImage(props) {
+    const message = props.currentMessage;
     const url = props.currentMessage.image;
     const artist = props.currentMessage.artist;
     const track = props.currentMessage.track;
     const uri = props.currentMessage.url; 
-    console.log(uri); 
     let color = 'white'
     if(props.currentMessage.user._id != props.user._id) {
       color = 'black'
@@ -411,7 +430,8 @@ renderMessageText(props) {
       <TouchableOpacity
         activeOpacity={75 / 100}
         style={{ flexDirection: 'row' }}
-        onPress={() => this.parent.openTrack(uri)}>
+        onPress={() => this.parent.openTrack(uri)}
+        onLongPress={() => this.parent.forwardTrack(message)}>
         <Image 
           style={{
             width: 60,
