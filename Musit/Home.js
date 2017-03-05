@@ -84,7 +84,7 @@ class Home extends Component {
     // Recommendations get displayed in the order that they are retrieved from the db, which means new messages are added to the end.
     var userId = this.props.firebase.auth().currentUser.uid
     var database = this.props.firebase.database();
-    database.ref("usersData/" + userId + "/messages").on("child_added", (messageKeySnapshot, previousKey) => {
+    database.ref("usersData/" + userId + "/messageList").on("child_added", (messageKeySnapshot, previousKey) => {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
         var message = messageDataSnapshot.val();
         message.id = messageDataSnapshot.key;
