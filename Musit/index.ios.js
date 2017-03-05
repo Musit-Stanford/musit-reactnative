@@ -39,7 +39,7 @@ export default class Musit extends React.Component {
       component: Home, 
       title: 'MUSIT', 
       backButtonTitle: ' ',
-      rightButtonTitle: '+',
+      rightButtonIcon: ' ',
       onRightButtonPress: () => this._navigateToConversation(),
       passProps: { firebase: firebase }
     });
@@ -49,7 +49,7 @@ export default class Musit extends React.Component {
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Login, title: 'MUSIT', backButtonTitle: ' ', rightButtonTitle: '+', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
+        initialRoute={{ component: Login, title: 'MUSIT', backButtonTitle: ' ', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
         titleTextColor='#E4E4E4'
         shadowHidden={true}
         style={{flex: 1}}

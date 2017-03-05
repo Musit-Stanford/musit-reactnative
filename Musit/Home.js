@@ -43,16 +43,24 @@ const searchStyles = StyleSheet.create({
   },
 });
 
+
 class Home extends Component {
   constructor(props) {
     super(props);
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
     this.state = {
-        dataSource: ds.cloneWithRows(data),
+        ds: ds,
         threads: [],
-        threadDataSource: ds.cloneWithRows([])
+        threadDataSource: ds.cloneWithRows([]),
+        messages: [],
+        messagesDataSource: ds.cloneWithRows([])
     };
+    this.subscribeToConversations()
+    this.subscribeToRecommendations()
+  }
+
+  subscribeToConversations() {
     var database = this.props.firebase.database();
     var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
     database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
@@ -63,7 +71,26 @@ class Home extends Component {
           let newThreads = previousState.threads.concat(conversation);
           return {
             threads: newThreads,
-            threadDataSource: ds.cloneWithRows(newThreads)
+            threadDataSource: this.state.ds.cloneWithRows(newThreads)
+          };
+        });
+      });
+    });
+  }
+
+  subscribeToRecommendations() {
+    var userId = this.props.firebase.auth().currentUser.uid
+    var database = this.props.firebase.database();
+    database.ref("usersData/" + userId + "/messageList").on("child_added", (messageKeySnapshot, previousKey) => {
+      database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
+        var message = messageDataSnapshot.val();
+        message.id = messageDataSnapshot.key;
+        this.setState((previousState) => {
+          var newMessages = [message];
+          newMessages.push(...previousState.messages.slice(0, 3))
+          return {
+            messages: newMessages,
+            messagesDataSource: this.state.ds.cloneWithRows(newMessages)
           };
         });
       });
@@ -80,7 +107,7 @@ class Home extends Component {
           style={searchStyles.searchContainer}
           ref='searchBar'
           hideBackground={true}
-          placeholder='Search Recommendations'
+          placeholder='Search Friends'
           fontFamily='Avenir'
         />
         <ScrollView style={{ marginTop:50, height: 600}}>
@@ -101,7 +128,7 @@ class Home extends Component {
           <ListView
             pageSize={3}
             enableEmptySections={true}
-            dataSource={this.state.dataSource}
+            dataSource={this.state.messagesDataSource}
             renderRow={(data) => <Row {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
