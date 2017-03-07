@@ -192,7 +192,7 @@ class Conversation extends Component {
       text: this.state.input,
       createdAt: new Date(),
       user: {
-        _id: 2,
+        _id: this.props.firebase.auth().currentUser.uid,
         avatar: this.state.userPhoto
       },
       image: this.state.rec.album.images[0].url,
@@ -242,7 +242,6 @@ class Conversation extends Component {
     id: newConversationKey
   });
   this.subscribeToConversation(newConversationKey);
-  console.log(this.props)
   var updates = {};
   var usersDataPath = "/usersData/";
   var newConversationPath = "/conversations/" + newConversationKey+ "/";
@@ -550,7 +549,7 @@ renderMessageText(props) {
               isAnimated={true}
               enableEmptySections={true}
               user={{
-                _id: 1,
+                _id: this.props.firebase.auth().currentUser.uid,
               }}
               renderMessageText={this.renderMessageText}
               renderMessageImage={this.renderMessageImage}

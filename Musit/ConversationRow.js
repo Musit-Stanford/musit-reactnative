@@ -69,7 +69,7 @@ class ConversationRow extends Component {
         onPress={() => {this.props.navigator.push({
           component: Conversation,
           title: this.props.track,
-          passProps: {...this.props, id: this.props.conversationId},
+          passProps: {...this.props, id: this.props.id},
           backButtonTitle: ' '
         })}}>
         <View style={styles.container}>
@@ -77,14 +77,14 @@ class ConversationRow extends Component {
             {notification}
             <View style={styles.textBlock}>
               <Text style={styles.trackName}>
-                {`${this.props.userName}`}
+                {`${this.props.sender}`}
               </Text>
               <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.artistName}>
                   {`${trackName}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.artist}`}
+                  {`${this.props.participant}`}
                 </Text>
               </View>
             </View>

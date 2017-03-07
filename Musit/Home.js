@@ -71,7 +71,8 @@ class Home extends Component {
         threadDataSource: ds.cloneWithRows([]),
         allUserSource: ds.cloneWithRows([]),
         messages: [],
-        messagesDataSource: ds.cloneWithRows([])
+        messagesDataSource: ds.cloneWithRows([]),
+        usersMap: {"placeholder": "Kek"}
     };
     // this.subscribeToConversations()
 
@@ -79,22 +80,36 @@ class Home extends Component {
 
   componentWillMount() {
     this.subscribeToFriends()
-    this.subscribeToRecommendations()
+    this.subscribeToConversations()
   }
 
   subscribeToConversations() {
     var database = this.props.firebase.database();
-    var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
+    let currentUserId = this.props.firebase.auth().currentUser.uid;
+    var currentUsersDataPath = "/usersData/" + currentUserId + "/";
     database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
       database.ref("conversations/" + conversationKeySnapshot.key).once("value", (conversationDataSnapshot) => {
         let conversation = conversationDataSnapshot.val();
         conversation.id = conversationDataSnapshot.key;
-        this.setState((previousState) => {
-          let newThreads = previousState.threads.concat(conversation);
-          return {
-            threads: newThreads,
-            threadDataSource: this.state.ds.cloneWithRows(newThreads)
-          };
+        conversation.track = "The Kekkiest kek";
+        let participants = conversation.users;
+        delete participants[currentUserId];
+        conversation.participant = this.state.usersMap[Object.keys(participants)[0]].name;
+        conversation.sender = "The Sender";
+        conversation.image = "https://i.scdn.co/image/d9f503e34a559756922061be4e3d34b0c301ddce";
+        console.log(conversation);
+        database.ref("messages/" + Object.keys(conversation.messages).reverse()[0]).once("value", (messageDataSnapshot) => {
+          let message = messageDataSnapshot.val();
+          conversation.track = message.track;
+          conversation.image = message.image;
+          conversation.sender = this.state.usersMap[message.userId].name;
+          this.setState((previousState) => {
+            let newThreads = previousState.threads.concat(conversation);
+            return {
+              threads: newThreads,
+              threadDataSource: this.state.ds.cloneWithRows(newThreads)
+            };
+          });
         });
       });
     });
@@ -103,15 +118,16 @@ class Home extends Component {
   subscribeToFriends() {
     var database = this.props.firebase.database();
     var users = []
-    database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
-      snapshot.forEach(function(userSnapshot) {
+    database.ref("usersData").orderByChild("name").once("value", (snapshot) => {
+      snapshot.forEach((userSnapshot) => {
         var user = userSnapshot.val()
         user.id = userSnapshot.key;
         users.push(user)
+        this.state.usersMap[userSnapshot.key] = userSnapshot.val();
       })
       this.setState((previousState) => {
         return {
-          allUserSource: this.state.ds.cloneWithRows(users) 
+          allUserSource: this.state.ds.cloneWithRows(users),
         };
       });
     }, function(error) {}, this)
@@ -139,9 +155,6 @@ class Home extends Component {
   }
   
   componentDidMount() {
-  }
-
-  componentWillMount() {
   }
   
   render() {
@@ -172,7 +185,7 @@ class Home extends Component {
           <ListView
             pageSize={3}
             enableEmptySections={true}
-            dataSource={this.state.messagesDataSource}
+            dataSource={this.state.threadDataSource}
             renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
