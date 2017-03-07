@@ -99,7 +99,7 @@ class Conversation extends Component {
       message: '', 
       userPhoto: this.props.firebase.auth().currentUser.photoURL,
       guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
-      editing: false, 
+      editing: false,
       spotifyQueries: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
       recommendation: {}, 
@@ -108,7 +108,8 @@ class Conversation extends Component {
       input: '',
       query: '',
       recepients: [],
-      id: this.props.id === undefined ? undefined : this.props.id
+      id: this.props.id === undefined ? undefined : this.props.id,
+      new: this.props.new === undefined ? false : this.props.new
     };
     this.onSend = this.onSend.bind(this);
     if (this.props.firebase === undefined) return;
@@ -202,7 +203,7 @@ class Conversation extends Component {
     let result = []
     result.push(message); 
     let prevMessages = this.state.messages; 
-    if(this.props.new) {
+    if(this.state.new) {
       this.createNewConversation(this.state.recepients).then(() => {
         this.sendMessage(message);
         this.setState({
@@ -212,7 +213,7 @@ class Conversation extends Component {
           start: true,
           messages: GiftedChat.append(prevMessages, result),
         })
-        this.props.new = false; 
+        this.state.new = false; 
       }); 
     } else {
       this.sendMessage(message);
@@ -509,7 +510,7 @@ renderMessageText(props) {
   render() {
     let data = this.state.userSource;
     let prompt = "Person / Group";
-    if(!this.props.new) {
+    if(!this.state.new) {
       prompt = this.props.name; 
     }
     return (
