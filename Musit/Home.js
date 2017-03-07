@@ -74,6 +74,10 @@ class Home extends Component {
         messagesDataSource: ds.cloneWithRows([])
     };
     // this.subscribeToConversations()
+
+  }
+
+  componentWillMount() {
     this.subscribeToFriends()
     this.subscribeToRecommendations()
   }
