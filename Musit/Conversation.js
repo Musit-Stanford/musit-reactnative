@@ -16,6 +16,7 @@ import Result from './Result'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
 import Swiper from 'react-native-swiper';
 import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
+var ScrollableTabView = require('react-native-scrollable-tab-view');
 
 const styles = StyleSheet.create({
   container: {
@@ -566,7 +567,29 @@ renderMessageText(props) {
     let spotifyData = this.parent.state.spotifyResults;
     let soundCloudData = this.parent.state.soundCloudResults;
     return(
-      <Swiper showsButtons={false} renderPagination={(index, total, context) => this.parent.renderPagination(index, total, context)}>
+
+      <ScrollableTabView style={{height: 300}}>
+        <View tabLabel="Spotify">
+          <ListView
+        style={{ backgroundColor: 'white' }}
+        enableEmptySections={true}
+        dataSource={spotifyData}
+        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+        scrollEnabled={true}
+    />
+        </View>
+        <View tabLabel="SoundCloud">
+          <ListView
+        style={{ backgroundColor: 'white' }}
+        enableEmptySections={true}
+        dataSource={soundCloudData}
+        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+        scrollEnabled={true}
+    />
+        </View>
+      </ScrollableTabView>
+
+      /*<Swiper showsButtons={false} renderPagination={(index, total, context) => this.parent.renderPagination(index, total, context)}>
         <View>
           <ListView
         style={{ backgroundColor: 'white' }}
@@ -585,7 +608,7 @@ renderMessageText(props) {
         scrollEnabled={true}
     />
         </View>
-      </Swiper>
+      </Swiper>*/
 
       
     );
