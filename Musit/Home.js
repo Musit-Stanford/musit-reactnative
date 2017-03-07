@@ -74,11 +74,6 @@ class Home extends Component {
         messagesDataSource: ds.cloneWithRows([])
     };
     // this.subscribeToConversations()
-
-  }
-
-  componentWillMount() {
-    this.subscribeToFriends()
   }
 
   subscribeToConversations() {
@@ -119,7 +114,8 @@ class Home extends Component {
 
 
   subscribeToRecommendations() {
-    var userId = this.props.firebase.auth().currentUser.uid
+    let currentUser = this.props.firebase.auth().currentUser;
+    var userId = currentUser.uid
     var database = this.props.firebase.database();
     database.ref("usersData/" + userId + "/messageList").on("child_added", (messageKeySnapshot, previousKey) => {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
@@ -142,6 +138,7 @@ class Home extends Component {
   }
 
   componentWillMount() {
+    this.subscribeToFriends()
   }
   
   render() {

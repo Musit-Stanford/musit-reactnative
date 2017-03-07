@@ -120,7 +120,6 @@ class Login  extends Component {
               } else if (result.isCancelled) {
                 alert("login is cancelled.");
               } else {
-                this.props.onSuccessfulLogin();
                 AccessToken.getCurrentAccessToken().then(
                   (data) => {
                     let firebase = this.props.firebase;
@@ -149,7 +148,7 @@ class Login  extends Component {
                     });
 //                     firebase.ref('\')
                   }
-                );
+                ).then(() => this.props.onSuccessfulLogin());
               }
             }}
         />
