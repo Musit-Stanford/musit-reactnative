@@ -212,8 +212,8 @@ class Conversation extends Component {
           recChosen: false,
           start: true,
           messages: GiftedChat.append(prevMessages, result),
+          new: false
         })
-        this.state.new = false; 
       }); 
     } else {
       this.sendMessage(message);
@@ -238,7 +238,9 @@ class Conversation extends Component {
  createNewConversation(selectedFriends) {
   var database = this.props.firebase.database();
   var newConversationKey = database.ref().child('conversations').push().key;
-  this.state.id = newConversationKey;
+  this.setState({
+    id: newConversationKey
+  });
   this.subscribeToConversation(newConversationKey);
   console.log(this.props)
   var updates = {};
