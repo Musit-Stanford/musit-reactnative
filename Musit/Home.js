@@ -75,7 +75,6 @@ class Home extends Component {
     };
     // this.subscribeToConversations()
     this.subscribeToFriends()
-    this.subscribeToRecommendations()
   }
 
   subscribeToConversations() {
@@ -135,6 +134,7 @@ class Home extends Component {
   }
   
   componentDidMount() {
+    this.subscribeToRecommendations();
   }
 
   componentWillMount() {
