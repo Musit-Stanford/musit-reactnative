@@ -20,12 +20,13 @@ const styles = StyleSheet.create({
   textBlock: {
     flexDirection: 'column',
     width: 90,
+    marginTop: 10
   },
   threadName: {
     fontSize: 10,
     textAlign: 'center',
     color: '#7C7C7C',
-    backgroundColor: 'rgba(0,0,0,0)',
+    backgroundColor: 'rgba(0,0,0,0)'
   }
 });
 

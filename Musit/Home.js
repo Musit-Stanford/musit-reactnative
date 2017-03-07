@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   footer: {
     height: 50,
     width: 375,
-    marginTop: 10,
+    marginTop: 12,
     backgroundColor: '#10ABDF'
 
   }
