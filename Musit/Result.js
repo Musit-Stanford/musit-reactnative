@@ -50,17 +50,22 @@ class Result extends Component {
       rec: this.props,
       recChosen: true,
       guide: 'Enter a message...',
-      input:'',
+      input:''
     });
   }
   
   render () {
+    let uri = '';
+    if(this.props.album.images[0].url !== undefined) {
+      uri = this.props.album.images[0].url;
+    }
+
     return (
       <TouchableOpacity 
       style={styles.container}
       onPress={() => this.pressHandler()}
       >
-        <Image source={{ uri: this.props.album.images[0].url }} style={styles.photo} />
+        <Image source={{ uri: uri }} style={styles.photo} />
         <View style={{ flexDirection: 'column' }}>
           <Text style={styles.trackName}>
             {`${this.props.name}`}

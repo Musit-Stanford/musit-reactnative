@@ -5,16 +5,17 @@ import Conversation from './Conversation'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: 80,
+    width: 85,
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
   photo: {
-    height: 55,
-    width: 55,
+    height: 50,
+    width: 50,
     alignItems: 'flex-end',
     borderRadius: 25,
-    marginLeft: 16,
+    marginLeft: 20,
+    marginTop: 10
   },
   textBlock: {
     flexDirection: 'column',
@@ -25,7 +26,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#7C7C7C',
     backgroundColor: 'rgba(0,0,0,0)',
-    marginTop: 10,
   }
 });
 
@@ -40,7 +40,7 @@ const ThreadRow = (props) => (
           backButtonTitle: ' ',
         })}}
     >
-    <Image source={{ uri: 'https://facebook.github.io/react/img/logo_og.png'}} style={styles.photo} />
+    <Image source={{ uri: props.photoURL}} style={styles.photo} />
     <View style={styles.textBlock}>
       <Text style={styles.threadName}>
         {`${props.name}`}

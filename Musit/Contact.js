@@ -51,13 +51,13 @@ class Contact extends Component {
   
   pressHandler() {
     let receipients = this.props.parent.state.recepients; 
-    console.log(this.props); 
     this.checkForExistentConversation(this.props); 
     receipients.push({ name: this.props.name, id: this.props.id });
     this.props.parent.setState({
       receipients: receipients,
       enteringNames: false, 
     });
+    console.log(receipients); 
     let input = receipients[0].name; 
     if(receipients.length > 1) {
       for(let i = 1; i < receipients.length; i++) {

@@ -87,14 +87,17 @@ class Conversation extends Component {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     var users = [];
+    console.log(this.props); 
     this.state = {
       ds: ds,
-      allUsers: ds.cloneWithRows([]),
+      allUsers: [],
       messages: [],
       friends: users,
+      start: true,
       selectedFriends: [],
       enteringNames: false, 
       message: '', 
+      userPhoto: this.props.firebase.auth().currentUser.photoURL,
       guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
       editing: false, 
       spotifyQueries: ds.cloneWithRows([]),
@@ -152,7 +155,6 @@ class Conversation extends Component {
 
   sendMessage(message) {
     let database = this.props.firebase.database();
-    console.log(this.state.id)
     var conversationId = this.state.id;
     var newMessageKey = database.ref().child("messages").push().key;
     message.id = newMessageKey;
@@ -182,47 +184,46 @@ class Conversation extends Component {
   }
   
   onSend(messages = []) {
-    let url = "https://api.spotify.com/v1/search?q=" + this.state.recChosen.name + "&type=artist,track";
-    fetch(url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      let message = {
-        _id: 3,
-        text: this.state.input,
-        createdAt: new Date(),
-        user: {
-          avatar: this.props.firebase.auth().currentUser.photoURL
-        },
-        image: this.state.rec.image,
-        track: this.state.rec.track,
-        artist: this.state.rec.artist,
-        url: this.state.rec.url
-      }
-      let result = []
-      result.push(message); 
-      console.log(this.state.recepients);
-      if(this.props.new) {
-        this.createNewConversation(this.state.recepients).then(() => {
-          console.log(this.props);
-          this.sendMessage(message);
-          this.setState({
-            input: '',
-            rec: {},
-            recommendation: {},
-            messages: GiftedChat.append(this.state.messages, result),
-          })
-          this.props.new = false; 
-        }); 
-      } else {
+    console.log(this.state.userPhoto); 
+    let message = {
+      _id: Math.round(Math.random() * 1000000),
+      text: this.state.input,
+      createdAt: new Date(),
+      user: {
+        _id: 2,
+        avatar: this.state.userPhoto
+      },
+      image: this.state.rec.album.images[0].url,
+      track: this.state.rec.name,
+      artist: this.state.rec.artists[0].name,
+      url: this.state.rec.external_urls.spotify
+    }
+    let result = []
+    result.push(message); 
+    let prevMessages = this.state.messages; 
+    if(this.props.new) {
+      this.createNewConversation(this.state.recepients).then(() => {
         this.sendMessage(message);
         this.setState({
           input: '',
           rec: {},
-          recommendation: {},
-          messages: GiftedChat.append(this.state.messages, result),
+          recChosen: false,
+          start: true,
+          messages: GiftedChat.append(prevMessages, result),
         })
+        this.props.new = false; 
+      }); 
+    } else {
+      this.sendMessage(message);
+      console.log(result); 
+      this.setState({
+        input: '',
+        recChosen: false, 
+        rec: {},
+        start: true, 
+        messages: GiftedChat.append(prevMessages, result),
+      })
     }
-    });
   }
   
   inputMessage() {
@@ -307,8 +308,10 @@ renderMessageText(props) {
   querySpotify(query) {
     this.setState({
       editing: true,
+      start: false, 
       input: query.text,
     })
+    if(query.text.length <= 0) return;
     var url = "https://api.spotify.com/v1/search?q=" + query.text + "&type=track";
     fetch(url)
     .then((response) => response.json())
@@ -389,7 +392,6 @@ renderMessageText(props) {
     );
   }
   
-  // ScrollView inside a View 
   renderComposer(props) {
     let width = Dimensions.get('window').width;
     return(
@@ -402,7 +404,7 @@ renderMessageText(props) {
             position: 'absolute',
             backgroundColor: 'rgba(0,0,0,0)',
             marginLeft: 10,
-            color: '#95a5a6',
+            color: 'black',
           }}
           ref='recSpace'
           onSubmitEditing={() => {this.parent.onSend()}}
@@ -416,22 +418,22 @@ renderMessageText(props) {
           style={{
             height: 45,
             right: 0,
-            width: width/3,
+            width: width/2.5,
             marginLeft: 10,
             backgroundColor: 'rgba(0,0,0,0)',
             position: 'absolute',
           }}
           onPress={() => {this.parent.removeRec()}}
           activeOpacity={75 / 100}>
-          <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 0, marginLeft: 0}}>X</Text>
+          <Text style={{color:'#0076FF', fontFamily: 'Avenir', fontSize: 14, marginTop: 14, marginLeft:85}}>Remove</Text>
           {this.parent.state.rec ? (
-          <Image source={{ uri: this.parent.state.rec.image }} style={{ 
+          <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
             height: 30,
             width: 30,
             borderRadius: 5,
             position: 'absolute',
             top: 7,
-            left: 10,
+            left: 5,
             marginLeft: 40}} />):(null)}
         </TouchableOpacity>):(null)}
       </View>
@@ -464,11 +466,13 @@ renderMessageText(props) {
           resizeMode={"contain"}
           source={{url}}
         />
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: 10 }}>
           <Text
             style={{
               color: color,
               fontSize: 14,
+              maxWidth: 200,
+              marginRight: 10,
               fontWeight: 'normal',
               fontFamily:  'Avenir' ,
             }}>
@@ -489,7 +493,7 @@ renderMessageText(props) {
   }
   
   renderBelow() {
-    if(this.parent.state.recChosen) return null; 
+    if(this.parent.state.recChosen || this.parent.state.start) return null; 
     let data = this.parent.state.spotifyQueries;
     return(
       <ListView

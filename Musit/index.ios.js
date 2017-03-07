@@ -15,6 +15,7 @@ import Login from './Login'
 import Conversation from './Conversation'
 import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 import * as firebase from 'firebase';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDn-HyzRU2ohuLSUvIbp0D5GZURTrXuxjA",
@@ -34,26 +35,31 @@ export default class Musit extends React.Component {
       passProps: { new: true, firebase: firebase }
     });
   }
+
   _navigateToHome() {
-    this.refs.nav.replace({
-      component: Home, 
-      title: 'MUSIT', 
-      backButtonTitle: ' ',
-      rightButtonIcon: ' ',
-      onRightButtonPress: () => this._navigateToConversation(),
-      passProps: { firebase: firebase }
-    });
+    Icon.getImageSource('user', 20, 'red').then((source) =>
+      this.refs.nav.replace({
+        component: Home, 
+        title: 'Musit', 
+        backButtonTitle: ' ',
+        rightButtonTitle: ' ',
+        titleTextColor: '#1086DE',
+        onRightButtonPress: () => this._navigateToConversation(),
+        passProps: { firebase: firebase }
+      })
+    );
+    
   }
   
   render() {
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Login, title: 'MUSIT', backButtonTitle: ' ', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
+        initialRoute={{ component: Login, title: 'Musit', backButtonTitle: ' ', rightButtonTitle: ' ', titleTextColor: '#1086DE', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
         titleTextColor='#E4E4E4'
         shadowHidden={true}
         style={{flex: 1}}
-        tintColor='#DCDCDC'
+        tintColor='#10ABDE'
         barTintColor='white'
         interactivePopGestureEnabled={true}
       />

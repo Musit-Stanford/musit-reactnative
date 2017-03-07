@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ListView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
+import ConversationRow from './ConversationRow'
 import SearchBar from 'react-native-search-bar';
 import MenuBar from './MenuBar'
+import Conversation from "./Conversation";
 
 const styles = StyleSheet.create({
   container: {
@@ -27,6 +29,20 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#CACACA',
+  },
+  photo: {
+    height: 55,
+    width: 55,
+    alignItems: 'flex-end',
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  footer: {
+    height: 50,
+    width: 375,
+    marginTop: 10,
+    backgroundColor: '#10ABDF'
+
   }
 });
 
@@ -53,10 +69,12 @@ class Home extends Component {
         ds: ds,
         threads: [],
         threadDataSource: ds.cloneWithRows([]),
+        allUserSource: ds.cloneWithRows([]),
         messages: [],
         messagesDataSource: ds.cloneWithRows([])
     };
-    this.subscribeToConversations()
+    // this.subscribeToConversations()
+    this.subscribeToFriends()
     this.subscribeToRecommendations()
   }
 
@@ -77,6 +95,25 @@ class Home extends Component {
       });
     });
   }
+
+  subscribeToFriends() {
+    var database = this.props.firebase.database();
+    var users = []
+    database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
+      snapshot.forEach(function(userSnapshot) {
+        var user = userSnapshot.val()
+        user.id = userSnapshot.key;
+        users.push(user)
+      })
+      this.setState((previousState) => {
+        return {
+          allUserSource: this.state.ds.cloneWithRows(users) 
+        };
+      });
+    }, function(error) {}, this)
+  }
+
+
 
   subscribeToRecommendations() {
     var userId = this.props.firebase.auth().currentUser.uid
@@ -99,6 +136,9 @@ class Home extends Component {
   
   componentDidMount() {
   }
+
+  componentWillMount() {
+  }
   
   render() {
     return (
@@ -110,30 +150,31 @@ class Home extends Component {
           placeholder='Search Friends'
           fontFamily='Avenir'
         />
-        <ScrollView style={{ marginTop:50, height: 600}}>
-          <View style={{ padding: 10, backgroundColor:'white', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text
-              style={{ 
-                color: "rgba(147,147,147,1)",
-                fontSize: 12,
-                fontWeight: "bold",
-                fontFamily: "Avenir",
-                letterSpacing: 1,
-                marginLeft: 10,
-              }}>
-              RECENT RECOMMENDATIONS
-            </Text>
-            <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
-          </View>
+        <View style={{ marginTop: 50, padding: 10, backgroundColor:'#FBFBFB', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text
+            style={{ 
+              color: "rgba(147,147,147,1)",
+              fontSize: 12,
+              fontWeight: "bold",
+              fontFamily: "Avenir",
+              letterSpacing: 1,
+              marginLeft: 10,
+            }}>
+            CONVERSATIONS
+          </Text>
+          <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
+        </View>
+        <ScrollView style={{height: 330}}>
           <ListView
             pageSize={3}
             enableEmptySections={true}
             dataSource={this.state.messagesDataSource}
-            renderRow={(data) => <Row {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
+            renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
-          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+        </ScrollView>
+          <View style={{ backgroundColor: '#FBFBFB', padding: 10, marginBottom: 5, marginTop: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
               style={{ 
                 color: "rgba(147,147,147,1)",
@@ -143,32 +184,38 @@ class Home extends Component {
                 letterSpacing: 1,
                 marginLeft: 10,
               }}>
-              CONVERSATIONS
+              FRIENDS
             </Text>
             <MenuBar name='threads' navigator={this.props.navigator}></MenuBar>
           </View>
           <ListView
             enableEmptySections={true}
-            dataSource={this.state.threadDataSource}
+            dataSource={this.state.allUserSource}
             renderRow={(data) => <ThreadRow {...data} firebase={this.props.firebase} new={false} navigator={this.props.navigator} />}
             horizontal={true}
-            style={{ marginTop: 10 }}
+            style={{marginBottom:5}}
           />
-          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text
+        <TouchableOpacity 
+          style={styles.footer}
+          onPress={() => {this.props.navigator.push({
+                component: Conversation,
+                passProps: { new: true, firebase: this.props.firebase },
+                title: 'New Conversation',
+                backButtonTitle: ' '
+              })}}
+          >
+          <Text
               style={{ 
-                color: "rgba(147,147,147,1)",
-                fontSize: 12,
-                fontWeight: "bold",
+                color: "white",
+                fontSize: 16,
+                letterSpacing: 0.4,
                 fontFamily: "Avenir",
-                letterSpacing: 1,
-                marginLeft: 10,
+                marginTop: 15,
+                marginLeft: 120,
               }}>
-              MUSIT NETWORK
+              New Conversation
             </Text>
-            <MenuBar name='musitNetwork' navigator={this.props.navigator}></MenuBar>
-          </View>
-        </ScrollView>
+        </TouchableOpacity>
       </View>
     );
   }
