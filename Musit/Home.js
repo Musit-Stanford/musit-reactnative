@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ListView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
-// import data from './demoData.js'
+import ConversationRow from './ConversationRow'
 import SearchBar from 'react-native-search-bar';
 import MenuBar from './MenuBar'
+import Conversation from "./Conversation";
 
 const styles = StyleSheet.create({
   container: {
@@ -28,6 +29,20 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#CACACA',
+  },
+  photo: {
+    height: 55,
+    width: 55,
+    alignItems: 'flex-end',
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  footer: {
+    height: 50,
+    width: 375,
+    marginTop: 10,
+    backgroundColor: '#10ABDF'
+
   }
 });
 
@@ -54,34 +69,73 @@ class Home extends Component {
         ds: ds,
         threads: [],
         threadDataSource: ds.cloneWithRows([]),
+        allUserSource: ds.cloneWithRows([]),
         messages: [],
-        messagesDataSource: ds.cloneWithRows([])
+        messagesDataSource: ds.cloneWithRows([]),
+        usersMap: {"placeholder": "Kek"}
     };
+    // this.subscribeToConversations()
+
+  }
+
+  componentWillMount() {
+    this.subscribeToFriends()
     this.subscribeToConversations()
-    this.subscribeToRecommendations()
   }
 
   subscribeToConversations() {
     var database = this.props.firebase.database();
-    var currentUsersDataPath = "/usersData/" + this.props.firebase.auth().currentUser.uid + "/";
+    let currentUserId = this.props.firebase.auth().currentUser.uid;
+    var currentUsersDataPath = "/usersData/" + currentUserId + "/";
     database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
       database.ref("conversations/" + conversationKeySnapshot.key).once("value", (conversationDataSnapshot) => {
         let conversation = conversationDataSnapshot.val();
         conversation.id = conversationDataSnapshot.key;
+        conversation.track = "The Kekkiest kek";
+        let participants = conversation.users;
+        delete participants[currentUserId];
+        conversation.participant = this.state.usersMap[Object.keys(participants)[0]].name;
+        conversation.sender = "The Sender";
+        conversation.image = "https://i.scdn.co/image/d9f503e34a559756922061be4e3d34b0c301ddce";
         console.log(conversation);
-        this.setState((previousState) => {
-          let newThreads = previousState.threads.concat(conversation);
-          return {
-            threads: newThreads,
-            threadDataSource: this.state.ds.cloneWithRows(newThreads)
-          };
+        database.ref("messages/" + Object.keys(conversation.messages).reverse()[0]).once("value", (messageDataSnapshot) => {
+          let message = messageDataSnapshot.val();
+          conversation.track = message.track;
+          conversation.image = message.image;
+          conversation.sender = this.state.usersMap[message.userId].name;
+          this.setState((previousState) => {
+            let newThreads = previousState.threads.concat(conversation);
+            return {
+              threads: newThreads,
+              threadDataSource: this.state.ds.cloneWithRows(newThreads)
+            };
+          });
         });
       });
     });
   }
 
+  subscribeToFriends() {
+    var database = this.props.firebase.database();
+    var users = []
+    database.ref("usersData").orderByChild("name").once("value", (snapshot) => {
+      snapshot.forEach((userSnapshot) => {
+        var user = userSnapshot.val()
+        user.id = userSnapshot.key;
+        users.push(user)
+        this.state.usersMap[userSnapshot.key] = userSnapshot.val();
+      })
+      this.setState((previousState) => {
+        return {
+          allUserSource: this.state.ds.cloneWithRows(users),
+        };
+      });
+    }, function(error) {}, this)
+  }
+
+
+
   subscribeToRecommendations() {
-    // Recommendations get displayed in the order that they are retrieved from the db, which means new messages are added to the end.
     var userId = this.props.firebase.auth().currentUser.uid
     var database = this.props.firebase.database();
     database.ref("usersData/" + userId + "/messageList").on("child_added", (messageKeySnapshot, previousKey) => {
@@ -105,37 +159,39 @@ class Home extends Component {
   
   render() {
     return (
-      <View style={{paddingTop: 0}}>
+      <View style={{paddingTop: 60}}>
         <SearchBar
           style={searchStyles.searchContainer}
           ref='searchBar'
           hideBackground={true}
-          placeholder='Search Recommendations'
+          placeholder='Search Friends'
           fontFamily='Avenir'
         />
-        <ScrollView style={{ marginTop:50, height: 600}}>
-          <View style={{ padding: 10, backgroundColor:'white', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text
-              style={{ 
-                color: "rgba(147,147,147,1)",
-                fontSize: 12,
-                fontWeight: "bold",
-                fontFamily: "Avenir",
-                letterSpacing: 1,
-                marginLeft: 10,
-              }}>
-              RECENT RECOMMENDATIONS
-            </Text>
-            <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
-          </View>
+        <View style={{ marginTop: 50, padding: 10, backgroundColor:'#FBFBFB', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text
+            style={{ 
+              color: "rgba(147,147,147,1)",
+              fontSize: 12,
+              fontWeight: "bold",
+              fontFamily: "Avenir",
+              letterSpacing: 1,
+              marginLeft: 10,
+            }}>
+            CONVERSATIONS
+          </Text>
+          <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
+        </View>
+        <ScrollView style={{height: 330}}>
           <ListView
             pageSize={3}
-            dataSource={this.state.messagesDataSource}
-            renderRow={(data) => <Row {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
+            enableEmptySections={true}
+            dataSource={this.state.threadDataSource}
+            renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
-          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+        </ScrollView>
+          <View style={{ backgroundColor: '#FBFBFB', padding: 10, marginBottom: 5, marginTop: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text
               style={{ 
                 color: "rgba(147,147,147,1)",
@@ -145,31 +201,38 @@ class Home extends Component {
                 letterSpacing: 1,
                 marginLeft: 10,
               }}>
-              CONVERSATIONS
+              FRIENDS
             </Text>
             <MenuBar name='threads' navigator={this.props.navigator}></MenuBar>
           </View>
           <ListView
-            dataSource={this.state.threadDataSource}
+            enableEmptySections={true}
+            dataSource={this.state.allUserSource}
             renderRow={(data) => <ThreadRow {...data} firebase={this.props.firebase} new={false} navigator={this.props.navigator} />}
             horizontal={true}
-            style={{ marginTop: 10 }}
+            style={{marginBottom:5}}
           />
-          <View style={{ padding: 10, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text
+        <TouchableOpacity 
+          style={styles.footer}
+          onPress={() => {this.props.navigator.push({
+                component: Conversation,
+                passProps: { new: true, firebase: this.props.firebase },
+                title: 'New Conversation',
+                backButtonTitle: ' '
+              })}}
+          >
+          <Text
               style={{ 
-                color: "rgba(147,147,147,1)",
-                fontSize: 12,
-                fontWeight: "bold",
+                color: "white",
+                fontSize: 16,
+                letterSpacing: 0.4,
                 fontFamily: "Avenir",
-                letterSpacing: 1,
-                marginLeft: 10,
+                marginTop: 15,
+                marginLeft: 120,
               }}>
-              MUSIT NETWORK
+              New Conversation
             </Text>
-            <MenuBar name='musitNetwork' navigator={this.props.navigator}></MenuBar>
-          </View>
-        </ScrollView>
+        </TouchableOpacity>
       </View>
     );
   }

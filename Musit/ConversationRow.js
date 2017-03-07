@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableHighlight } from 'react-native';
 import DisplayRecommendation from './DisplayRecommendation'
+import Conversation from './Conversation'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 18,
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'white'
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     letterSpacing: 0.5, 
     width: 250,
-    marginBottom: 10,
+    marginBottom: 2,
     fontFamily: 'Avenir',
   },
   artistName: {
@@ -41,12 +42,11 @@ const styles = StyleSheet.create({
     fontSize: 10, 
     fontFamily: 'Avenir',
     color: '#61A7F8',
-    marginTop: 1.5,
-    marginLeft: 10, 
+    marginTop: 10
   }
 });
 
-class Row extends Component {
+class ConversationRow extends Component {
   constructor(props) {
     super(props);
   }
@@ -55,15 +55,21 @@ class Row extends Component {
     const hasRead = this.props.hasRead; 
     let notification = null;
     if(!hasRead) {
-      notification = <View style={{ backgroundColor:"#3498db", width:8, height:8, borderRadius: 20, marginTop: 24 }}></View>;
+      notification = <View style={{ backgroundColor:"#3498db", width:8, height:8, borderRadius: 20, marginTop: 31 }}></View>;
+    }
+    let trackName = this.props.track; 
+    console.log(trackName); 
+    if(trackName.length >= 30) {
+      trackName = trackName.substring(0, 30);
+      trackName += "..."; 
     }
     console.log(this.props); 
     return (
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
-          component: DisplayRecommendation,
+          component: Conversation,
           title: this.props.track,
-          passProps: {...this.props},
+          passProps: {...this.props, id: this.props.id},
           backButtonTitle: ' '
         })}}>
         <View style={styles.container}>
@@ -71,14 +77,14 @@ class Row extends Component {
             {notification}
             <View style={styles.textBlock}>
               <Text style={styles.trackName}>
-                {`${this.props.track}`}
+                {`${this.props.sender}`}
               </Text>
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.artistName}>
-                  {`${this.props.artist}`}
+                  {`${trackName}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.userName}`}
+                  {`${this.props.participant}`}
                 </Text>
               </View>
             </View>
@@ -90,4 +96,4 @@ class Row extends Component {
   }
 }
 
-export default Row;
+export default ConversationRow

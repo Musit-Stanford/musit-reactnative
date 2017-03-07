@@ -15,6 +15,7 @@ import Contact from './Contact'
 import Result from './Result'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
 import Swiper from 'react-native-swiper';
+import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 
 const styles = StyleSheet.create({
   container: {
@@ -113,13 +114,17 @@ class Conversation extends Component {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     var users = [];
+    console.log(this.props); 
     this.state = {
       ds: ds,
+      allUsers: [],
       messages: [],
       friends: users,
+      start: true,
       selectedFriends: [],
       enteringNames: false, 
       message: '', 
+      userPhoto: this.props.firebase.auth().currentUser.photoURL,
       guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
       editing: false, 
       spotifyResults: ds.cloneWithRows([]),
@@ -131,7 +136,8 @@ class Conversation extends Component {
       input: '',
       query: '',
       recepients: [],
-      id: this.props.id === undefined ? undefined : this.props.id
+      id: this.props.id === undefined ? undefined : this.props.id,
+      new: this.props.new === undefined ? false : this.props.new
     };
     this.onSend = this.onSend.bind(this);
     if (this.props.firebase === undefined) return;
@@ -147,7 +153,7 @@ class Conversation extends Component {
         user.id = userSnapshot.key;
         users.push(user)
       })
-      this.setState({userSource: ds.cloneWithRows(users)});
+      this.setState({userSource: ds.cloneWithRows(users), allUsers: users});
     }, function(error) {}, this)
   }
   
@@ -178,7 +184,6 @@ class Conversation extends Component {
 
   sendMessage(message) {
     let database = this.props.firebase.database();
-    console.log(this.state.id)
     var conversationId = this.state.id;
     var newMessageKey = database.ref().child("messages").push().key;
     message.id = newMessageKey;
@@ -186,56 +191,69 @@ class Conversation extends Component {
     var newMessagePath = "/messages/" + message.id + "/";
     var newMessageConversationIndex = "conversations/" + conversationId + "/messages/" + message.id;
     var currentUserId = this.props.firebase.auth().currentUser.uid;
+    message.conversationId = conversationId
     message.userId = currentUserId;
+    message.userName = this.props.firebase.auth().currentUser.displayName;
     updates[newMessagePath] = message;
     updates[newMessageConversationIndex] = true;
     database.ref().update(updates);
+    this.subscribeRecepients(message.id);
+  }
+
+  subscribeRecepients(messageId) {
+    console.log("here"); 
+    var database = this.props.firebase.database();
+    var recepients = this.state.recepients; 
+    var usersDataPath = "/usersData/";
+    var updates = {};
+    recepients.forEach(function(user) {
+      var recepientUserId = user.id; 
+      updates[usersDataPath + recepientUserId + '/messageList/' + messageId] = true;
+      database.ref().update(updates);
+    });
   }
   
   onSend(messages = []) {
-    let url = "https://api.spotify.com/v1/search?q=" + this.state.recChosen.name + "&type=artist,track";
-    fetch(url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      let message = {
-        _id: 3,
-        text: this.state.input,
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://scontent-sjc2-1.xx.fbcdn.net/v/t31.0-8/13115918_10154011289885259_369530075324702060_o.jpg?oh=1ea9d7e934a89a30dc5cc0e5f4577bde&oe=58FEADFB',
-        },
-        image: this.state.rec.image,
-        track: this.state.rec.track,
-        artist: this.state.rec.artist,
-        url: this.state.rec.url
-      }
-      let result = []
-      result.push(message); 
-      console.log(this.state.recepients);
-      if(this.props.new) {
-        this.createNewConversation(this.state.recepients).then(() => {
-          console.log(this.props);
-          this.sendMessage(message);
-          this.setState({
-            input: '',
-            rec: {},
-            recommendation: {},
-            messages: GiftedChat.append(this.state.messages, result),
-          })
-          this.props.new = false; 
-        }); 
-      } else {
+    console.log(this.state.userPhoto); 
+    let message = {
+      _id: Math.round(Math.random() * 1000000),
+      text: this.state.input,
+      createdAt: new Date(),
+      user: {
+        _id: this.props.firebase.auth().currentUser.uid,
+        avatar: this.state.userPhoto
+      },
+      image: this.state.rec.album.images[0].url,
+      track: this.state.rec.name,
+      artist: this.state.rec.artists[0].name,
+      url: this.state.rec.external_urls.spotify
+    }
+    let result = []
+    result.push(message); 
+    let prevMessages = this.state.messages; 
+    if(this.state.new) {
+      this.createNewConversation(this.state.recepients).then(() => {
         this.sendMessage(message);
         this.setState({
           input: '',
           rec: {},
-          recommendation: {},
-          messages: GiftedChat.append(this.state.messages, result),
+          recChosen: false,
+          start: true,
+          messages: GiftedChat.append(prevMessages, result),
+          new: false
         })
+      }); 
+    } else {
+      this.sendMessage(message);
+      console.log(result); 
+      this.setState({
+        input: '',
+        recChosen: false, 
+        rec: {},
+        start: true, 
+        messages: GiftedChat.append(prevMessages, result),
+      })
     }
-    });
   }
   
   inputMessage() {
@@ -248,9 +266,10 @@ class Conversation extends Component {
  createNewConversation(selectedFriends) {
   var database = this.props.firebase.database();
   var newConversationKey = database.ref().child('conversations').push().key;
-  this.state.id = newConversationKey;
+  this.setState({
+    id: newConversationKey
+  });
   this.subscribeToConversation(newConversationKey);
-  console.log(this.props)
   var updates = {};
   var usersDataPath = "/usersData/";
   var newConversationPath = "/conversations/" + newConversationKey+ "/";
@@ -322,14 +341,16 @@ renderMessageText(props) {
   queryForTracks(query) {
     this.setState({
       editing: true,
+      start: false, 
       input: query.text,
     })
+    if(query.text.length <= 0) return;
 
     var SC_URL = 'https://api.soundcloud.com/tracks.json';
     var SC_CLIENT_ID = '1c3aeb3f91390630d351f3c708148086';
     var soundCloudUrl = SC_URL + "?client_id=" + SC_CLIENT_ID + "&q=" + query.text;
-
     var soundCloudResponse = fetch(soundCloudUrl).then((response) => response.json())
+
     var url = "https://api.spotify.com/v1/search?q=" + query.text + "&type=track";
     var spotifyResponse = fetch(url).then((response) => response.json())
     var mergedTracks = []
@@ -385,10 +406,16 @@ renderMessageText(props) {
   }
 
   addRecepients(text) {
+    var curName = text.substring(text.lastIndexOf(",") + 2);
+    var users = this.state.allUsers;
+    var filteredUsers = users.filter(function(el) {
+      if(el.id == 'undefined') return false;
+      return el.name.includes(curName); 
+    });
     if(text.length == 0) {
       this.setState({text: "", enteringNames: false}); 
     } else {
-      this.setState({text, enteringNames: true});
+      this.setState({text, enteringNames: true, userSource: this.state.ds.cloneWithRows(filteredUsers)});
     }
   }
 
@@ -430,7 +457,7 @@ renderMessageText(props) {
             position: 'absolute',
             backgroundColor: 'rgba(0,0,0,0)',
             marginLeft: 10,
-            color: '#95a5a6',
+            color: 'black',
           }}
           ref='recSpace'
           onSubmitEditing={() => {this.parent.onSend()}}
@@ -444,22 +471,22 @@ renderMessageText(props) {
           style={{
             height: 45,
             right: 0,
-            width: width/3,
+            width: width/2.5,
             marginLeft: 10,
             backgroundColor: 'rgba(0,0,0,0)',
             position: 'absolute',
           }}
           onPress={() => {this.parent.removeRec()}}
           activeOpacity={75 / 100}>
-          <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 0, marginLeft: 0}}>X</Text>
+          <Text style={{color:'#0076FF', fontFamily: 'Avenir', fontSize: 14, marginTop: 14, marginLeft:85}}>Remove</Text>
           {this.parent.state.rec ? (
-          <Image source={{ uri: this.parent.state.rec.image }} style={{ 
+          <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
             height: 30,
             width: 30,
             borderRadius: 5,
             position: 'absolute',
             top: 7,
-            left: 10,
+            left: 5,
             marginLeft: 40}} />):(null)}
         </TouchableOpacity>):(null)}
       </View>
@@ -492,11 +519,13 @@ renderMessageText(props) {
           resizeMode={"contain"}
           source={{url}}
         />
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: 10 }}>
           <Text
             style={{
               color: color,
               fontSize: 14,
+              maxWidth: 200,
+              marginRight: 10,
               fontWeight: 'normal',
               fontFamily:  'Avenir' ,
             }}>
@@ -533,7 +562,7 @@ renderMessageText(props) {
   }
   
   renderBelow() {
-    if(this.parent.state.recChosen) return null; 
+    if(this.parent.state.recChosen || this.parent.state.start) return null; 
     let spotifyData = this.parent.state.spotifyResults;
     let soundCloudData = this.parent.state.soundCloudResults;
     return(
@@ -564,6 +593,10 @@ renderMessageText(props) {
   
   render() {
     let data = this.state.userSource;
+    let prompt = "Person / Group";
+    if(!this.state.new) {
+      prompt = this.props.name; 
+    }
     return (
       <View style={styles.container}>
         <View style={styles.directory}>
@@ -571,31 +604,24 @@ renderMessageText(props) {
             style={styles.directoryText}>
             To:           
           </Text>   
-          {!this.props.new ? (
-              <Text
-               style={this.userTitle()}>
-               {this.props.name}
-              </Text>
-            ) : (
-              <TextInput
+          <TextInput
                 ref='names'
                 multi={false}
                 style={[styles.userEntry, this.textColor()]}
-                placeholder={ 'Person / Group' }
+                placeholder={ prompt }
                 placeholderTextColor={"rgba(198,198,204,1)"}
                 onFocus={() => {this.commas()}}
                 onChangeText={(text) => this.addRecepients(text)}
                 onSubmitEditing={() => this.submitText()}
                 value={(this.state && this.state.text) || ''}
               />
-            )}
         </View>
         {this.state.enteringNames ? (
           <ListView
             enableEmptySections={true}
             automaticallyAdjustContentInsets={false}
             dataSource={data}
-            renderRow={(data, sectionID, rowID) => <Contact {...data} row={rowID} parent={this} navigator={this.props.navigator}/>}
+            renderRow={(data, sectionID, rowID) => <Contact {...data} firebase={this.props.firebase} row={rowID} parent={this} navigator={this.props.navigator}/>}
             scrollEnabled={true}
           />
         ) : (
@@ -604,8 +630,9 @@ renderMessageText(props) {
               messages={this.state.messages}
               onSend={this.onSend}
               isAnimated={true}
+              enableEmptySections={true}
               user={{
-                _id: 1,
+                _id: this.props.firebase.auth().currentUser.uid,
               }}
               renderMessageText={this.renderMessageText}
               renderMessageImage={this.renderMessageImage}

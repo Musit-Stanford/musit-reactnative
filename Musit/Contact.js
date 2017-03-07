@@ -38,14 +38,26 @@ class Contact extends Component {
   constructor(props) {
     super(props); 
   }
+
+  checkForExistentConversation() {
+    var database = this.props.firebase.database();
+    database.ref("usersData").orderByChild("name").equalTo(this.props.name).once("value", function(snapshot) {
+      snapshot.forEach(function(userSnapshot) {
+        var user = userSnapshot.val()
+        console.log(user); 
+      })
+    }, function(error) {}, this);
+  }
   
   pressHandler() {
     let receipients = this.props.parent.state.recepients; 
+    this.checkForExistentConversation(this.props); 
     receipients.push({ name: this.props.name, id: this.props.id });
     this.props.parent.setState({
       receipients: receipients,
       enteringNames: false, 
     });
+    console.log(receipients); 
     let input = receipients[0].name; 
     if(receipients.length > 1) {
       for(let i = 1; i < receipients.length; i++) {
