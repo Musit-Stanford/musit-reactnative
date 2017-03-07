@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableHighlight } from 'react-native';
 import DisplayRecommendation from './DisplayRecommendation'
+import Conversation from './Conversation'
 
 const styles = StyleSheet.create({
   container: {
@@ -66,9 +67,9 @@ class ConversationRow extends Component {
     return (
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
-          component: DisplayRecommendation,
+          component: Conversation,
           title: this.props.track,
-          passProps: {...this.props},
+          passProps: {...this.props, id: this.props.conversationId},
           backButtonTitle: ' '
         })}}>
         <View style={styles.container}>

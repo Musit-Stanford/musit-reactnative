@@ -162,6 +162,7 @@ class Conversation extends Component {
     var newMessagePath = "/messages/" + message.id + "/";
     var newMessageConversationIndex = "conversations/" + conversationId + "/messages/" + message.id;
     var currentUserId = this.props.firebase.auth().currentUser.uid;
+    message.conversationId = conversationId
     message.userId = currentUserId;
     message.userName = this.props.firebase.auth().currentUser.displayName;
     updates[newMessagePath] = message;
