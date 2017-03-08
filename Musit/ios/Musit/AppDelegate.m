@@ -11,8 +11,14 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-//  AppDelegate.m
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import "RCTPushNotificationManager.h"
+#import "RNFIRMessaging.h"
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
+
+@import Firebase;
 
 @implementation AppDelegate
 
@@ -36,9 +42,31 @@
   [self.window makeKeyAndVisible];
   [[FBSDKApplicationDelegate sharedInstance] application:application
     didFinishLaunchingWithOptions:launchOptions];
+  [Fabric with:@[[Crashlytics class]]];
+  [FIRApp configure];
+  [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
   // Add any custom logic here.
   return YES;
 }
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
+{
+    [RNFIRMessaging willPresentNotification:notification withCompletionHandler:completionHandler];
+  }
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler
+{
+    [RNFIRMessaging didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
+  }
+
+//You can skip this method if you don't want to use local notification
+-(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    [RNFIRMessaging didReceiveLocalNotification:notification];
+  }
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
+    [RNFIRMessaging didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+  }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
 return [[FBSDKApplicationDelegate sharedInstance] application:application
