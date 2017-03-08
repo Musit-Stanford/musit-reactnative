@@ -61,7 +61,6 @@ class Login  extends Component {
     ).start();                                // Start the animation
     AccessToken.getCurrentAccessToken().then(
       (data) => {
-        console.log(data)
         if (data !== null) {
           if (data.accessToken !== undefined) {
             let firebase = this.props.firebase;

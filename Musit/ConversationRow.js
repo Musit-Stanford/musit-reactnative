@@ -68,7 +68,8 @@ class ConversationRow extends Component {
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
           component: Conversation,
-          title: this.props.track,
+          tintColor: '#2977B2',
+          title: this.props.userName,
           passProps: {...this.props, id: this.props.conversationId},
           backButtonTitle: ' '
         })}}>

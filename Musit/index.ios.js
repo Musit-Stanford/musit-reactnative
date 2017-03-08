@@ -12,10 +12,10 @@ import {
 } from 'react-native'
 import Home from './Home'
 import Login from './Login'
+import Profile from './Profile'
 import Conversation from './Conversation'
 import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
 import * as firebase from 'firebase';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDn-HyzRU2ohuLSUvIbp0D5GZURTrXuxjA",
@@ -37,29 +37,46 @@ export default class Musit extends React.Component {
   }
 
   _navigateToHome() {
-    Icon.getImageSource('user', 20, 'red').then((source) =>
-      this.refs.nav.replace({
-        component: Home, 
-        title: 'Musit', 
-        backButtonTitle: ' ',
-        rightButtonTitle: ' ',
-        titleTextColor: '#1086DE',
-        onRightButtonPress: () => this._navigateToConversation(),
-        passProps: { firebase: firebase }
-      })
-    );
-    
+    this.refs.nav.replace({
+      component: Home, 
+      title: 'Musit', 
+      backButtonTitle: ' ',
+      rightButtonTitle: ' ',
+      titleTextColor: '#2977B2',
+      tintColor: '#2977B2',
+      leftButtonIcon: require('./images/user.png'),
+      onLeftButtonPress: () => this._navigateToProfile(),
+      onRightButtonPress: () => this._navigateToConversation(),
+      passProps: { firebase: firebase }
+    }); 
   }
-  
+
+  _navigateToProfile() {
+    let navi = this.refs.nav; 
+    this.refs.nav.push({
+      component: Profile, 
+      rightButtonIcon: require('./images/logout.png'),
+      titleTextColor: 'white',
+      title: firebase.auth().currentUser.displayName,
+      tintColor: 'white',
+      barTintColor: '#136CAF',
+      onRightButtonPress: () => firebase.auth().signOut().then(function() {
+        navi.replace({ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', leftButtonIcon: require('./images/user@2x.png'), onLeftButtonPress: () => this._navigateToProfile(), titleTextColor: '#2977B2', passProps: {firebase: firebase}})
+      }, function(error) {
+
+      }),
+      passProps: { firebase: firebase }
+    }); 
+  }
+
   render() {
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Login, title: 'Musit', backButtonTitle: ' ', rightButtonTitle: ' ', titleTextColor: '#1086DE', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
-        titleTextColor='#E4E4E4'
+        initialRoute={{ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', leftButtonIcon: require('./images/user@2x.png'), onLeftButtonPress: () => this._navigateToProfile(), titleTextColor: '#2977B2', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
+        titleTextColor='#2977B2'
         shadowHidden={true}
         style={{flex: 1}}
-        tintColor='#10ABDE'
         barTintColor='white'
         interactivePopGestureEnabled={true}
       />

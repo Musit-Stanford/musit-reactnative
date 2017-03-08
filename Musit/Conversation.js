@@ -98,7 +98,7 @@ class Conversation extends Component {
       enteringNames: false, 
       message: '', 
       userPhoto: this.props.firebase.auth().currentUser.photoURL,
-      guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
+      guide: props.prepopulatedMessage === undefined ? ' Search for a song...' : 'Enter a message...',
       editing: false,
       spotifyQueries: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
@@ -130,6 +130,15 @@ class Conversation extends Component {
   }
   
   componentWillMount() {
+    if(!this.props.new) {
+      let receipients = [];
+      receipients.push({ name: this.props.userName, id: this.props.id }); 
+      this.setState({
+        text: this.props.userName,
+        receipients: receipients
+      });
+      console.log(receipients); 
+    }
   }
   
   componentDidMount() {
@@ -192,7 +201,7 @@ class Conversation extends Component {
       text: this.state.input,
       createdAt: new Date(),
       user: {
-        _id: 2,
+        _id: this.props.firebase.auth().currentUser.uid,
         avatar: this.state.userPhoto
       },
       image: this.state.rec.album.images[0].url,
@@ -508,12 +517,14 @@ renderMessageText(props) {
         scrollEnabled={true}
     />);
   }
-  
+
   render() {
     let data = this.state.userSource;
     let prompt = "Person / Group";
     if(!this.state.new) {
-      prompt = this.props.name; 
+      if(this.props.name) {
+        prompt = this.props.name; 
+      }
     }
     return (
       <View style={styles.container}>
@@ -550,7 +561,7 @@ renderMessageText(props) {
               isAnimated={true}
               enableEmptySections={true}
               user={{
-                _id: 1,
+                _id: this.props.firebase.auth().currentUser.uid,
               }}
               renderMessageText={this.renderMessageText}
               renderMessageImage={this.renderMessageImage}

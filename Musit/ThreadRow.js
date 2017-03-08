@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Conversation from './Conversation'
+import Friend from './Friend'
 
 const styles = StyleSheet.create({
   container: {
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
   textBlock: {
     flexDirection: 'column',
     width: 90,
-    marginTop: 10
+    marginTop: 0
   },
   threadName: {
     fontSize: 10,
@@ -30,24 +31,46 @@ const styles = StyleSheet.create({
   }
 });
 
-const ThreadRow = (props) => (
-  <TouchableOpacity 
-    style={styles.container}
-    onPress={() => {props.navigator.push({
-          component: Conversation,
-          title: props.name,
-          passProps: {...props},
-          firebase: props.firebase,
-          backButtonTitle: ' ',
-        })}}
-    >
-    <Image source={{ uri: props.photoURL}} style={styles.photo} />
-    <View style={styles.textBlock}>
-      <Text style={styles.threadName}>
-        {`${props.name}`}
-      </Text>
-    </View>
-  </TouchableOpacity>
-);
+class ThreadRow extends Component {
 
-export default ThreadRow;
+  constructor(props) {
+    super(props)
+  }
+
+  addFriend() {
+    let currId = this.props.firebase.auth().currentUser.uid;
+    let database = this.props.firebase.database();
+    database.ref("usersData/" + currId + "/friends/").push({
+      id: this.props.id,
+      name: this.props.name,
+      photoURL: this.props.photoURL
+    });
+  }
+
+  render() {
+    return(<TouchableOpacity 
+      style={styles.container}
+      onPress={() => {this.props.navigator.push({
+            component: Friend,
+            barTintColor: '#136CAF',
+            tintColor: 'white',
+            title: this.props.name,
+            titleTextColor: 'white',
+            rightButtonIcon: require('./images/addFriend@2x.png'),
+            onRightButtonPress: () => this.addFriend(),
+            passProps: {...this.props},
+            firebase: this.props.firebase,
+            backButtonTitle: ' ',
+          })}}
+      >
+      <Image source={{ uri: this.props.photoURL}} style={styles.photo} />
+      <View style={styles.textBlock}>
+        <Text style={styles.threadName}>
+          {`${this.props.name}`}
+        </Text>
+      </View>
+    </TouchableOpacity>);
+  }
+}
+
+export default ThreadRow

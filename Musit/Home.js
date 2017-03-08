@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity, StatusBar } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
 import ConversationRow from './ConversationRow'
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 375,
     marginTop: 12,
-    backgroundColor: '#10ABDF'
+    backgroundColor: '#2977B2'
 
   }
 });
@@ -144,14 +144,9 @@ class Home extends Component {
   render() {
     return (
       <View style={{paddingTop: 60}}>
-        <SearchBar
-          style={searchStyles.searchContainer}
-          ref='searchBar'
-          hideBackground={true}
-          placeholder='Search Friends'
-          fontFamily='Avenir'
-        />
-        <View style={{ marginTop: 50, padding: 10, backgroundColor:'#FBFBFB', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <StatusBar
+       />
+        <View style={{ marginTop: 10, padding: 10, backgroundColor:'#FBFBFB', flexDirection: 'row', justifyContent: 'space-between', shadowColor: "grey", shadowOffset: {width: 5, height: 5}, shadowOpacity: 0.08, shadowRadius: 4}}>
           <Text
             style={{ 
               color: "rgba(147,147,147,1)",
@@ -163,9 +158,20 @@ class Home extends Component {
             }}>
             CONVERSATIONS
           </Text>
-          <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
+          <Text
+              style={{ 
+                color: "rgba(147,147,147,.5)",
+                fontSize: 10,
+                textDecorationLine: 'underline',
+                fontWeight: "bold",
+                fontFamily: "Avenir",
+                letterSpacing: 1,
+                marginLeft: 10,
+              }}>
+              VIEW ALL
+            </Text>
         </View>
-        <ScrollView style={{height: 330}}>
+        <ScrollView style={{height: 360, marginTop: 10}}>
           <ListView
             pageSize={3}
             enableEmptySections={true}
@@ -175,7 +181,7 @@ class Home extends Component {
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
         </ScrollView>
-          <View style={{ backgroundColor: '#FBFBFB', padding: 10, marginBottom: 5, marginTop: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ backgroundColor: '#FBFBFB', padding: 10, marginBottom: 5, marginTop: 0, flexDirection: 'row', justifyContent: 'space-between', shadowColor: "grey", shadowOffset: {width: 5, height: 5}, shadowOpacity: 0.1, shadowRadius: 5}}>
             <Text
               style={{ 
                 color: "rgba(147,147,147,1)",
@@ -187,7 +193,18 @@ class Home extends Component {
               }}>
               FRIENDS
             </Text>
-            <MenuBar name='threads' navigator={this.props.navigator}></MenuBar>
+            <Text
+              style={{ 
+                color: "rgba(147,147,147,.5)",
+                fontSize: 10,
+                textDecorationLine: 'underline',
+                fontWeight: "bold",
+                fontFamily: "Avenir",
+                letterSpacing: 1,
+                marginLeft: 10,
+              }}>
+              FIND FRIENDS
+            </Text>
           </View>
           <ListView
             enableEmptySections={true}
@@ -201,6 +218,7 @@ class Home extends Component {
           onPress={() => {this.props.navigator.push({
                 component: Conversation,
                 passProps: { new: true, firebase: this.props.firebase },
+                tintColor: '#2977B2',
                 title: 'New Conversation',
                 backButtonTitle: ' '
               })}}
