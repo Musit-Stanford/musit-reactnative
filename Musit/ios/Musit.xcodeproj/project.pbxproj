@@ -20,6 +20,10 @@
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		1A0331E01E543A920018C73F /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A0331C71E54324B0018C73F /* libRCTFBSDK.a */; };
+		1A08CC2D1E6EADA900C0B223 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A08CC191E6EAD8000C0B223 /* libRCTPushNotification.a */; };
+		1A4E11E71E6EBF38004693A3 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4E11E51E6EBF38004693A3 /* Fabric.framework */; };
+		1A4E11E81E6EBF38004693A3 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4E11E61E6EBF38004693A3 /* Crashlytics.framework */; };
+		1A83FBB51E6EB5D10034FF74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A83FBB41E6EB5D10034FF74 /* GoogleService-Info.plist */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2D02E4C21E0B4AEC006451C7 /* libRCTAnimation-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157351DD0AC6500FF2AA8 /* libRCTAnimation-tvOS.a */; };
@@ -37,8 +41,10 @@
 		34E4B6B41E565BE600978132 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E4B6B31E565BE600978132 /* Bolts.framework */; };
 		5B1F4EFD83C64D33BEE54E54 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A2694F4BEBE4B4D8223191C /* libc++.tbd */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		7FA590ADB5E5405096D68D61 /* libRNFIRMessaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB1E3F95AD9A44FBB6721920 /* libRNFIRMessaging.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		838A663270A4406FAA383CD7 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4341DCC44574459B85FC92AA /* libRCTFBSDK.a */; };
+		A62E77A519350998BED0E239 /* libPods-Musit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F02C6495560E17777420DF8 /* libPods-Musit.a */; };
 		D696244AA8B746D18404DD84 /* libRNSearchBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74BEE7DEC38047B0B305BDEB /* libRNSearchBar.a */; };
 		EC2AAEB5A9EA4E46B5A18B65 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C604FAC423AB4129B25CDF44 /* libz.tbd */; };
 /* End PBXBuildFile section */
@@ -120,6 +126,27 @@
 			proxyType = 2;
 			remoteGlobalIDString = 9350E0F11CE3B0920041D815;
 			remoteInfo = RCTFBSDK;
+		};
+		1A08CC181E6EAD8000C0B223 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A08CC071E6EAD8000C0B223 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTPushNotification;
+		};
+		1A08CC1A1E6EAD8000C0B223 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A08CC071E6EAD8000C0B223 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
+			remoteInfo = "RCTPushNotification-tvOS";
+		};
+		1A83FC061E6EBB730034FF74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 867F5DBBD80E43909FFB898A /* RNFIRMessaging.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNFIRMessaging;
 		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -280,6 +307,11 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Musit/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Musit/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		1A08CC071E6EAD8000C0B223 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
+		1A4E11E51E6EBF38004693A3 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		1A4E11E61E6EBF38004693A3 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		1A83FBB41E6EB5D10034FF74 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Musit/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1A83FBD51E6EB68A0034FF74 /* Musit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Musit.entitlements; path = Musit/Musit.entitlements; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Musit-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Musit-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Musit-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Musit-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		340F820C1E534277008CED5C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Musit/Images.xcassets; sourceTree = "<group>"; };
@@ -287,6 +319,7 @@
 		34E4B6AF1E565B7100978132 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = ../../../../../FacebookSDK/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		34E4B6B11E565B8100978132 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = ../../../../../FacebookSDK/FBSDKShareKit.framework; sourceTree = "<group>"; };
 		34E4B6B31E565BE600978132 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = ../../../../../FacebookSDK/Bolts.framework; sourceTree = "<group>"; };
+		3576D497FA6EBFB54708717E /* Pods-Musit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Musit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Musit/Pods-Musit.debug.xcconfig"; sourceTree = "<group>"; };
 		39ECAC280F884872B7455B20 /* RNOverlay.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNOverlay.xcodeproj; path = "../node_modules/react-native-overlay/RNOverlay.xcodeproj"; sourceTree = "<group>"; };
 		3ECBAFBF340948DDA75DF581 /* RCTFBSDK.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDK.xcodeproj; path = "../node_modules/react-native-fbsdk/ios/RCTFBSDK.xcodeproj"; sourceTree = "<group>"; };
 		4341DCC44574459B85FC92AA /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
@@ -295,8 +328,12 @@
 		74BEE7DEC38047B0B305BDEB /* libRNSearchBar.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSearchBar.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		867F5DBBD80E43909FFB898A /* RNFIRMessaging.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFIRMessaging.xcodeproj; path = "../node_modules/react-native-fcm/ios/RNFIRMessaging.xcodeproj"; sourceTree = "<group>"; };
+		9F02C6495560E17777420DF8 /* libPods-Musit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Musit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA3D2E1C4E314F6C8DD1D4CA /* Pods-Musit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Musit.release.xcconfig"; path = "Pods/Target Support Files/Pods-Musit/Pods-Musit.release.xcconfig"; sourceTree = "<group>"; };
 		C604FAC423AB4129B25CDF44 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		F015D5753019447EB5452116 /* RCTFBSDKLogin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDKLogin.xcodeproj; path = "../node_modules/react-native-fbsdklogin/RCTFBSDKLogin.xcodeproj"; sourceTree = "<group>"; };
+		FB1E3F95AD9A44FBB6721920 /* libRNFIRMessaging.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFIRMessaging.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -312,6 +349,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A08CC2D1E6EADA900C0B223 /* libRCTPushNotification.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
@@ -322,6 +360,7 @@
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				34E4B6AE1E565B6A00978132 /* FBSDKCoreKit.framework in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
+				1A4E11E71E6EBF38004693A3 /* Fabric.framework in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
@@ -331,7 +370,10 @@
 				5B1F4EFD83C64D33BEE54E54 /* libc++.tbd in Frameworks */,
 				EC2AAEB5A9EA4E46B5A18B65 /* libz.tbd in Frameworks */,
 				838A663270A4406FAA383CD7 /* libRCTFBSDK.a in Frameworks */,
+				1A4E11E81E6EBF38004693A3 /* Crashlytics.framework in Frameworks */,
 				1A0331E01E543A920018C73F /* libRCTFBSDK.a in Frameworks */,
+				A62E77A519350998BED0E239 /* libPods-Musit.a in Frameworks */,
+				7FA590ADB5E5405096D68D61 /* libRNFIRMessaging.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,10 +465,12 @@
 		13B07FAE1A68108700A75B9A /* Musit */ = {
 			isa = PBXGroup;
 			children = (
+				1A83FBD51E6EB68A0034FF74 /* Musit.entitlements */,
 				340F820C1E534277008CED5C /* Images.xcassets */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				1A83FBB41E6EB5D10034FF74 /* GoogleService-Info.plist */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -460,6 +504,23 @@
 			isa = PBXGroup;
 			children = (
 				1A0331C71E54324B0018C73F /* libRCTFBSDK.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A08CC081E6EAD8000C0B223 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A08CC191E6EAD8000C0B223 /* libRCTPushNotification.a */,
+				1A08CC1B1E6EAD8000C0B223 /* libRCTPushNotification-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A83FBE61E6EBB720034FF74 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A83FC071E6EBB730034FF74 /* libRNFIRMessaging.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -501,6 +562,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				1A08CC071E6EAD8000C0B223 /* RCTPushNotification.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -516,6 +578,7 @@
 				39ECAC280F884872B7455B20 /* RNOverlay.xcodeproj */,
 				3ECBAFBF340948DDA75DF581 /* RCTFBSDK.xcodeproj */,
 				F015D5753019447EB5452116 /* RCTFBSDKLogin.xcodeproj */,
+				867F5DBBD80E43909FFB898A /* RNFIRMessaging.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -536,6 +599,7 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				E2BF299DEF3F46608A1036F4 /* Frameworks */,
+				EEB2AF06EF55B39FC89DC156 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -555,14 +619,26 @@
 		E2BF299DEF3F46608A1036F4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A4E11E51E6EBF38004693A3 /* Fabric.framework */,
+				1A4E11E61E6EBF38004693A3 /* Crashlytics.framework */,
 				34E4B6B31E565BE600978132 /* Bolts.framework */,
 				34E4B6B11E565B8100978132 /* FBSDKShareKit.framework */,
 				34E4B6AF1E565B7100978132 /* FBSDKLoginKit.framework */,
 				34E4B6AD1E565B6A00978132 /* FBSDKCoreKit.framework */,
 				0A2694F4BEBE4B4D8223191C /* libc++.tbd */,
 				C604FAC423AB4129B25CDF44 /* libz.tbd */,
+				9F02C6495560E17777420DF8 /* libPods-Musit.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EEB2AF06EF55B39FC89DC156 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3576D497FA6EBFB54708717E /* Pods-Musit.debug.xcconfig */,
+				AA3D2E1C4E314F6C8DD1D4CA /* Pods-Musit.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -590,10 +666,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Musit" */;
 			buildPhases = (
+				FB992B1D85AA045F9B81C155 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				5B2A5DDA5A93AA9C30EFF85F /* [CP] Embed Pods Frameworks */,
+				AE084B47A73671F362E3C0B9 /* [CP] Copy Pods Resources */,
+				1A4E11C41E6EBF1B004693A3 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -654,8 +734,19 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 5GE82NA3EZ;
+						DevelopmentTeam = 2B7HJ7PQVC;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -713,6 +804,10 @@
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
 				},
 				{
+					ProductGroup = 1A08CC081E6EAD8000C0B223 /* Products */;
+					ProjectRef = 1A08CC071E6EAD8000C0B223 /* RCTPushNotification.xcodeproj */;
+				},
+				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
 					ProjectRef = 139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */;
 				},
@@ -731,6 +826,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = 1A83FBE61E6EBB720034FF74 /* Products */;
+					ProjectRef = 867F5DBBD80E43909FFB898A /* RNFIRMessaging.xcodeproj */;
 				},
 				{
 					ProductGroup = 1A03318D1E5423D60018C73F /* Products */;
@@ -820,6 +919,27 @@
 			fileType = archive.ar;
 			path = libRCTFBSDK.a;
 			remoteRef = 1A0331C61E54324B0018C73F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1A08CC191E6EAD8000C0B223 /* libRCTPushNotification.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTPushNotification.a;
+			remoteRef = 1A08CC181E6EAD8000C0B223 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1A08CC1B1E6EAD8000C0B223 /* libRCTPushNotification-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRCTPushNotification-tvOS.a";
+			remoteRef = 1A08CC1A1E6EAD8000C0B223 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1A83FC071E6EBB730034FF74 /* libRNFIRMessaging.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFIRMessaging.a;
+			remoteRef = 1A83FC061E6EBB730034FF74 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		34B5FB191E530EC600789A2B /* libRNSearchBar.a */ = {
@@ -970,6 +1090,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				340F820D1E534277008CED5C /* Images.xcassets in Resources */,
+				1A83FBB51E6EB5D10034FF74 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1004,6 +1125,19 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
 		};
+		1A4E11C41E6EBF1B004693A3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 4f6e851235442b38cf6ae26e36108edf4ad17181 08a34560b4336935e6f143502128eb8ac29a0758702ce1e18313750499df43ab";
+		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1017,6 +1151,51 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh";
+		};
+		5B2A5DDA5A93AA9C30EFF85F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Musit/Pods-Musit-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AE084B47A73671F362E3C0B9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Musit/Pods-Musit-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FB992B1D85AA045F9B81C155 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1087,6 +1266,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1112,6 +1292,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1124,14 +1305,26 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3576D497FA6EBFB54708717E /* Pods-Musit.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = Musit/Musit.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 5GE82NA3EZ;
-				FRAMEWORK_SEARCH_PATHS = "~/Documents/FacebookSDK";
+				DEVELOPMENT_TEAM = 2B7HJ7PQVC;
+				FRAMEWORK_SEARCH_PATHS = (
+					"~/Documents/FacebookSDK",
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS/**",
+					"$(SRCROOT)/node_modules/react-native/React/**",
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+				);
 				INFOPLIST_FILE = Musit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1140,7 +1333,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Musit-Application";
+				PRODUCT_BUNDLE_IDENTIFIER = com.musit.application;
 				PRODUCT_NAME = Musit;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1149,13 +1342,25 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AA3D2E1C4E314F6C8DD1D4CA /* Pods-Musit.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = Musit/Musit.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5GE82NA3EZ;
-				FRAMEWORK_SEARCH_PATHS = "~/Documents/FacebookSDK";
+				DEVELOPMENT_TEAM = 2B7HJ7PQVC;
+				FRAMEWORK_SEARCH_PATHS = (
+					"~/Documents/FacebookSDK",
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS/**",
+					"$(SRCROOT)/node_modules/react-native/React/**",
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
+				);
 				INFOPLIST_FILE = Musit/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1164,7 +1369,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Musit-Application";
+				PRODUCT_BUNDLE_IDENTIFIER = com.musit.application;
 				PRODUCT_NAME = Musit;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1187,6 +1392,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1226,6 +1432,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1259,6 +1466,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Musit-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1283,6 +1491,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
