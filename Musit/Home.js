@@ -126,7 +126,6 @@ class Home extends Component {
   }
 
   getInitialConversations() {
-    console.log(this.state);
     var database = this.props.firebase.database();
     let currentUserId = this.props.firebase.auth().currentUser.uid;
     var currentUsersDataPath = "/usersData/" + currentUserId + "/";
@@ -148,7 +147,7 @@ class Home extends Component {
               conversation.participant = this.state.usersMap[Object.keys(conversation.users)[0]].name;
               conversation.sender = this.state.usersMap[message.userId].name;
               conversation.image = message.image
-              console.log("Completed")
+              conversation.recentTime = message.createdAt
               conversations.push(conversation)
               resolve("Success");
             });
@@ -158,6 +157,16 @@ class Home extends Component {
       }
       Promise.all(promises).then((values) => {
         this.setState((previousState) => {
+            conversations.sort(function(a, b) {
+              console.log(a)
+              if (a.recentTime < b.recentTime) {
+                return 1
+              } else if (a.recentTime > b.recentTime) {
+                return -1
+              } else {
+                return 0
+              }
+            });
             let newThreads = conversations;
             return {
               threads: newThreads,
