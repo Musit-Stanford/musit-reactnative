@@ -431,6 +431,8 @@ renderMessageText(props) {
 
   commas() {
     if(this.state.recepients.length >= 1) {
+      console.log(this.state.recepients);
+      this.refs.names.setNativeProps({text: ''});
       let val = this.state.recepients[0].name + ", ";
       for(let i = 1; i < this.state.recepients.length; i++) {
         val += this.state.recepients[i].name + ", "
@@ -438,7 +440,7 @@ renderMessageText(props) {
       this.refs.names.setNativeProps({text: val});
       if(!this.props.new) {
         this.setState({
-          recepients: val
+          text: val
         });
       }
     }
@@ -564,13 +566,13 @@ renderMessageText(props) {
   renderPagination(index, total, context) {
     if (index == 0) {
       return (
-        <View>
+        <View style={styles.titles}>
           <Text>Spotify <Text style={styles.inActive}>SoundCloud</Text></Text>
         </View>
         )
     } else {
       return (
-        <View>
+        <View style={styles.titles}>
           <Text><Text style={styles.inActive}>Spotify</Text> SoundCloud</Text>
         </View>
         )
@@ -582,11 +584,11 @@ renderMessageText(props) {
     let spotifyData = this.parent.state.spotifyResults;
     let soundCloudData = this.parent.state.soundCloudResults;
     return(
-      <ScrollableTabView style={{height: 215}} locked={true} contentProps={{keyboardShouldPersistTaps:"always"}}>
+      <ScrollableTabView tabBarActiveTextColor={'#2977B2'} tabBarUnderlineStyle={{backgroundColor:'#2977B2'}} tabBarTextStyle={{fontFamily: 'Avenir'}} tabBarInactiveTextColor={'#bdc3c7'} style={{height: 215}} locked={true} contentProps={{keyboardShouldPersistTaps:"always"}}>
         <View tabLabel="Spotify">
           <ListView
           keyboardShouldPersistTaps="always"
-          style={{ backgroundColor: 'white' }}
+          style={{ backgroundColor: '#FBFBFB' }}
           enableEmptySections={true}
           dataSource={spotifyData}
           renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
@@ -596,7 +598,7 @@ renderMessageText(props) {
         <View tabLabel="SoundCloud">
           <ListView
             keyboardShouldPersistTaps="always"
-            style={{ backgroundColor: 'white' }}
+            style={{ backgroundColor: '#FBFBFB' }}
             enableEmptySections={true}
             dataSource={soundCloudData}
             renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
@@ -609,7 +611,7 @@ renderMessageText(props) {
 
   render() {
     let data = this.state.userSource;
-    let prompt = "Person / Group";
+    let prompt;
     if(!this.state.new) {
       if(this.props.name) {
         prompt = this.props.name; 
@@ -623,16 +625,16 @@ renderMessageText(props) {
             To:           
           </Text>   
           <TextInput
-                ref='names'
-                multi={false}
-                style={[styles.userEntry, this.textColor()]}
-                placeholder={ prompt }
-                placeholderTextColor={"rgba(198,198,204,1)"}
-                onFocus={() => {this.commas()}}
-                onChangeText={(text) => this.addRecepients(text)}
-                onSubmitEditing={() => this.submitText()}
-                value={(this.state && this.state.text) || ''}
-              />
+            ref='names'
+            multi={false}
+            style={[styles.userEntry, this.textColor()]}
+            placeholder={ 'Person/Group' }
+            placeholderTextColor={"rgba(198,198,204,1)"}
+            onFocus={() => {this.commas()}}
+            onChangeText={(text) => this.addRecepients(text)}
+            onSubmitEditing={() => this.submitText()}
+            value={(this.state && this.state.text) || prompt}
+          />
         </View>
         {this.state.enteringNames ? (
           <ListView

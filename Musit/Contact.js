@@ -22,6 +22,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginLeft: 22,
     marginTop: 15,
+    shadowColor: "grey", 
+    shadowOffset: {width: 5, height: 5}, 
+    shadowOpacity: 1, 
+    shadowRadius: 5
   },
   textBlock: {
     flexDirection: 'column',
@@ -68,7 +72,7 @@ class Contact extends Component {
       this.checkForExistentConversation(this.props); 
       receipients.push({ name: this.props.name, id: this.props.id });
       this.props.parent.setState({
-        receipients: receipients,
+        recepients: receipients,
         enteringNames: false, 
       });
       console.log(receipients); 
@@ -77,6 +81,8 @@ class Contact extends Component {
         for(let i = 1; i < receipients.length; i++) {
           input += ", " + receipients[i].name;
         }
+      } else {
+        input += ", ";
       }
       this.props.parent.refs.names.setNativeProps({text: input, multi: true});
     } else {

@@ -8,7 +8,8 @@ import {
   Dimensions,
   Button,
   Linking,
-  TouchableOpacity
+  TouchableOpacity,
+  StatusBar
 } from 'react-native'
 const styles = StyleSheet.create({
   container: {
@@ -101,6 +102,8 @@ const DisplayRecommendation = (props) => {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        />
       <Image source={{ uri: props.image}} style={styles.photo} />
       <View style={styles.textBlock}>
         <Text style={styles.trackName}>

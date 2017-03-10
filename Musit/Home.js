@@ -228,7 +228,6 @@ class Home extends Component {
   }
   
   componentDidMount() {
-    this.subscribeToRecommendations();
   }
 
   footerStyle() {
@@ -243,8 +242,6 @@ class Home extends Component {
   render() {
     return (
       <View style={{paddingTop: 60}}>
-        <StatusBar
-       />
         <View style={{ marginTop: 10, padding: 10, backgroundColor:'#FBFBFB', flexDirection: 'row', justifyContent: 'space-between', shadowColor: "grey", shadowOffset: {width: 5, height: 5}, shadowOpacity: 0.08, shadowRadius: 2}}>
           <Text
             style={{ 
@@ -276,9 +273,9 @@ class Home extends Component {
             <RefreshControl
               refreshing={this.state.isRefreshing}
               onRefresh={() => this.getInitialConversations()}
-              tintColor="#ff0000"
-              title="Loading..."
-              titleColor="#00ff00"
+              tintColor="#3498db"
+              title="Grabbing more tunes..."
+              titleColor="#2980b9"
               colors={['#ff0000', '#00ff00', '#0000ff']}
               progressBackgroundColor="#ffff00"
             />
@@ -287,7 +284,7 @@ class Home extends Component {
           <ListView
             pageSize={3}
             enableEmptySections={true}
-            dataSource={this.state.messagesDataSource}
+            dataSource={this.state.threadDataSource}
             renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
@@ -315,7 +312,7 @@ class Home extends Component {
                 component: Discover,
                 passProps: { firebase: this.props.firebase },
                 tintColor: '#2977B2',
-                title: 'Discover Friends',
+                titleImage: require('./images/search@3x.png'),
                 backButtonTitle: ' '
               })}}
             >
@@ -346,7 +343,7 @@ class Home extends Component {
                 component: Conversation,
                 passProps: { new: true, firebase: this.props.firebase },
                 tintColor: '#2977B2',
-                title: 'New Conversation',
+                titleImage: require("./images/recommendation@3x.png"),
                 backButtonTitle: ' '
               })}}
           >

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, ScrollView, ListView, TouchableOpacity, StatusBar, TextInput } from 'react-native';
 import Contact from './Contact' 
+import SearchBar from 'react-native-search-bar';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -15,7 +17,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 78,
     textAlign: 'center',
-    backgroundColor: '#F4F4F4',
+    backgroundColor: '#ecf0f1',
     color: 'black',
     shadowOffset: {width: 5, height: 5}, 
     shadowOpacity: 0.08, 
@@ -76,13 +78,13 @@ class Discover extends Component {
           ref='names'
           multi={false}
           style={[styles.userEntry]}
-          placeholder={ "Search Musit Users" }
-          placeholderTextColor={"#2c3e50"}
+          placeholder={ "Search Users" }
+          placeholderTextColor={"#7f8c8d"}
           onChangeText={(text) => this.addNames(text)}
           value={(this.state && this.state.text) || ''}
         />
         <ListView
-          style={{marginTop: 0}}
+          style={{marginTop: 0, backgroundColor: 'white'}}
           enableEmptySections={true}
           automaticallyAdjustContentInsets={false}
           dataSource={data}

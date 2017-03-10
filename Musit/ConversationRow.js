@@ -63,28 +63,34 @@ class ConversationRow extends Component {
       trackName = trackName.substring(0, 30);
       trackName += "..."; 
     }
+    let name = this.props.name; 
+    if(name.length > 1) {
+      name = name.split(",");
+      let length = name.length - 1;
+      name[0] += " + " + length + " others"; 
+    }
     console.log(this.props); 
     return (
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
           component: Conversation,
           tintColor: '#2977B2',
-          title: this.props.userName,
-          passProps: {...this.props, id: this.props.conversationId},
+          titleImage: require('./images/conversation@3x.png'),
+          passProps: {...this.props, id: this.props.id},
           backButtonTitle: ' '
         })}}>
         <View style={styles.container}>
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.textBlock}>
               <Text style={styles.trackName}>
-                {`${this.props.userName}`}
+                {`${this.props.sender}`}
               </Text>
               <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.artistName}>
                   {`${trackName}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.artist}`}
+                  {`${this.props.name}`}
                 </Text>
               </View>
             </View>

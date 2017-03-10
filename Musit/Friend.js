@@ -179,7 +179,7 @@ class Friend extends Component {
                 component: Conversation,
                 passProps: { new: true, firebase: this.props.firebase },
                 tintColor: '#2977B2',
-                title: 'New Conversation',
+                title: require('./images/recommendation@3x.png'),
                 backButtonTitle: ' '
               })}}
           >

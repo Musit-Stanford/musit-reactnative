@@ -39,31 +39,12 @@ export default class Musit extends React.Component {
   _navigateToHome() {
     this.refs.nav.replace({
       component: Home, 
-      title: 'Musit', 
+      titleImage: require('./images/musit.png'),
       backButtonTitle: ' ',
       rightButtonTitle: ' ',
       titleTextColor: '#2977B2',
-      tintColor: '#2977B2',
+      tintColor: 'rgba(0,0,0,0)',
       onLeftButtonPress: () => this._navigateToProfile(),
-      onRightButtonPress: () => this._navigateToConversation(),
-      passProps: { firebase: firebase }
-    }); 
-  }
-
-  _navigateToProfile() {
-    let navi = this.refs.nav; 
-    this.refs.nav.push({
-      component: Profile, 
-      rightButtonIcon: require('./images/logout.png'),
-      titleTextColor: 'white',
-      title: firebase.auth().currentUser.displayName,
-      tintColor: 'white',
-      barTintColor: '#136CAF',
-      onRightButtonPress: () => firebase.auth().signOut().then(function() {
-        navi.replace({ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', titleTextColor: '#2977B2', passProps: {firebase: firebase}})
-      }, function(error) {
-
-      }),
       passProps: { firebase: firebase }
     }); 
   }
@@ -72,7 +53,7 @@ export default class Musit extends React.Component {
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', titleTextColor: '#2977B2', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
+        initialRoute={{ component: Login, title: "", titleImage: require('./images/musit.png'), tintColor: '#2977B2', backButtonTitle: ' ', titleTextColor: '#2977B2', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
         titleTextColor='#2977B2'
         shadowHidden={true}
         style={{flex: 1}}
