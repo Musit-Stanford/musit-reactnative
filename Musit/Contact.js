@@ -6,11 +6,13 @@ import {
   Image,
   Text,
 } from 'react-native'
+import Friend from './Friend' 
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0)',
     justifyContent: 'flex-start',
   },
   photo: {
@@ -48,23 +50,50 @@ class Contact extends Component {
       })
     }, function(error) {}, this);
   }
+
+  addFriend() {
+    let currId = this.props.firebase.auth().currentUser.uid;
+    let database = this.props.firebase.database();
+    database.ref("usersData/" + currId + "/friends/").push({
+      id: this.props.id,
+      name: this.props.name,
+      photoURL: this.props.photoURL
+    });
+    this.props.navigator.pop(); 
+  }
   
   pressHandler() {
-    let receipients = this.props.parent.state.recepients; 
-    this.checkForExistentConversation(this.props); 
-    receipients.push({ name: this.props.name, id: this.props.id });
-    this.props.parent.setState({
-      receipients: receipients,
-      enteringNames: false, 
-    });
-    console.log(receipients); 
-    let input = receipients[0].name; 
-    if(receipients.length > 1) {
-      for(let i = 1; i < receipients.length; i++) {
-        input += ", " + receipients[i].name;
+    if(!this.props.parent.state.discover) {
+      let receipients = this.props.parent.state.recepients; 
+      this.checkForExistentConversation(this.props); 
+      receipients.push({ name: this.props.name, id: this.props.id });
+      this.props.parent.setState({
+        receipients: receipients,
+        enteringNames: false, 
+      });
+      console.log(receipients); 
+      let input = receipients[0].name; 
+      if(receipients.length > 1) {
+        for(let i = 1; i < receipients.length; i++) {
+          input += ", " + receipients[i].name;
+        }
       }
+      this.props.parent.refs.names.setNativeProps({text: input, multi: true});
+    } else {
+      this.props.navigator.push({
+        component: Friend,
+        barTintColor: '#136CAF',
+        tintColor: 'white',
+        title: this.props.name,
+        titleTextColor: 'white',
+        rightButtonTitle: '+',
+        onRightButtonPress: () => this.addFriend(),
+        passProps: {...this.props},
+        firebase: this.props.firebase,
+        backButtonTitle: ' ',
+      });
     }
-    this.props.parent.refs.names.setNativeProps({text: input, multi: true});
+
   }
   
   render () {

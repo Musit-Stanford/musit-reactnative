@@ -61,7 +61,7 @@ export default class Musit extends React.Component {
       tintColor: 'white',
       barTintColor: '#136CAF',
       onRightButtonPress: () => firebase.auth().signOut().then(function() {
-        navi.replace({ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', leftButtonIcon: require('./images/user@2x.png'), onLeftButtonPress: () => this._navigateToProfile(), titleTextColor: '#2977B2', passProps: {firebase: firebase}})
+        navi.replace({ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', rightButtonIcon: require('./images/user@2x.png'), onRightButtonPress: () => this._navigateToProfile(), titleTextColor: '#2977B2', passProps: {firebase: firebase}})
       }, function(error) {
 
       }),
@@ -73,7 +73,7 @@ export default class Musit extends React.Component {
     return (
       <NavigatorIOS
         ref='nav'
-        initialRoute={{ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', leftButtonIcon: require('./images/user@2x.png'), onLeftButtonPress: () => this._navigateToProfile(), titleTextColor: '#2977B2', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
+        initialRoute={{ component: Login, title: 'Musit', tintColor: '#2977B2', backButtonTitle: ' ', rightButtonIcon: require('./images/user@2x.png'), onRightButtonPress: () => this._navigateToProfile(), titleTextColor: '#2977B2', passProps: {firebase: firebase, onSuccessfulLogin: () => this._navigateToHome()}}}
         titleTextColor='#2977B2'
         shadowHidden={true}
         style={{flex: 1}}

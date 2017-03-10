@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity, StatusBar, Dimensions } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
 import ConversationRow from './ConversationRow'
 import SearchBar from 'react-native-search-bar';
 import MenuBar from './MenuBar'
 import Conversation from "./Conversation";
+import Discover from './Discover'
 
 const styles = StyleSheet.create({
   container: {
@@ -39,10 +40,15 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: 50,
-    width: 375,
+    width: Dimensions.width,
     marginTop: 12,
-    backgroundColor: '#2977B2'
-
+    backgroundColor: '#2977B2',
+  },
+  footerFixed: {
+    height: 50,
+    width: Dimensions.width,
+    marginTop: 95,
+    backgroundColor: '#2977B2',
   }
 });
 
@@ -96,16 +102,24 @@ class Home extends Component {
 
   subscribeToFriends() {
     var database = this.props.firebase.database();
+    let currentUser = this.props.firebase.auth().currentUser;
+    var userId = currentUser.uid
     var users = []
-    database.ref("usersData").orderByChild("name").once("value", function(snapshot) {
-      snapshot.forEach(function(userSnapshot) {
-        var user = userSnapshot.val()
-        user.id = userSnapshot.key;
-        users.push(user)
-      })
+    database.ref("usersData/" + userId + "/friends").on("child_added", function(snapshot, previousKey) {
+      users.push(snapshot.val());
       this.setState((previousState) => {
         return {
           allUserSource: this.state.ds.cloneWithRows(users) 
+        };
+      });
+    }, function(error) {}, this)
+    database.ref("usersData/" + userId + "/friends").on("child_removed", function(snapshot, previousKey) {
+      var filtered = users.filter(function(el) {
+        return el.id !== snapshot.val().id;
+      })
+      this.setState((previousState) => {
+        return {
+          allUserSource: this.state.ds.cloneWithRows(filtered) 
         };
       });
     }, function(error) {}, this)
@@ -140,13 +154,22 @@ class Home extends Component {
   componentWillMount() {
     this.subscribeToFriends()
   }
+
+  footerStyle() {
+    console.log(this.state.allUserSource);
+    if(this.state.allUserSource.rowIdentities[0].length == 0) {
+      return styles.footerFixed;
+    } else {
+      return styles.footer;
+    }
+  }
   
   render() {
     return (
       <View style={{paddingTop: 60}}>
         <StatusBar
        />
-        <View style={{ marginTop: 10, padding: 10, backgroundColor:'#FBFBFB', flexDirection: 'row', justifyContent: 'space-between', shadowColor: "grey", shadowOffset: {width: 5, height: 5}, shadowOpacity: 0.08, shadowRadius: 4}}>
+        <View style={{ marginTop: 10, padding: 10, backgroundColor:'#FBFBFB', flexDirection: 'row', justifyContent: 'space-between', shadowColor: "grey", shadowOffset: {width: 5, height: 5}, shadowOpacity: 0.08, shadowRadius: 2}}>
           <Text
             style={{ 
               color: "rgba(147,147,147,1)",
@@ -193,18 +216,28 @@ class Home extends Component {
               }}>
               FRIENDS
             </Text>
-            <Text
-              style={{ 
-                color: "rgba(147,147,147,.5)",
-                fontSize: 10,
-                textDecorationLine: 'underline',
-                fontWeight: "bold",
-                fontFamily: "Avenir",
-                letterSpacing: 1,
-                marginLeft: 10,
-              }}>
-              FIND FRIENDS
-            </Text>
+            <TouchableOpacity 
+              onPress={() => {this.props.navigator.push({
+                component: Discover,
+                passProps: { firebase: this.props.firebase },
+                tintColor: '#2977B2',
+                title: 'Discover Friends',
+                backButtonTitle: ' '
+              })}}
+            >
+              <Text
+                style={{ 
+                  color: "rgba(147,147,147,.5)",
+                  fontSize: 10,
+                  textDecorationLine: 'underline',
+                  fontWeight: "bold",
+                  fontFamily: "Avenir",
+                  letterSpacing: 1,
+                  marginLeft: 10,
+                }}>
+                FIND FRIENDS
+              </Text>
+            </TouchableOpacity>
           </View>
           <ListView
             enableEmptySections={true}
@@ -214,7 +247,7 @@ class Home extends Component {
             style={{marginBottom:5}}
           />
         <TouchableOpacity 
-          style={styles.footer}
+          style={this.footerStyle()}
           onPress={() => {this.props.navigator.push({
                 component: Conversation,
                 passProps: { new: true, firebase: this.props.firebase },

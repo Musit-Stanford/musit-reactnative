@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     position: 'absolute', 
-    top: 40,
+    top: 30,
     height: 35,
     backgroundColor: 'rgba(47,122,179,1)',
     width: Dimensions.get('window').width
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
   top: {
     position: 'absolute', 
     justifyContent: 'center',
-    top: 50, 
-    height: 50,
+    top: 45, 
+    height: 30,
     width: Dimensions.get('window').width,
     backgroundColor: 'rgba(47,122,179,1)',
   },
@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   photo: {
-    height: 20,
-    width: 20,
+    height: 15,
+    width: 15,
     borderRadius: 10,
     marginRight: 8,
   }
@@ -112,7 +112,6 @@ class Friend extends Component {
     if (index == 0) {
       return (
         <View style={[styles.top]}>
-          <View style={{flexDirection:'row', justifyContent:'center', marginTop: 6}}><Image source={{ uri: this.props.photoURL}} style={styles.photo} /></View>
           <View style={[styles.bars]}>
             <Text style={styles.category}>Sent</Text><Text style={styles.inActive}>Received</Text>
           </View>
@@ -121,7 +120,6 @@ class Friend extends Component {
     } else {
       return (
         <View style={[styles.top]}>
-          <View style={{flexDirection:'row', justifyContent:'center', marginTop: 6}}><Image source={{ uri: this.props.photoURL}} style={styles.photo} /><Text style={styles.name}>{this.props.name}</Text></View>
           <View style={[styles.bars]}>
             <Text style={[styles.category, styles.inActive]}>Sent</Text><Text style={styles.category}>Received</Text>
           </View>
@@ -137,9 +135,8 @@ class Friend extends Component {
          barStyle="light-content"
         />
         <Swiper showsButtons={false} renderPagination={(index, total, context) => this.renderPagination(index, total, context)}>
-          <ScrollView style={{height: 200, marginTop: 130}}>
+          <ScrollView style={{height: 200, marginTop: 115}}>
             <ListView
-              pageSize={3}
               enableEmptySections={true}
               dataSource={this.state.messagesDataSource}
               renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
@@ -149,7 +146,6 @@ class Friend extends Component {
           </ScrollView>
           <ScrollView style={{height: 200, marginTop: 130}}>
             <ListView
-              pageSize={3}
               enableEmptySections={true}
               dataSource={this.state.messagesDataSource}
               renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}

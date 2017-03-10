@@ -134,11 +134,10 @@ class Conversation extends Component {
       let receipients = [];
       receipients.push({ name: this.props.userName, id: this.props.id }); 
       this.setState({
-        text: this.props.userName,
-        receipients: receipients
-      });
-      console.log(receipients); 
+        recepients: receipients
+      });      
     }
+    this.commas(); 
   }
   
   componentDidMount() {
@@ -382,10 +381,15 @@ renderMessageText(props) {
   commas() {
     if(this.state.recepients.length >= 1) {
       let val = this.state.recepients[0].name + ", ";
-      for(let i = 1; i < this.state.receipients.length; i++) {
-        val += this.state.receipients[i].name + ", "
+      for(let i = 1; i < this.state.recepients.length; i++) {
+        val += this.state.recepients[i].name + ", "
       }
       this.refs.names.setNativeProps({text: val});
+      if(!this.props.new) {
+        this.setState({
+          recepients: val
+        });
+      }
     }
   }
 
@@ -495,6 +499,7 @@ renderMessageText(props) {
             style={{
               color: color,
               fontSize: 12,
+              marginRight: 10,
               fontWeight: 'normal',
               fontFamily: 'Avenir',
             }}>
