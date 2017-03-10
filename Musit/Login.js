@@ -163,14 +163,13 @@ class Login  extends Component {
               } else if (result.isCancelled) {
                 alert("login is cancelled.");
               } else {
-                this.props.onSuccessfulLogin();
                 AccessToken.getCurrentAccessToken().then(
                   (data) => {
                     let firebase = this.props.firebase;
                     let database = firebase.database();                    
                     let credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
-                    firebase.auth().signInWithCredential(credential).then(function(user) { 
-                      database.ref("usersData").child(user.uid).once("value", function(snapshot) {
+                    firebase.auth().signInWithCredential(credential).then((user) => { 
+                      database.ref("usersData").child(user.uid).once("value", (snapshot) => {
                         let exists = (snapshot.val() !== null);
                         if (!exists) {
                           database.ref("usersData/" + user.uid).set({
@@ -179,6 +178,7 @@ class Login  extends Component {
                           });
                           seedWithUsers(50, database);
                         }
+                        this.props.onSuccessfulLogin();
                       });
                     }, function(error) {
                       // Handle Errors here.
