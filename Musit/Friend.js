@@ -148,6 +148,11 @@ class Friend extends Component {
   }
   
   render() {
+    console.log(this.props.bar); 
+    let bar = this.props.bar
+    if(this.props.bar == undefined) {
+      bar = true; 
+    }
     return (
       <View>
         <StatusBar
@@ -173,7 +178,8 @@ class Friend extends Component {
             />
           </ScrollView>
         </Swiper>
-        <TouchableOpacity 
+        {bar ? (
+          <TouchableOpacity 
           style={styles.footer}
           onPress={() => {this.props.navigator.push({
                 component: Conversation,
@@ -195,6 +201,7 @@ class Friend extends Component {
               Send Recommendation
             </Text>
         </TouchableOpacity>
+          ) : (null)}
       </View>
     );
   }

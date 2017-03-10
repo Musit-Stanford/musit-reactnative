@@ -60,7 +60,8 @@ class Discover extends Component {
     var curName = text.toLowerCase(); 
     var users = this.state.users;
     var filteredUsers = users.filter(function(el) {
-      if(el.id == 'undefined') return false;
+      console.log(el)
+      if(el.id == 'undefined' || el.name == undefined) return false;
       return el.name.toLowerCase().includes(curName); 
     });
     if(text.length == 0) {

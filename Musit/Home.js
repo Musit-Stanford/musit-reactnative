@@ -259,7 +259,7 @@ class Home extends Component {
                 tintColor: 'white',
                 title: "You",
                 titleTextColor: 'white',
-                passProps: {...this.props, id: this.props.firebase.auth().currentUser.uid},
+                passProps: {...this.props, bar: false, id: this.props.firebase.auth().currentUser.uid},
                 firebase: this.props.firebase,
                 backButtonTitle: ' ',
               })}}
@@ -274,7 +274,7 @@ class Home extends Component {
                 letterSpacing: 1,
                 marginLeft: 10,
               }}>
-              VIEW ALL
+              VIEW PROFILE
             </Text>
             </TouchableOpacity>
         </View>

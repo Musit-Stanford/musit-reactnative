@@ -60,6 +60,15 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     color: 'black'
   },
+  knownUsers: {  
+    height: 20, 
+    width: Dimensions.get('window').width,
+    fontFamily: 'Avenir',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 78,
+    color: '#0073F9'
+  },
   recommendList: {
     position: 'absolute',
     top: -100,
@@ -419,7 +428,7 @@ renderMessageText(props) {
     var curName = text.substring(text.lastIndexOf(",") + 2).toLowerCase();
     var users = this.state.allUsers;
     var filteredUsers = users.filter(function(el) {
-      if(el.id == 'undefined') return false;
+      if(el.id == 'undefined' || el.name == undefined) return false;
       return el.name.toLowerCase().includes(curName); 
     });
     if(text.length == 0) {
@@ -430,18 +439,20 @@ renderMessageText(props) {
   }
 
   commas() {
-    if(this.state.recepients.length >= 1) {
-      console.log(this.state.recepients);
-      this.refs.names.setNativeProps({text: ''});
-      let val = this.state.recepients[0].name + ", ";
-      for(let i = 1; i < this.state.recepients.length; i++) {
-        val += this.state.recepients[i].name + ", "
-      }
-      this.refs.names.setNativeProps({text: val});
-      if(!this.props.new) {
-        this.setState({
-          text: val
-        });
+    if(this.props.new) {
+      if(this.state.recepients.length >= 1) {
+        console.log(this.state.recepients);
+        this.refs.names.setNativeProps({text: ''});
+        let val = this.state.recepients[0].name + ", ";
+        for(let i = 1; i < this.state.recepients.length; i++) {
+          val += this.state.recepients[i].name + ", "
+        }
+        this.refs.names.setNativeProps({text: val});
+        if(!this.props.new) {
+          this.setState({
+            text: val
+          });
+        }
       }
     }
   }
@@ -524,8 +535,7 @@ renderMessageText(props) {
       <TouchableOpacity
         activeOpacity={75 / 100}
         style={{ flexDirection: 'row' }}
-        onPress={() => this.parent.openTrack(uri)}
-        onLongPress={() => this.parent.forwardTrack(message)}>
+        onPress={() => this.parent.openTrack(uri)}>
         <Image 
           style={{
             width: 60,
@@ -617,25 +627,42 @@ renderMessageText(props) {
         prompt = this.props.name; 
       }
     }
+    let name = this.props.name; 
+    nameOutput = name;
+    console.log(name.length);
+    if(name.length > 50) {
+      name = name.split(",");
+      let length = name.length - 1;
+      name[0] += " + " + length + " others"; 
+      nameOutput = name[0];
+    }
     return (
       <View style={styles.container}>
-        <View style={styles.directory}>
-          <Text
-            style={styles.directoryText}>
-            To:           
-          </Text>   
-          <TextInput
-            ref='names'
-            multi={false}
-            style={[styles.userEntry, this.textColor()]}
-            placeholder={ 'Person/Group' }
-            placeholderTextColor={"rgba(198,198,204,1)"}
-            onFocus={() => {this.commas()}}
-            onChangeText={(text) => this.addRecepients(text)}
-            onSubmitEditing={() => this.submitText()}
-            value={(this.state && this.state.text) || prompt}
-          />
-        </View>
+          {this.props.new ? (
+            <View style={styles.directory}>  
+              <Text
+                style={styles.directoryText}>
+                To:           
+              </Text> 
+              <TextInput
+                ref='names'
+                multi={false}
+                style={[styles.userEntry, this.textColor()]}
+                placeholder={ 'Person/Group' }
+                placeholderTextColor={"rgba(198,198,204,1)"}
+                onFocus={() => {this.commas()}}
+                onChangeText={(text) => this.addRecepients(text)}
+                onSubmitEditing={() => this.submitText()}
+                value={(this.state && this.state.text) || prompt}
+              />
+            </View>) : (
+              <View style={styles.directory}>   
+                <Text
+                  style={styles.knownUsers}>
+                  {nameOutput}         
+                </Text>  
+              </View> 
+            )}
         {this.state.enteringNames ? (
           <ListView
             keyboardShouldPersistTaps="always"
