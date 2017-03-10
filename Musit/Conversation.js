@@ -98,7 +98,7 @@ class Conversation extends Component {
       enteringNames: false, 
       message: '', 
       userPhoto: this.props.firebase.auth().currentUser.photoURL,
-      guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
+      guide: props.prepopulatedMessage === undefined ? ' Search for a song...' : 'Enter a message...',
       editing: false,
       spotifyQueries: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
@@ -130,6 +130,14 @@ class Conversation extends Component {
   }
   
   componentWillMount() {
+    if(!this.props.new) {
+      let receipients = [];
+      receipients.push({ name: this.props.userName, id: this.props.id }); 
+      this.setState({
+        recepients: receipients
+      });      
+    }
+    this.commas(); 
   }
   
   componentDidMount() {
@@ -373,10 +381,15 @@ renderMessageText(props) {
   commas() {
     if(this.state.recepients.length >= 1) {
       let val = this.state.recepients[0].name + ", ";
-      for(let i = 1; i < this.state.receipients.length; i++) {
-        val += this.state.receipients[i].name + ", "
+      for(let i = 1; i < this.state.recepients.length; i++) {
+        val += this.state.recepients[i].name + ", "
       }
       this.refs.names.setNativeProps({text: val});
+      if(!this.props.new) {
+        this.setState({
+          recepients: val
+        });
+      }
     }
   }
 
@@ -486,6 +499,7 @@ renderMessageText(props) {
             style={{
               color: color,
               fontSize: 12,
+              marginRight: 10,
               fontWeight: 'normal',
               fontFamily: 'Avenir',
             }}>
@@ -508,12 +522,14 @@ renderMessageText(props) {
         scrollEnabled={true}
     />);
   }
-  
+
   render() {
     let data = this.state.userSource;
     let prompt = "Person / Group";
     if(!this.state.new) {
-      prompt = this.props.name; 
+      if(this.props.name) {
+        prompt = this.props.name; 
+      }
     }
     return (
       <View style={styles.container}>

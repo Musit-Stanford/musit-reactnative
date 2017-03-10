@@ -68,8 +68,9 @@ class ConversationRow extends Component {
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
           component: Conversation,
-          title: this.props.track,
-          passProps: {...this.props, id: this.props.id},
+          tintColor: '#2977B2',
+          title: this.props.userName,
+          passProps: {...this.props, id: this.props.conversationId},
           backButtonTitle: ' '
         })}}>
         <View style={styles.container}>
@@ -77,14 +78,14 @@ class ConversationRow extends Component {
             {notification}
             <View style={styles.textBlock}>
               <Text style={styles.trackName}>
-                {`${this.props.sender}`}
+                {`${this.props.userName}`}
               </Text>
               <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.artistName}>
                   {`${trackName}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.participant}`}
+                  {`${this.props.artist}`}
                 </Text>
               </View>
             </View>
