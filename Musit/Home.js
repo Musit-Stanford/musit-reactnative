@@ -134,7 +134,7 @@ class Home extends Component {
               message.id = messageDataSnapshot.key;
               conversation.track = message.track;
               conversation.participant = this.state.usersMap[Object.keys(conversation.users)[0]].name;
-              conversation.sender = this.state.usersMap[message.userId].name;
+              conversation.sender = message.userId === currentUserId ? "You" : this.state.usersMap[message.userId].name;
               conversation.image = message.image
               conversation.recentTime = message.createdAt
               conversations.push(conversation)
