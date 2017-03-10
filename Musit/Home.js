@@ -283,7 +283,7 @@ class Home extends Component {
           <ListView
             pageSize={3}
             enableEmptySections={true}
-            dataSource={this.state.messagesDataSource}
+            dataSource={this.state.threadDataSource}
             renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}

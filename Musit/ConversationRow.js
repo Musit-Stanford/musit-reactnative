@@ -77,14 +77,14 @@ class ConversationRow extends Component {
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.textBlock}>
               <Text style={styles.trackName}>
-                {`${this.props.userName}`}
+                {`${this.props.sender}`}
               </Text>
               <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.artistName}>
                   {`${trackName}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.artist}`}
+                  {`${this.props.name}`}
                 </Text>
               </View>
             </View>
