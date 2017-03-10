@@ -567,7 +567,6 @@ renderMessageText(props) {
     let spotifyData = this.parent.state.spotifyResults;
     let soundCloudData = this.parent.state.soundCloudResults;
     return(
-
       <ScrollableTabView style={{height: 200}} locked={true} contentProps={{keyboardShouldPersistTaps:"always"}}>
         <View tabLabel="Spotify">
           <ListView
@@ -589,30 +588,7 @@ renderMessageText(props) {
             scrollEnabled={true}
         />
         </View>
-      </ScrollableTabView>
-
-      /*<Swiper showsButtons={false} renderPagination={(index, total, context) => this.parent.renderPagination(index, total, context)}>
-        <View>
-          <ListView
-        style={{ backgroundColor: 'white' }}
-        enableEmptySections={true}
-        dataSource={spotifyData}
-        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
-        scrollEnabled={true}
-    />
-        </View>
-        <View>
-          <ListView
-        style={{ backgroundColor: 'white' }}
-        enableEmptySections={true}
-        dataSource={soundCloudData}
-        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
-        scrollEnabled={true}
-    />
-        </View>
-      </Swiper>*/
-
-      
+      </ScrollableTabView>      
     );
   }
   
