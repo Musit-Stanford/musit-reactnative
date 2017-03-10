@@ -416,11 +416,11 @@ renderMessageText(props) {
   }
 
   addRecepients(text) {
-    var curName = text.substring(text.lastIndexOf(",") + 2);
+    var curName = text.substring(text.lastIndexOf(",") + 2).toLowerCase();
     var users = this.state.allUsers;
     var filteredUsers = users.filter(function(el) {
       if(el.id == 'undefined') return false;
-      return el.name.includes(curName); 
+      return el.name.toLowerCase().includes(curName); 
     });
     if(text.length == 0) {
       this.setState({text: "", enteringNames: false}); 

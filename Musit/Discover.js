@@ -57,11 +57,11 @@ class Discover extends Component {
   }
 
   addNames(text) {
-    var curName = text; 
+    var curName = text.toLowerCase(); 
     var users = this.state.users;
     var filteredUsers = users.filter(function(el) {
       if(el.id == 'undefined') return false;
-      return el.name.includes(curName); 
+      return el.name.toLowerCase().includes(curName); 
     });
     if(text.length == 0) {
       this.setState({text: ""}); 
