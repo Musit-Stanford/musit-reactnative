@@ -56,7 +56,7 @@ class Login  extends Component {
       this.state.bounceValue,                 // Animate `bounceValue`
       {
         toValue: 0.9,                         // Animate to smaller size
-        friction: 0.8,                          // Bouncier spring
+        friction: 1.2,                          // Bouncier spring
       }
     ).start();                                // Start the animation
     AccessToken.getCurrentAccessToken().then(
@@ -79,11 +79,11 @@ class Login  extends Component {
         <View>
           <Animated.Image 
             style={{
-              width:  350 ,
-              height:  250 ,
+              width:  320 ,
+              height:  220 ,
               position: "absolute",
               top: 110,
-              left: 20,
+              left: 30,
               transform: [                        // `transform` is an ordered array
                 {scale: this.state.bounceValue},  // Map `bounceValue` to `scale`
               ]
@@ -93,7 +93,7 @@ class Login  extends Component {
           />
           <Text
             style={{
-              color: "#468EE5",
+              color: "#2977B2",
               backgroundColor: "rgba(0,0,0,0)",
               fontSize:  42 ,
               position: "absolute",

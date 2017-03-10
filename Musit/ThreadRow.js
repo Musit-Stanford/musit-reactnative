@@ -54,10 +54,17 @@ class ThreadRow extends Component {
   unFriend() {
     let currId = this.props.firebase.auth().currentUser.uid;
     let database = this.props.firebase.database();
+    let friendId = this.props.id; 
     database.ref("usersData/" + currId + "/friends/").orderByChild("id").equalTo(this.props.id).once("value", function(snapshot) {
       snapshot.forEach(function(userSnapshot) {
         var user = userSnapshot.val()
         database.ref("usersData/" + currId + "/friends/" + userSnapshot.key).remove(); 
+      })
+    });
+    database.ref("usersData/" + this.props.id + "/friends/").orderByChild("id").equalTo(currId).once("value", function(snapshot) {
+      snapshot.forEach(function(userSnapshot) {
+        var user = userSnapshot.val();
+        database.ref("usersData/" + friendId + "/friends/" + userSnapshot.key).remove(); 
       })
     });
     this.props.navigator.pop(); 

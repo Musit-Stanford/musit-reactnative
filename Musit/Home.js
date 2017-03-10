@@ -171,7 +171,7 @@ class Home extends Component {
   subscribeToFriends() {
     var database = this.props.firebase.database();
     let currentUser = this.props.firebase.auth().currentUser;
-    var userId = currentUser.uid
+    var userId = currentUser.uid;
     var users = []
     database.ref("usersData/" + userId + "/friends").on("child_added", function(snapshot, previousKey) {
       users.push(snapshot.val());

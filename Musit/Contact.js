@@ -56,12 +56,19 @@ class Contact extends Component {
   }
 
   addFriend() {
+    let currentUser = this.props.firebase.auth().currentUser; 
+    console.log(currentUser); 
     let currId = this.props.firebase.auth().currentUser.uid;
     let database = this.props.firebase.database();
     database.ref("usersData/" + currId + "/friends/").push({
       id: this.props.id,
       name: this.props.name,
       photoURL: this.props.photoURL
+    });
+    database.ref("usersData/" + this.props.id + "/friends/").push({
+      id: currId,
+      name: currentUser.displayName,
+      photoURL: currentUser.photoURL
     });
     this.props.navigator.pop(); 
   }
