@@ -112,7 +112,7 @@ class Home extends Component {
           allUserSource: this.state.ds.cloneWithRows(users) 
         };
       });
-    }, function(error) {}, this)
+    }, function(error) {}, this);
     database.ref("usersData/" + userId + "/friends").on("child_removed", function(snapshot, previousKey) {
       var filtered = users.filter(function(el) {
         return el.id !== snapshot.val().id;

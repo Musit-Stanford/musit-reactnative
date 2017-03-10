@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 class Friend extends Component {
   constructor(props) {
     super(props);
-
+    console.log(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
     this.state = {
         ds: ds,

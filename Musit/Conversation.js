@@ -250,7 +250,6 @@ class Conversation extends Component {
     id: newConversationKey
   });
   this.subscribeToConversation(newConversationKey);
-  console.log(this.props)
   var updates = {};
   var usersDataPath = "/usersData/";
   var newConversationPath = "/conversations/" + newConversationKey+ "/";
