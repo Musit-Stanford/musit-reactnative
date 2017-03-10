@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 78,
     textAlign: 'center',
-    backgroundColor: '#bdc3c7',
+    backgroundColor: '#F4F4F4',
     color: 'black',
     shadowOffset: {width: 5, height: 5}, 
     shadowOpacity: 0.08, 

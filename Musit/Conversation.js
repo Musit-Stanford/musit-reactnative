@@ -14,7 +14,9 @@ import {
 import Contact from './Contact'
 import Result from './Result'
 import { GiftedChat, Actions, Bubble } from 'react-native-gifted-chat'
+import Swiper from 'react-native-swiper';
 import FBSDK, { LoginButton, AccessToken } from 'react-native-fbsdk';
+var ScrollableTabView = require('react-native-scrollable-tab-view');
 
 const styles = StyleSheet.create({
   container: {
@@ -22,6 +24,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     backgroundColor: 'white'
+  },
+  inActive: {
+    color: 'gray'
   },
   directory: {
     flex: 0.2,
@@ -77,6 +82,29 @@ const styles = StyleSheet.create({
   }
 });
 
+function getMergedArray(arr1, arr2) {
+  var shorterArray;
+  var longerArray;
+  if (arr1.length > arr2) {
+    longerArray = arr1;
+    shorterArray = arr2;
+  } else {
+    longerArray = arr2;
+    shorterArray = arr1;
+  }
+  var shorterArrayLength = shorterArray.length;
+  var mergedArray = []
+  for (var i = 0; i < shorterArrayLength; i++) {
+    mergedArray.push(longerArray[i]);
+    mergedArray.push(shorterArray[i]);
+  }  
+  var longerArrayLength = longerArray.length
+  for (var i = shorterArrayLength; i < longerArrayLength; i++) {
+    mergedArray.push(longerArray[i])
+  }
+  return mergedArray.reverse();
+}
+
 class Conversation extends Component {
 
   static propTypes = {}
@@ -98,9 +126,10 @@ class Conversation extends Component {
       enteringNames: false, 
       message: '', 
       userPhoto: this.props.firebase.auth().currentUser.photoURL,
-      guide: props.prepopulatedMessage === undefined ? ' Search for a song...' : 'Enter a message...',
-      editing: false,
-      spotifyQueries: ds.cloneWithRows([]),
+      guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
+      editing: false, 
+      spotifyResults: ds.cloneWithRows([]),
+      soundCloudResults: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
       recommendation: {}, 
       rec: props.prepopulatedMessage === undefined ? undefined : props.prepopulatedMessage,
@@ -316,25 +345,47 @@ renderMessageText(props) {
     this.refs.recSpace.value = ''; 
     this.setState({enteringNames: false, editing: true, recChosen: true});
   }
+
+
   
-  querySpotify(query) {
+  queryForTracks(query) {
     this.setState({
       editing: true,
       start: false, 
       input: query.text,
     })
     if(query.text.length <= 0) return;
+
+    var SC_URL = 'https://api.soundcloud.com/tracks.json';
+    var SC_CLIENT_ID = '1c3aeb3f91390630d351f3c708148086';
+    var soundCloudUrl = SC_URL + "?client_id=" + SC_CLIENT_ID + "&q=" + query.text;
+    var soundCloudResponse = fetch(soundCloudUrl).then((response) => response.json())
+
     var url = "https://api.spotify.com/v1/search?q=" + query.text + "&type=track";
-    fetch(url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-          const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-          let tracks = responseJson.tracks.items.reverse(); 
-          this.setState({
-            spotifyQueries: ds.cloneWithRows(tracks)
-          })
-      }
-    )
+    var spotifyResponse = fetch(url).then((response) => response.json())
+    var mergedTracks = []
+    const placeholderImage = "https://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/032013/soundcloud_logo_0.png?itok=xO8Oaxwr"
+    Promise.all([soundCloudResponse, spotifyResponse]).then(values => {
+      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1._id !== r2._id});
+      // SoundCloud
+      var soundCloudTracks = values[0];
+      soundCloudTracks.map(function(track){
+        track.album = {};
+        track.album.images = [{}];
+        track.album.images[0].url = track.artwork_url === null ? placeholderImage : track.artwork_url;
+        track.name = track.title;
+        track.artists = [{}];
+        track.artists[0].name = track.user.username;
+        track._id = track.id
+        track.external_urls = {}
+        track.external_urls.spotify = track.permalink_url
+      })
+      var spotifyTracks = values[1].tracks.items;
+      this.setState({
+        spotifyResults: ds.cloneWithRows(spotifyTracks),
+        soundCloudResults: ds.cloneWithRows(soundCloudTracks)
+      })
+    })
   }
   
   textColor() {
@@ -427,7 +478,7 @@ renderMessageText(props) {
           onSubmitEditing={() => {this.parent.onSend()}}
           placeholder={this.parent.state.guide}
           placeholderTextColor={"#95a5a6"}
-          onChangeText={(text) => {this.parent.querySpotify({text})}}
+          onChangeText={(text) => {this.parent.queryForTracks({text})}}
           value={this.parent.state.input}
         />
         {this.parent.state.recChosen ? (
@@ -509,18 +560,51 @@ renderMessageText(props) {
       </TouchableOpacity>
     );
   }
+
+  renderPagination(index, total, context) {
+    if (index == 0) {
+      return (
+        <View>
+          <Text>Spotify <Text style={styles.inActive}>SoundCloud</Text></Text>
+        </View>
+        )
+    } else {
+      return (
+        <View>
+          <Text><Text style={styles.inActive}>Spotify</Text> SoundCloud</Text>
+        </View>
+        )
+    }
+  }
   
   renderBelow() {
     if(this.parent.state.recChosen || this.parent.state.start) return null; 
-    let data = this.parent.state.spotifyQueries;
+    let spotifyData = this.parent.state.spotifyResults;
+    let soundCloudData = this.parent.state.soundCloudResults;
     return(
-      <ListView
-        style={{ backgroundColor: 'white' }}
-        enableEmptySections={true}
-        dataSource={data}
-        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
-        scrollEnabled={true}
-    />);
+      <ScrollableTabView style={{height: 215}} locked={true} contentProps={{keyboardShouldPersistTaps:"always"}}>
+        <View tabLabel="Spotify">
+          <ListView
+          keyboardShouldPersistTaps="always"
+          style={{ backgroundColor: 'white' }}
+          enableEmptySections={true}
+          dataSource={spotifyData}
+          renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+          scrollEnabled={true}
+        />
+        </View>
+        <View tabLabel="SoundCloud">
+          <ListView
+            keyboardShouldPersistTaps="always"
+            style={{ backgroundColor: 'white' }}
+            enableEmptySections={true}
+            dataSource={soundCloudData}
+            renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+            scrollEnabled={true}
+        />
+        </View>
+      </ScrollableTabView>      
+    );
   }
 
   render() {
@@ -552,6 +636,7 @@ renderMessageText(props) {
         </View>
         {this.state.enteringNames ? (
           <ListView
+            keyboardShouldPersistTaps="always"
             enableEmptySections={true}
             automaticallyAdjustContentInsets={false}
             dataSource={data}
@@ -560,6 +645,7 @@ renderMessageText(props) {
           />
         ) : (
             <GiftedChat
+              keyboardShouldPersistTaps="always"
               parent={this}
               messages={this.state.messages}
               onSend={this.onSend}
@@ -571,7 +657,7 @@ renderMessageText(props) {
               renderMessageText={this.renderMessageText}
               renderMessageImage={this.renderMessageImage}
               renderComposer={this.renderComposer}
-              onInputTextChanged={this.querySpotify}
+              onInputTextChanged={this.queryForTracks}
               renderFooter={this.renderBelow}
             />
           )}

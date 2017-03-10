@@ -22,18 +22,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   photo: {
-    flex: 3,
+    flex: 2.5,
+    marginTop: 30,
     width: Dimensions.get('window').width * 0.8,
-    borderRadius: 40,
+    borderRadius: 10,
     marginLeft: 35,
-    // width: Dimensions.get('window').width,
-    marginTop: 10,
     alignItems: 'flex-end',
   },
   textBlock: {
     flex: 2,
     flexDirection: 'column',
-    paddingTop: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -46,7 +44,7 @@ const styles = StyleSheet.create({
   },
   artistName: {
     fontSize: 16,
-    color: '#CD5C6A',
+    color: '#2ABA67',
     fontFamily: 'Avenir',
   },
   donorName: {
@@ -57,8 +55,8 @@ const styles = StyleSheet.create({
     marginLeft: 6, 
   },
   messageBlock: {
-    backgroundColor: '#2ABA67',
-    flex: 0.5,
+    backgroundColor: '#2977B2',
+    height: 50
   },
   sharing: {
     fontSize: 12,
@@ -123,24 +121,9 @@ const DisplayRecommendation = (props) => {
             style={{ backgroundColor: 'rgba(0,0,0,0)', color: 'white', textAlign: 'center', fontFamily: 'Avenir' }}
           >Listen</Text>
         </TouchableOpacity>
-        <View style={{ flexDirection: 'row', marginTop: 50, }}>
-          <Text style={styles.sharing}>
-            Shared by 31 others:
-          </Text>
-          <View style={styles.chips}>
-            <Text style={styles.names}>
-              Musit Team
-            </Text>
-          </View>
-          <View style={styles.chips}>
-            <Text style={styles.names}>
-              Jared
-            </Text>
-          </View>
-        </View>
       </View>
       <View style={styles.messageBlock}> 
-        <Text style={{ color: 'white', textAlign: 'center', fontFamily:'Avenir', paddingTop: 16, fontSize: 16  }}>Recommend to {`${props.id}`}</Text>
+        <Text style={{ color: 'white', textAlign: 'center', fontFamily:'Avenir', paddingTop: 16, fontSize: 16  }}>Forward Recommendation</Text>
       </View> 
     </View>
   )

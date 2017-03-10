@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   }
 });
 
-class ConversationRow extends Component {
+class SentRow extends Component {
   constructor(props) {
     super(props);
   }
@@ -67,7 +67,7 @@ class ConversationRow extends Component {
     return (
       <TouchableHighlight 
         onPress={() => {this.props.navigator.push({
-          component: Conversation,
+          component: DisplayRecommendation,
           tintColor: '#2977B2',
           title: this.props.userName,
           passProps: {...this.props, id: this.props.conversationId},
@@ -77,14 +77,14 @@ class ConversationRow extends Component {
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.textBlock}>
               <Text style={styles.trackName}>
-                {`${this.props.userName}`}
+                {`${trackName}`}
               </Text>
               <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.artistName}>
-                  {`${trackName}`}
+                  {`${this.props.artist}`}
                 </Text>
                 <Text style={styles.donorName}>
-                  {`${this.props.artist}`}
+                  {`${this.props.userName}`}
                 </Text>
               </View>
             </View>
@@ -96,4 +96,4 @@ class ConversationRow extends Component {
   }
 }
 
-export default ConversationRow
+export default SentRow

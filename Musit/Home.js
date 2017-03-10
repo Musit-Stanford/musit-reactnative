@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity, StatusBar, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity, ActivityIndicator, RefreshControl, Dimensions, StatusBar } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
 import ConversationRow from './ConversationRow'
@@ -63,6 +63,11 @@ const searchStyles = StyleSheet.create({
     borderBottomColor: '#bbb',
     backgroundColor: 'white',
   },
+  centering: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+  },
 });
 
 
@@ -77,9 +82,17 @@ class Home extends Component {
         threadDataSource: ds.cloneWithRows([]),
         allUserSource: ds.cloneWithRows([]),
         messages: [],
-        messagesDataSource: ds.cloneWithRows([])
+        messagesDataSource: ds.cloneWithRows([]),
+        usersMap: {"placeholder": "Kek"},
+        loadingInitial: true,
+        isRefreshing: false
     };
-    // this.subscribeToConversations()
+  }
+
+  componentWillMount() {
+    this.subscribeToFriends()
+    this.allFriends();
+    this.getInitialConversations()
   }
 
   subscribeToConversations() {
@@ -97,6 +110,60 @@ class Home extends Component {
           };
         });
       });
+    });
+  }
+
+  getInitialConversations() {
+    var database = this.props.firebase.database();
+    let currentUserId = this.props.firebase.auth().currentUser.uid;
+    var currentUsersDataPath = "/usersData/" + currentUserId + "/";
+    let conversations = [];
+    database.ref(currentUsersDataPath + "conversations/").once("value")
+    .then((conversationKeySnapshot) => { // .val() always returns an object with conversation keys as keys.
+      let allOfMyConversationKeys = Object.keys(conversationKeySnapshot.val());
+      let promises = [];
+      for (var i = allOfMyConversationKeys.length - 1; i >= 0; i--) {
+        let key = allOfMyConversationKeys[i];
+        var getConversationData = new Promise((resolve, reject) => {
+          database.ref("conversations/" + key).once("value", (conversationDataSnapshot) => {
+            let conversation = conversationDataSnapshot.val();
+            conversation.id = conversationDataSnapshot.key;
+            database.ref("messages/" + Object.keys(conversation.messages).reverse()[0]).once("value").then((messageDataSnapshot) => {
+              let message = messageDataSnapshot.val();
+              message.id = messageDataSnapshot.key;
+              conversation.track = message.track;
+              conversation.participant = this.state.usersMap[Object.keys(conversation.users)[0]].name;
+              conversation.sender = this.state.usersMap[message.userId].name;
+              conversation.image = message.image
+              conversation.recentTime = message.createdAt
+              conversations.push(conversation)
+              resolve("Success");
+            });
+          })
+        });
+        promises.push(getConversationData);
+      }
+      Promise.all(promises).then((values) => {
+        this.setState((previousState) => {
+            conversations.sort(function(a, b) {
+              console.log(a)
+              if (a.recentTime < b.recentTime) {
+                return 1
+              } else if (a.recentTime > b.recentTime) {
+                return -1
+              } else {
+                return 0
+              }
+            });
+            let newThreads = conversations;
+            return {
+              threads: newThreads,
+              threadDataSource: this.state.ds.cloneWithRows(newThreads),
+              loadingInitial: false,
+              isRefreshing: false
+            };
+          });
+      })
     });
   }
 
@@ -125,6 +192,19 @@ class Home extends Component {
     }, function(error) {}, this)
   }
 
+  allFriends() {
+     var database = this.props.firebase.database();
+     var users = []
+     database.ref("usersData").orderByChild("name").once("value", (snapshot) => {
+       snapshot.forEach((userSnapshot) => {
+         var user = userSnapshot.val()
+         user.id = userSnapshot.key;
+         users.push(user);
+         this.state.usersMap[userSnapshot.key] = userSnapshot.val();
+       })
+       }, function(error) {}, this);
+  }
+
 
 
   subscribeToRecommendations() {
@@ -149,10 +229,6 @@ class Home extends Component {
   
   componentDidMount() {
     this.subscribeToRecommendations();
-  }
-
-  componentWillMount() {
-    this.subscribeToFriends()
   }
 
   footerStyle() {
@@ -194,7 +270,20 @@ class Home extends Component {
               VIEW ALL
             </Text>
         </View>
-        <ScrollView style={{height: 360, marginTop: 10}}>
+        <ScrollView 
+          style={{height: 360, marginTop: 10}}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.isRefreshing}
+              onRefresh={() => this.getInitialConversations()}
+              tintColor="#ff0000"
+              title="Loading..."
+              titleColor="#00ff00"
+              colors={['#ff0000', '#00ff00', '#0000ff']}
+              progressBackgroundColor="#ffff00"
+            />
+          }
+        >
           <ListView
             pageSize={3}
             enableEmptySections={true}
@@ -203,6 +292,11 @@ class Home extends Component {
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
+              <ActivityIndicator
+                animating={this.state.loadingInitial}
+                style={[styles.centering, {height: 80}]}
+                size="large"
+              />
         </ScrollView>
           <View style={{ backgroundColor: '#FBFBFB', padding: 10, marginBottom: 5, marginTop: 0, flexDirection: 'row', justifyContent: 'space-between', shadowColor: "grey", shadowOffset: {width: 5, height: 5}, shadowOpacity: 0.1, shadowRadius: 5}}>
             <Text
