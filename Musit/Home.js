@@ -226,10 +226,6 @@ class Home extends Component {
       });
     });
   }
-  
-  componentDidMount() {
-    this.subscribeToRecommendations();
-  }
 
   footerStyle() {
     console.log(this.state.allUserSource);
