@@ -169,10 +169,10 @@ class Conversation extends Component {
     updates[newMessagePath] = message;
     updates[newMessageConversationIndex] = true;
     database.ref().update(updates);
-    this.subscribeRecepients(message.id);
+    this.subscribeRecepients(message.id, message.userId);
   }
 
-  subscribeRecepients(messageId) {
+  subscribeRecepients(messageId, senderId) {
     console.log("here"); 
     var database = this.props.firebase.database();
     var recepients = this.state.recepients; 
@@ -181,8 +181,9 @@ class Conversation extends Component {
     recepients.forEach(function(user) {
       var recepientUserId = user.id; 
       updates[usersDataPath + recepientUserId + '/messageList/' + messageId] = true;
-      database.ref().update(updates);
     });
+    updates[usersDataPath + senderId + '/sentList/' + messageId] = true;
+    database.ref().update(updates);
   }
   
   onSend(messages = []) {
