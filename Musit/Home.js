@@ -7,6 +7,7 @@ import SearchBar from 'react-native-search-bar';
 import MenuBar from './MenuBar'
 import Conversation from "./Conversation";
 import Discover from './Discover'
+import Friend from './Friend.js'
 
 const styles = StyleSheet.create({
   container: {
@@ -253,6 +254,18 @@ class Home extends Component {
             }}>
             CONVERSATIONS
           </Text>
+            <TouchableOpacity 
+              onPress={() => {this.props.navigator.push({
+                component: Friend,
+                barTintColor: '#136CAF',
+                tintColor: 'white',
+                title: "You",
+                titleTextColor: 'white',
+                passProps: {...this.props, id: this.props.firebase.auth().currentUser.uid},
+                firebase: this.props.firebase,
+                backButtonTitle: ' ',
+              })}}
+            >
           <Text
               style={{ 
                 color: "rgba(147,147,147,.5)",
@@ -265,6 +278,7 @@ class Home extends Component {
               }}>
               VIEW ALL
             </Text>
+            </TouchableOpacity>
         </View>
         <ScrollView 
           style={{height: 360, marginTop: 10}}
