@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, ListView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import Row from './Row'
 import ThreadRow from './ThreadRow'
 import ConversationRow from './ConversationRow'
@@ -57,6 +57,11 @@ const searchStyles = StyleSheet.create({
     borderBottomColor: '#bbb',
     backgroundColor: 'white',
   },
+  centering: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+  },
 });
 
 
@@ -72,22 +77,28 @@ class Home extends Component {
         allUserSource: ds.cloneWithRows([]),
         messages: [],
         messagesDataSource: ds.cloneWithRows([]),
-        usersMap: {"placeholder": "Kek"}
+        usersMap: {"placeholder": "Kek"},
+        loadingInitial: true,
+        isRefreshing: false
     };
-    // this.subscribeToConversations()
-
   }
 
   componentWillMount() {
     this.subscribeToFriends()
-    this.subscribeToConversations()
+    this.getInitialConversations()
   }
 
   subscribeToConversations() {
     var database = this.props.firebase.database();
     let currentUserId = this.props.firebase.auth().currentUser.uid;
     var currentUsersDataPath = "/usersData/" + currentUserId + "/";
-    database.ref(currentUsersDataPath + "conversations/").on("child_added", (conversationKeySnapshot, previousKey) => { // Going to assume names don't change here. Otherwise, I would have to always update these things.
+    database.ref(currentUsersDataPath + "conversations/").once("child_added", (conversationKeySnapshot, previousKey) => {
+      let conversation = {};
+      conversation.id = conversationKeySnapshot.key;
+      conversation.track = "The Kekkiest kek";
+      conversation.participant = "Kek Johnson"
+      conversation.sender = "The Sender";
+      conversation.image = "https://i.scdn.co/image/d9f503e34a559756922061be4e3d34b0c301ddce";
       database.ref("conversations/" + conversationKeySnapshot.key).once("value", (conversationDataSnapshot) => {
         let conversation = conversationDataSnapshot.val();
         conversation.id = conversationDataSnapshot.key;
@@ -97,7 +108,6 @@ class Home extends Component {
         conversation.participant = this.state.usersMap[Object.keys(participants)[0]].name;
         conversation.sender = "The Sender";
         conversation.image = "https://i.scdn.co/image/d9f503e34a559756922061be4e3d34b0c301ddce";
-        console.log(conversation);
         database.ref("messages/" + Object.keys(conversation.messages).reverse()[0]).once("value", (messageDataSnapshot) => {
           let message = messageDataSnapshot.val();
           conversation.track = message.track;
@@ -112,6 +122,51 @@ class Home extends Component {
           });
         });
       });
+    });
+  }
+
+  getInitialConversations() {
+    console.log(this.state);
+    var database = this.props.firebase.database();
+    let currentUserId = this.props.firebase.auth().currentUser.uid;
+    var currentUsersDataPath = "/usersData/" + currentUserId + "/";
+    let conversations = [];
+    database.ref(currentUsersDataPath + "conversations/").once("value")
+    .then((conversationKeySnapshot) => { // .val() always returns an object with conversation keys as keys.
+      let allOfMyConversationKeys = Object.keys(conversationKeySnapshot.val());
+      let promises = [];
+      for (var i = allOfMyConversationKeys.length - 1; i >= 0; i--) {
+        let key = allOfMyConversationKeys[i];
+        var getConversationData = new Promise((resolve, reject) => {
+          database.ref("conversations/" + key).once("value", (conversationDataSnapshot) => {
+            let conversation = conversationDataSnapshot.val();
+            conversation.id = conversationDataSnapshot.key;
+            database.ref("messages/" + Object.keys(conversation.messages).reverse()[0]).once("value").then((messageDataSnapshot) => {
+              let message = messageDataSnapshot.val();
+              message.id = messageDataSnapshot.key;
+              conversation.track = message.track;
+              conversation.participant = this.state.usersMap[Object.keys(conversation.users)[0]].name;
+              conversation.sender = this.state.usersMap[message.userId].name;
+              conversation.image = message.image
+              console.log("Completed")
+              conversations.push(conversation)
+              resolve("Success");
+            });
+          })
+        });
+        promises.push(getConversationData);
+      }
+      Promise.all(promises).then((values) => {
+        this.setState((previousState) => {
+            let newThreads = conversations;
+            return {
+              threads: newThreads,
+              threadDataSource: this.state.ds.cloneWithRows(newThreads),
+              loadingInitial: false,
+              isRefreshing: false
+            };
+          });
+      })
     });
   }
 
@@ -181,7 +236,19 @@ class Home extends Component {
           </Text>
           <MenuBar name='recentRecs' navigator={this.props.navigator}></MenuBar>
         </View>
-        <ScrollView style={{height: 330}}>
+        <ScrollView style={{height: 330}}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.isRefreshing}
+            onRefresh={() => this.getInitialConversations()}
+            tintColor="#ff0000"
+            title="Loading..."
+            titleColor="#00ff00"
+            colors={['#ff0000', '#00ff00', '#0000ff']}
+            progressBackgroundColor="#ffff00"
+          />
+        }
+          >
           <ListView
             pageSize={3}
             enableEmptySections={true}
@@ -190,6 +257,11 @@ class Home extends Component {
             scrollEnabled={false}
             renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
           />
+                                <ActivityIndicator
+                animating={this.state.loadingInitial}
+                style={[styles.centering, {height: 80}]}
+                size="large"
+              />
         </ScrollView>
           <View style={{ backgroundColor: '#FBFBFB', padding: 10, marginBottom: 5, marginTop: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text

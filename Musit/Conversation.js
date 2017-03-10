@@ -373,8 +373,8 @@ renderMessageText(props) {
       })
       var spotifyTracks = values[1].tracks.items;
       this.setState({
-        spotifyResults: ds.cloneWithRows(spotifyTracks.reverse()),
-        soundCloudResults: ds.cloneWithRows(soundCloudTracks.reverse())
+        spotifyResults: ds.cloneWithRows(spotifyTracks),
+        soundCloudResults: ds.cloneWithRows(soundCloudTracks)
       })
     })
   }
@@ -568,24 +568,26 @@ renderMessageText(props) {
     let soundCloudData = this.parent.state.soundCloudResults;
     return(
 
-      <ScrollableTabView style={{height: 300}}>
+      <ScrollableTabView style={{height: 200}} locked={true} contentProps={{keyboardShouldPersistTaps:"always"}}>
         <View tabLabel="Spotify">
           <ListView
-        style={{ backgroundColor: 'white' }}
-        enableEmptySections={true}
-        dataSource={spotifyData}
-        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
-        scrollEnabled={true}
-    />
+          keyboardShouldPersistTaps="always"
+          style={{ backgroundColor: 'white' }}
+          enableEmptySections={true}
+          dataSource={spotifyData}
+          renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+          scrollEnabled={true}
+        />
         </View>
         <View tabLabel="SoundCloud">
           <ListView
-        style={{ backgroundColor: 'white' }}
-        enableEmptySections={true}
-        dataSource={soundCloudData}
-        renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
-        scrollEnabled={true}
-    />
+            keyboardShouldPersistTaps="always"
+            style={{ backgroundColor: 'white' }}
+            enableEmptySections={true}
+            dataSource={soundCloudData}
+            renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+            scrollEnabled={true}
+        />
         </View>
       </ScrollableTabView>
 
@@ -641,6 +643,7 @@ renderMessageText(props) {
         </View>
         {this.state.enteringNames ? (
           <ListView
+            keyboardShouldPersistTaps="always"
             enableEmptySections={true}
             automaticallyAdjustContentInsets={false}
             dataSource={data}
@@ -649,6 +652,7 @@ renderMessageText(props) {
           />
         ) : (
             <GiftedChat
+              keyboardShouldPersistTaps="always"
               parent={this}
               messages={this.state.messages}
               onSend={this.onSend}
