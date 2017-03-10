@@ -8,6 +8,7 @@ import MenuBar from './MenuBar'
 import Conversation from './Conversation'
 import Result from './Result'
 import Swiper from 'react-native-swiper'
+import SentRow from './SentRow'
 
 const styles = StyleSheet.create({
   container: {
@@ -69,12 +70,12 @@ const styles = StyleSheet.create({
 class Friend extends Component {
   constructor(props) {
     super(props);
-    console.log(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
     this.state = {
         ds: ds,
         messages: [],
         messagesDataSource: ds.cloneWithRows([]),
+        sentDataSource: ds.cloneWithRows([]),
         sent: ds.cloneWithRows([]),
         received: ds.cloneWithRows([])
     };
@@ -82,24 +83,42 @@ class Friend extends Component {
   
   componentDidMount() {
     this.subscribeToRecommendations();
+    this.subscribeToReceived();
   }
 
   subscribeToRecommendations() {
     let currentUser = this.props.firebase.auth().currentUser;
     var userId = currentUser.uid
     var database = this.props.firebase.database();
-    database.ref("usersData/" + userId + "/messageList").on("child_added", (messageKeySnapshot, previousKey) => {
+    database.ref("usersData/" + this.props.id + "/messageList").on("child_added", (messageKeySnapshot, previousKey) => {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
         var message = messageDataSnapshot.val();
         message.id = messageDataSnapshot.key;
         this.setState((previousState) => {
           var newMessages = [message];
-          newMessages.push(...previousState.messages.slice(0, 3))
+          newMessages.push(...previousState.messages)
           return {
             messages: newMessages,
             messagesDataSource: this.state.ds.cloneWithRows(newMessages)
           };
         });
+      });
+    });
+  }
+
+  subscribeToReceived() {
+    let currentUser = this.props.firebase.auth().currentUser;
+    var userId = currentUser.uid
+    var database = this.props.firebase.database();
+    var recs = [];
+    database.ref("usersData/" + this.props.id + "/sentList").on("child_added", (messageKeySnapshot, previousKey) => {
+      database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
+        var message = messageDataSnapshot.val();
+        message.id = messageDataSnapshot.key;
+        recs.push(message); 
+        this.setState({
+          sentDataSource: this.state.ds.cloneWithRows(recs)
+        })
       });
     });
   }
@@ -138,17 +157,17 @@ class Friend extends Component {
           <ScrollView style={{height: 200, marginTop: 115}}>
             <ListView
               enableEmptySections={true}
-              dataSource={this.state.messagesDataSource}
-              renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
+              dataSource={this.state.sentDataSource}
+              renderRow={(data) => <SentRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
               scrollEnabled={false}
               renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
             />
           </ScrollView>
-          <ScrollView style={{height: 200, marginTop: 130}}>
+          <ScrollView style={{height: 200, marginTop: 115}}>
             <ListView
               enableEmptySections={true}
               dataSource={this.state.messagesDataSource}
-              renderRow={(data) => <ConversationRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
+              renderRow={(data) => <SentRow {...data} firebase={this.props.firebase} navigator={this.props.navigator}/>}
               scrollEnabled={false}
               renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
             />
