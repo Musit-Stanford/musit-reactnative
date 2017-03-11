@@ -279,7 +279,7 @@ class Home extends Component {
             </TouchableOpacity>
         </View>
         <ScrollView 
-          style={{height: 360, marginTop: 10}}
+          style={{height: Dimensions.get('window').height - 305, marginTop: 10}}
           refreshControl={
             <RefreshControl
               refreshing={this.state.isRefreshing}

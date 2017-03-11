@@ -9,7 +9,8 @@ import {
   NavigatorIOS,
   TouchableHighlight,
   Image,
-  Animated
+  Animated,
+  Dimensions
 } from "react-native";
 import Home from "./Home";
 import Conversation from "./Conversation";
@@ -18,19 +19,6 @@ import FBSDK, { LoginButton, AccessToken } from "react-native-fbsdk";
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function seedWithUsers(count, database) {
-  fetch("https://randomuser.me/api/?results=" + count)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      responseJson.results.forEach(function(rando) {
-        database.ref("usersData").push({
-          name: capitalizeFirstLetter(rando.name.first) + " " + capitalizeFirstLetter(rando.name.last),
-          photoURL: rando.picture.thumbnail
-        });
-      });
-    });
 }
 
 class Login  extends Component {
@@ -73,17 +61,18 @@ class Login  extends Component {
     );
   }
 
+
   render() {
     return (
       <View>
         <View>
           <Animated.Image 
             style={{
-              width:  320 ,
+              width:  Dimensions.get('window').width/2,
               height:  220 ,
               position: "absolute",
               top: 110,
-              left: 30,
+              margin: Dimensions.get('window').width/4,
               transform: [                        // `transform` is an ordered array
                 {scale: this.state.bounceValue},  // Map `bounceValue` to `scale`
               ]
@@ -91,66 +80,53 @@ class Login  extends Component {
             resizeMode={"contain"}
             source={require("./images/logo.png")}
           />
-          <Text
-            style={{
-              color: "#2977B2",
-              backgroundColor: "rgba(0,0,0,0)",
-              fontSize:  42 ,
-              position: "absolute",
-              top: 340,
-              left: 140,
-              fontWeight: "normal",
-              fontFamily: "Avenir",
-            }}
-          >
-            musit
-          </Text>
         </View>
 
-        <LoginButton
-          style={styles.container}
-          publishPermissions={[]}
-          emailPermissions={["true"]}
-          onLogoutFinished={() => console.log("logout.")}
-          onLoginFinished={
-            (error, result) => {
-              if (error) {
-                alert("login has error: " + result.error);
-              } else if (result.isCancelled) {
-                alert("login is cancelled.");
-              } else {
-                AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    let firebase = this.props.firebase;
-                    let database = firebase.database();                    
-                    let credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
-                    firebase.auth().signInWithCredential(credential).then(function(user) { 
-                      database.ref("usersData").child(user.uid).once("value", function(snapshot) {
-                        let exists = (snapshot.val() !== null);
-                        if (!exists) {
-                          database.ref("usersData/" + user.uid).set({
-                            name: user.displayName,
-                            photoURL: user.photoURL,
-                          });
-                          seedWithUsers(50, database);
-                        }
+        <View style={styles.container}>
+          <LoginButton
+          style={{width: 300, height: 40}}
+            publishPermissions={[]}
+            emailPermissions={["true"]}
+            onLogoutFinished={() => console.log("logout.")}
+            onLoginFinished={
+              (error, result) => {
+                if (error) {
+                  alert("login has error: " + result.error);
+                } else if (result.isCancelled) {
+                  alert("login is cancelled.");
+                } else {
+                  AccessToken.getCurrentAccessToken().then(
+                    (data) => {
+                      let firebase = this.props.firebase;
+                      let database = firebase.database();                    
+                      let credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
+                      firebase.auth().signInWithCredential(credential).then((user) => { 
+                        database.ref("usersData").child(user.uid).once("value", (snapshot) => {
+                          let exists = (snapshot.val() !== null);
+                          if (!exists) {
+                            database.ref("usersData/" + user.uid).set({
+                              name: user.displayName,
+                              photoURL: user.photoURL,
+                            });
+                          }
+                          this.props.onSuccessfulLogin(); 
+                        });
+                      }, function(error) {
+                        // Handle Errors here.
+                        let errorCode = error.code;
+                        let errorMessage = error.message;
+                        // The email of the user's account used.
+                        let email = error.email;
+                        // The firebase.auth.AuthCredential type that was used.
+                        let credential = error.credential;
+                        // ...
                       });
-                    }, function(error) {
-                      // Handle Errors here.
-                      let errorCode = error.code;
-                      let errorMessage = error.message;
-                      // The email of the user's account used.
-                      let email = error.email;
-                      // The firebase.auth.AuthCredential type that was used.
-                      let credential = error.credential;
-                      // ...
-                    });
-//                     firebase.ref('\')
-                  }
-                ).then(() => this.props.onSuccessfulLogin());
-              }
-            }}
-        />
+                    }
+                  )
+                }
+              }}
+          />
+        </View>
       </View>
     );
   }
@@ -158,11 +134,11 @@ class Login  extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: 240, 
+    width: Dimensions.width, 
     height: 40,
-    position: "absolute",
-    top: 490,
-    left: 65
+    flexDirection: 'row',
+    top: 550,
+    justifyContent: 'center'
   }
 });
 
