@@ -63,12 +63,6 @@ class ConversationRow extends Component {
       trackName = trackName.substring(0, 30);
       trackName += "..."; 
     }
-    let name = this.props.name; 
-    if(name.length > 1) {
-      name = name.split(",");
-      let length = name.length - 1;
-      name[0] += " + " + length + " others"; 
-    }
     console.log(this.props); 
     return (
       <TouchableHighlight 

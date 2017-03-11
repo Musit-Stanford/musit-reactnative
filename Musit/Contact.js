@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  Keyboard,
   Text,
 } from 'react-native'
 import Friend from './Friend' 
@@ -75,6 +76,7 @@ class Contact extends Component {
   
   pressHandler() {
     if(!this.props.parent.state.discover) {
+      Keyboard.dismiss(); 
       let receipients = this.props.parent.state.recepients; 
       this.checkForExistentConversation(this.props); 
       receipients.push({ name: this.props.name, id: this.props.id });

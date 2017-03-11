@@ -625,16 +625,16 @@ renderMessageText(props) {
     if(!this.state.new) {
       if(this.props.name) {
         prompt = this.props.name; 
+        let name = this.props.name; 
+        nameOutput = name;
+        console.log(name.length);
+        if(name.length > 50) {
+          name = name.split(",");
+          let length = name.length - 1;
+          name[0] += " + " + length + " others"; 
+          nameOutput = name[0];
+        }
       }
-    }
-    let name = this.props.name; 
-    nameOutput = name;
-    console.log(name.length);
-    if(name.length > 50) {
-      name = name.split(",");
-      let length = name.length - 1;
-      name[0] += " + " + length + " others"; 
-      nameOutput = name[0];
     }
     return (
       <View style={styles.container}>

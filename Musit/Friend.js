@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
   footer: {
     height: 50,
     position: 'absolute',
-    width: 375,
-    top: 605,
+    width: Dimensions.get('window').width,
+    top: Dimensions.get('window').height - 62,
     marginTop: 12,
     backgroundColor: '#2977B2'
   },
