@@ -183,9 +183,9 @@ class Friend extends Component {
           style={styles.footer}
           onPress={() => {this.props.navigator.push({
                 component: Conversation,
-                passProps: { new: true, firebase: this.props.firebase },
+                passProps: { user: this.props.id, name: this.props.name, selected: true, new: true, firebase: this.props.firebase },
                 tintColor: '#2977B2',
-                title: require('./images/recommendation@3x.png'),
+                titleImage: require('./images/recommendation@3x.png'),
                 backButtonTitle: ' '
               })}}
           >
