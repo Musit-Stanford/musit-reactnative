@@ -175,6 +175,13 @@ class Conversation extends Component {
         recepients: receipients
       });      
     }
+    if(this.props.selected) {
+      let receipients = [];
+      receipients.push({ name: this.props.name, id: this.props.user }); 
+      this.setState({
+        recepients: receipients
+      });
+    }
     this.commas(); 
   }
   
@@ -622,7 +629,8 @@ renderMessageText(props) {
   render() {
     let data = this.state.userSource;
     let prompt;
-    if(!this.state.new) {
+    console.log(this.props); 
+    if(this.props.selected || !this.state.new) {
       if(this.props.name) {
         prompt = this.props.name; 
         let name = this.props.name; 
@@ -638,7 +646,7 @@ renderMessageText(props) {
     }
     return (
       <View style={styles.container}>
-          {this.props.new ? (
+          {(this.props.new && !this.props.selected) ? (
             <View style={styles.directory}>  
               <Text
                 style={styles.directoryText}>
