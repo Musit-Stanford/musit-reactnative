@@ -244,6 +244,7 @@ class Conversation extends Component {
     let message = {
       _id: Math.round(Math.random() * 1000000),
       text: this.state.input,
+      timestamp: Date.now(),
       createdAt: new Date(),
       user: {
         _id: this.props.firebase.auth().currentUser.uid,

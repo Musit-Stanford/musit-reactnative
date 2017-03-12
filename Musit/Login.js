@@ -10,7 +10,8 @@ import {
   TouchableHighlight,
   Image,
   Animated,
-  Dimensions
+  Dimensions,
+  Platform
 } from "react-native";
 import Home from "./Home";
 import Conversation from "./Conversation";
@@ -40,12 +41,14 @@ class Login  extends Component {
     });
   }
 
-  componentDidMount() {
-    console.log('here');
+  subscribeToNotifications() {
     FCM.requestPermissions(); // for iOS
     FCM.getFCMToken().then(token => {
-        console.log(token)
-        // store fcm token in your server
+      let firebase = this.props.firebase;
+      let database = firebase.database(); 
+      let updates = {}
+      updates["usersData/" + firebase.auth().currentUser.uid + "/registrationToken"] = token
+      database.ref().update(updates);
     });
     this.notificationListener = FCM.on(FCMEvent.Notification, async (notif) => {
         // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
@@ -74,10 +77,16 @@ class Login  extends Component {
           }
         }
     });
-    this.refreshTokenListener = FCM.on(FCMEvent.RefreshToken, (token) => {
-        
+    FCM.on(FCMEvent.RefreshToken, (token) => {
+      let firebase = this.props.firebase;
+      let database = firebase.database(); 
+      let updates = {}
+      updates["usersData/" + firebase.auth().currentUser.uid + "/registrationToken"] = token
+      database.ref().update(updates);
     });
+  }
 
+  componentDidMount() {
     this.state.bounceValue.setValue(1.5);     // Start large
     Animated.spring(                          // Base: spring, decay, timing
       this.state.bounceValue,                 // Animate `bounceValue`
@@ -93,7 +102,10 @@ class Login  extends Component {
             let firebase = this.props.firebase;
             let database = firebase.database();                    
             let credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
-            firebase.auth().signInWithCredential(credential).then(this.props.onSuccessfulLogin);
+            firebase.auth().signInWithCredential(credential).then(() => {
+              this.subscribeToNotifications();
+              this.props.onSuccessfulLogin();
+            });
           }
         }
       }
@@ -146,9 +158,11 @@ class Login  extends Component {
                             database.ref("usersData/" + user.uid).set({
                               name: user.displayName,
                               photoURL: user.photoURL,
+                            }).then(() => {
+                              this.subscribeToNotifications();
+                              this.props.onSuccessfulLogin(); 
                             });
                           }
-                          this.props.onSuccessfulLogin(); 
                         });
                       }, function(error) {
                         // Handle Errors here.
