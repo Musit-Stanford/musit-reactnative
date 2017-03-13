@@ -1,3 +1,5 @@
+# watchman
+.watch*
 # OSX
 #
 .DS_Store
