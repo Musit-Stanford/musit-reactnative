@@ -783,7 +783,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 2B7HJ7PQVC;
+						DevelopmentTeam = 5GE82NA3EZ;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1372,7 +1372,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 2B7HJ7PQVC;
+				DEVELOPMENT_TEAM = 5GE82NA3EZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"~/Documents/FacebookSDK",
 					"$(inherited)",
@@ -1416,7 +1416,7 @@
 				CODE_SIGN_ENTITLEMENTS = Musit/Musit.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2B7HJ7PQVC;
+				DEVELOPMENT_TEAM = 5GE82NA3EZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"~/Documents/FacebookSDK",
 					"$(inherited)",

@@ -135,7 +135,7 @@ class Conversation extends Component {
       enteringNames: false, 
       message: '', 
       userPhoto: this.props.firebase.auth().currentUser.photoURL,
-      guide: props.prepopulatedMessage === undefined ? '  Search Spotify for Track...' : 'Enter a message...',
+      guide: props.prepopulatedMessage === undefined ? '  Search for a track...' : 'Enter a message...',
       editing: false, 
       spotifyResults: ds.cloneWithRows([]),
       soundCloudResults: ds.cloneWithRows([]),
@@ -495,6 +495,7 @@ renderMessageText(props) {
             marginLeft: 10,
             color: 'black',
           }}
+          returnKeyType='send'
           ref='recSpace'
           onSubmitEditing={() => {this.parent.onSend()}}
           placeholder={this.parent.state.guide}
