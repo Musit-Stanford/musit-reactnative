@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableHighlight } from 'react-native';
 import DisplayRecommendation from './DisplayRecommendation'
 import Conversation from './Conversation'
 
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
   trackName: {
     fontSize: 18,
     letterSpacing: 0.5, 
-    width: 250,
     marginBottom: 2,
     fontFamily: 'Avenir',
   },

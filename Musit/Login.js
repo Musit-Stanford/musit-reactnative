@@ -115,71 +115,65 @@ class Login  extends Component {
 
   render() {
     return (
-      <View>
-        <View>
-          <Animated.Image 
-            style={{
-              width:  Dimensions.get('window').width/2,
-              height:  220 ,
-              position: "absolute",
-              top: 110,
-              margin: Dimensions.get('window').width/4,
-              transform: [                        // `transform` is an ordered array
-                {scale: this.state.bounceValue},  // Map `bounceValue` to `scale`
-              ]
-            }}
-            resizeMode={"contain"}
-            source={require("./images/logo.png")}
-          />
-        </View>
+      <View style={styles.holder}>
+        <Animated.Image 
+          style={{
+            width:  Dimensions.get('window').width/2,
+            height:  220 ,
+            margin: Dimensions.get('window').width/4,
+            transform: [                        // `transform` is an ordered array
+              {scale: this.state.bounceValue},  // Map `bounceValue` to `scale`
+            ]
+          }}
+          resizeMode={"contain"}
+          source={require("./images/logo.png")}
+        />
 
-        <View style={styles.container}>
-          <LoginButton
-          style={{width: 300, height: 40}}
-            publishPermissions={[]}
-            emailPermissions={["true"]}
-            onLogoutFinished={() => console.log("logout.")}
-            onLoginFinished={
-              (error, result) => {
-                if (error) {
-                  alert("login has error: " + result.error);
-                } else if (result.isCancelled) {
-                  alert("login is cancelled.");
-                } else {
-                  AccessToken.getCurrentAccessToken().then(
-                    (data) => {
-                      let firebase = this.props.firebase;
-                      let database = firebase.database();                    
-                      let credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
-                      firebase.auth().signInWithCredential(credential).then((user) => { 
-                        database.ref("usersData").child(user.uid).once("value", (snapshot) => {
-                          let exists = (snapshot.val() !== null);
-                          if (!exists) {
-                            database.ref("usersData/" + user.uid).set({
-                              name: user.displayName,
-                              photoURL: user.photoURL,
-                            }).then(() => {
-                              this.subscribeToNotifications();
-                              this.props.onSuccessfulLogin(); 
-                            });
-                          }
-                        });
-                      }, function(error) {
-                        // Handle Errors here.
-                        let errorCode = error.code;
-                        let errorMessage = error.message;
-                        // The email of the user's account used.
-                        let email = error.email;
-                        // The firebase.auth.AuthCredential type that was used.
-                        let credential = error.credential;
-                        // ...
+        <LoginButton
+        style={{width: (2*Dimensions.get('window').width)/3, height: 40}}
+          publishPermissions={[]}
+          emailPermissions={["true"]}
+          onLogoutFinished={() => console.log("logout.")}
+          onLoginFinished={
+            (error, result) => {
+              if (error) {
+                alert("login has error: " + result.error);
+              } else if (result.isCancelled) {
+                alert("login is cancelled.");
+              } else {
+                AccessToken.getCurrentAccessToken().then(
+                  (data) => {
+                    let firebase = this.props.firebase;
+                    let database = firebase.database();                    
+                    let credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken.toString());
+                    firebase.auth().signInWithCredential(credential).then((user) => { 
+                      database.ref("usersData").child(user.uid).once("value", (snapshot) => {
+                        let exists = (snapshot.val() !== null);
+                        if (!exists) {
+                          database.ref("usersData/" + user.uid).set({
+                            name: user.displayName,
+                            photoURL: user.photoURL,
+                          }).then(() => {
+                            this.subscribeToNotifications();
+                            this.props.onSuccessfulLogin(); 
+                          });
+                        }
                       });
-                    }
-                  )
-                }
-              }}
-          />
-        </View>
+                    }, function(error) {
+                      // Handle Errors here.
+                      let errorCode = error.code;
+                      let errorMessage = error.message;
+                      // The email of the user's account used.
+                      let email = error.email;
+                      // The firebase.auth.AuthCredential type that was used.
+                      let credential = error.credential;
+                      // ...
+                    });
+                  }
+                )
+              }
+            }}
+        />
       </View>
     );
   }
@@ -190,8 +184,12 @@ const styles = StyleSheet.create({
     width: Dimensions.width, 
     height: 40,
     flexDirection: 'row',
-    top: 550,
     justifyContent: 'center'
+  },
+  holder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });
 

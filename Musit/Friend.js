@@ -196,7 +196,8 @@ class Friend extends Component {
                 letterSpacing: 0.4,
                 fontFamily: "Avenir",
                 marginTop: 15,
-                marginLeft: 100,
+                width: Dimensions.get('window').width, 
+                textAlign: 'center'
               }}>
               Send Recommendation
             </Text>

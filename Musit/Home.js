@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   separator: {
-    width: 320,
+    width: Dimensions.get('window').width - 60,
     marginLeft: 30,
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#CACACA',
@@ -370,7 +370,8 @@ class Home extends Component {
                 letterSpacing: 0.4,
                 fontFamily: "Avenir",
                 marginTop: 15,
-                marginLeft: 120,
+                width: Dimensions.get('window').width,
+                textAlign:'center'
               }}>
               New Conversation
             </Text>
