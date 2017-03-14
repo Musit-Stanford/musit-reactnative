@@ -85,7 +85,7 @@ class Home extends Component {
         messages: [],
         messagesDataSource: ds.cloneWithRows([]),
         usersMap: {"placeholder": "Kek"},
-        loadingInitial: true,
+        loadingInitial: false,
         isRefreshing: false
     };
   }
@@ -121,6 +121,11 @@ class Home extends Component {
     let conversations = [];
     database.ref(currentUsersDataPath + "conversations/").once("value")
     .then((conversationKeySnapshot) => { // .val() always returns an object with conversation keys as keys.
+      this.setState((previousState) => {
+        return {
+          loadingInitial: true,
+        };
+      });
       let allOfMyConversationKeys = Object.keys(conversationKeySnapshot.val());
       let promises = [];
       for (var i = allOfMyConversationKeys.length - 1; i >= 0; i--) {
