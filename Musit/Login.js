@@ -157,6 +157,9 @@ class Login  extends Component {
                             this.subscribeToNotifications();
                             this.props.onSuccessfulLogin(); 
                           });
+                        } else {
+                          this.subscribeToNotifications();
+                          this.props.onSuccessfulLogin(); 
                         }
                       });
                     }, function(error) {
