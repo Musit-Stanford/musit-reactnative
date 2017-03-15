@@ -111,7 +111,6 @@ class Conversation extends Component {
     super(props)
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     var users = [];
-    console.log(this.props); 
     this.state = {
       ds: ds,
       allUsers: [],
@@ -157,10 +156,12 @@ class Conversation extends Component {
   componentWillMount() {
     if(!this.props.new) {
       let receipients = [];
-      receipients.push({ name: this.props.userName, id: this.props.id }); 
+      Object.keys(this.props.users).forEach(function(key,index) {
+          receipients.push({ id: key });
+      });
       this.setState({
         recepients: receipients
-      });      
+      });  
     }
     if(this.props.selected) {
       let receipients = [];
@@ -214,7 +215,6 @@ class Conversation extends Component {
   }
 
   subscribeRecepients(messageId, senderId) {
-    console.log("here"); 
     var database = this.props.firebase.database();
     var recepients = this.state.recepients; 
     var usersDataPath = "/usersData/";
@@ -437,7 +437,6 @@ renderMessageText(props) {
   commas() {
     if(this.props.new) {
       if(this.state.recepients.length >= 1) {
-        console.log(this.state.recepients);
         this.refs.names.setNativeProps({text: ''});
         let val = this.state.recepients[0].name + ", ";
         for(let i = 1; i < this.state.recepients.length; i++) {
@@ -619,7 +618,6 @@ renderMessageText(props) {
   render() {
     let data = this.state.userSource;
     let prompt;
-    console.log(this.props); 
     if(this.props.selected || !this.state.new) {
       if(this.props.name) {
         prompt = this.props.name; 

@@ -93,15 +93,29 @@ class Friend extends Component {
     database.ref("usersData/" + this.props.id + "/messageList").on("child_added", (messageKeySnapshot, previousKey) => {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
         var message = messageDataSnapshot.val();
-        message.id = messageDataSnapshot.key;
-        this.setState((previousState) => {
-          var newMessages = [message];
-          newMessages.push(...previousState.messages)
-          return {
-            messages: newMessages,
-            messagesDataSource: this.state.ds.cloneWithRows(newMessages)
-          };
-        });
+        if(this.props.me) {
+          if(userId != message.userId) {
+            message.id = messageDataSnapshot.key;
+            this.setState((previousState) => {
+              var newMessages = [message];
+              newMessages.push(...previousState.messages)
+              return {
+                messages: newMessages,
+                messagesDataSource: this.state.ds.cloneWithRows(newMessages)
+              };
+            });
+          }
+        } else {          
+          message.id = messageDataSnapshot.key;
+          this.setState((previousState) => {
+            var newMessages = [message];
+            newMessages.push(...previousState.messages)
+            return {
+              messages: newMessages,
+              messagesDataSource: this.state.ds.cloneWithRows(newMessages)
+            };
+          });
+        }
       });
     });
   }
@@ -159,7 +173,7 @@ class Friend extends Component {
          barStyle="light-content"
         />
         <Swiper showsButtons={false} renderPagination={(index, total, context) => this.renderPagination(index, total, context)}>
-          <ScrollView style={{height: 200, marginTop: 115}}>
+          <ScrollView style={{height: 200, marginTop: 115, marginBottom: 50}}>
             <ListView
               enableEmptySections={true}
               dataSource={this.state.sentDataSource}
@@ -168,7 +182,7 @@ class Friend extends Component {
               renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
             />
           </ScrollView>
-          <ScrollView style={{height: 200, marginTop: 115}}>
+          <ScrollView style={{height: 200, marginTop: 115, marginBottom: 50}}>
             <ListView
               enableEmptySections={true}
               dataSource={this.state.messagesDataSource}
