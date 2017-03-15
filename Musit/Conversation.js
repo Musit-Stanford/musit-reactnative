@@ -475,7 +475,7 @@ renderMessageText(props) {
         <TextInput
           style={{
             height: 45,
-            width: width,
+            width: (2*width)/3,
             fontFamily: 'Avenir',
             position: 'absolute',
             backgroundColor: 'rgba(0,0,0,0)',
@@ -495,14 +495,14 @@ renderMessageText(props) {
           style={{
             height: 45,
             right: 0,
-            width: width/2.5,
+            width: width/3,
             marginLeft: 10,
             backgroundColor: 'rgba(0,0,0,0)',
             position: 'absolute',
           }}
           onPress={() => {this.parent.removeRec()}}
           activeOpacity={75 / 100}>
-          <Text style={{color:'#0076FF', fontFamily: 'Avenir', fontSize: 14, marginTop: 14, marginLeft:85}}>Remove</Text>
+          <Text style={{color:'#0076FF', fontFamily: 'Avenir', fontSize: 14, marginTop: 14, marginLeft:65}}>Remove</Text>
           {this.parent.state.rec ? (
           <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
             height: 30,
@@ -511,7 +511,7 @@ renderMessageText(props) {
             position: 'absolute',
             top: 7,
             left: 5,
-            marginLeft: 40}} />):(null)}
+            marginLeft: 20}} />):(null)}
         </TouchableOpacity>):(null)}
       </View>
     );
