@@ -10,6 +10,7 @@ import {
   NativeModules,
   TouchableOpacity,
   Linking,
+  NavigatorIOS,
 } from 'react-native'
 import Contact from './Contact'
 import Result from './Result'
@@ -20,6 +21,7 @@ var ScrollableTabView = require('react-native-scrollable-tab-view');
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 65,
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -29,44 +31,33 @@ const styles = StyleSheet.create({
     color: 'gray'
   },
   directory: {
-    flex: 0.2,
+    height: 45,
     flexDirection: 'row',
-    width: Dimensions.get('window').width,
-    height: 40,
     backgroundColor: '#F4F4F4',
   },
-  directoryText: {
-    color: 'black',
-    fontSize: 12,
-    fontWeight: 'normal',
-    fontFamily: 'Avenir',
-    marginTop: 80,
-    marginLeft: 16,
-  },
-  userTitle: {
+  directoryText: {    
+    backgroundColor: 'transparent',
+    marginTop: 12,
     color: 'black',
     fontSize: 14,
     fontWeight: 'normal',
     fontFamily: 'Avenir',
-    marginTop: 79, 
-    marginLeft: 6
+    marginLeft: 16,
   },
   userEntry: {  
-    height: 20, 
     width:  200 ,
     fontFamily: 'Avenir',
     fontSize: 14,
-    marginTop: 78,
     marginLeft: 6,
     color: 'black'
   },
   knownUsers: {  
+    marginTop: 12,
     height: 20, 
     width: Dimensions.get('window').width,
     fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'center',
-    marginTop: 78,
     color: '#0073F9'
   },
   photo: {
@@ -182,6 +173,7 @@ class Conversation extends Component {
   }
   
   componentDidMount() {
+    console.log(NavigatorIOS);
     if(this.refs.recSpace) {
       this.refs.recSpace.focus(); 
     }
@@ -645,11 +637,9 @@ renderMessageText(props) {
     return (
       <View style={styles.container}>
           {(this.props.new && !this.props.selected) ? (
-            <View style={styles.directory}>  
-              <Text
-                style={styles.directoryText}>
-                To:           
-              </Text> 
+
+            <View style={styles.directory}>
+              <Text style={styles.directoryText}>To:</Text>
               <TextInput
                 ref='names'
                 multi={false}
@@ -660,8 +650,9 @@ renderMessageText(props) {
                 onChangeText={(text) => this.addRecepients(text)}
                 onSubmitEditing={() => this.submitText()}
                 value={(this.state && this.state.text) || prompt}
-              />
-            </View>) : (
+              />                 
+            </View>
+            ) : (
               <View style={styles.directory}>   
                 <Text
                   style={styles.knownUsers}>
