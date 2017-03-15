@@ -284,6 +284,7 @@ class Home extends Component {
             </TouchableOpacity>
         </View>
         <ScrollView 
+          automaticallyAdjustContentInsets={false}
           style={{height: Dimensions.get('window').height - 305, marginTop: 10}}
           refreshControl={
             <RefreshControl

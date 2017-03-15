@@ -69,10 +69,6 @@ const styles = StyleSheet.create({
     marginTop: 78,
     color: '#0073F9'
   },
-  recommendList: {
-    position: 'absolute',
-    top: -100,
-  },
   photo: {
     height: 55,
     width: 55,

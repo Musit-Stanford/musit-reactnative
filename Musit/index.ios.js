@@ -37,14 +37,11 @@ export default class Musit extends React.Component {
   }
 
   _navigateToHome() {
-    this.refs.nav.replace({
+    this.refs.nav.push({
       component: Home, 
       titleImage: require('./images/musit.png'),
-      backButtonTitle: ' ',
-      rightButtonTitle: ' ',
       titleTextColor: '#2977B2',
       tintColor: 'rgba(0,0,0,0)',
-      onLeftButtonPress: () => this._navigateToProfile(),
       passProps: { firebase: firebase }
     }); 
   }
