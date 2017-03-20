@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Linking,
   NavigatorIOS,
+  Alert,
 } from 'react-native'
 import Contact from './Contact'
 import Result from './Result'
@@ -228,6 +229,10 @@ class Conversation extends Component {
   }
   
   onSend(messages = []) {
+    if (this.state.rec === undefined || this.state.rec === {}) { // No rec was chosen
+      Alert.alert('No song selected', "Don't be shy, they want a recommendation too :)");
+      return;
+    }
     console.log(this.state.userPhoto); 
     let message = {
       _id: Math.round(Math.random() * 1000000),
@@ -348,7 +353,7 @@ renderMessageText(props) {
   
   onDonePressSong() {
     this.refs.recSpace.value = ''; 
-    this.setState({enteringNames: false, editing: true, recChosen: true});
+    this.setState({enteringNames: false, editing: true});
   }
 
 
