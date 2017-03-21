@@ -121,6 +121,10 @@ class Home extends Component {
     let conversations = [];
     database.ref(currentUsersDataPath + "conversations/").once("value")
     .then((conversationKeySnapshot) => { // .val() always returns an object with conversation keys as keys.
+      var exists = (conversationKeySnapshot.val() !== null);
+      if (!exists) {
+        return;
+      }
       this.setState((previousState) => {
         return {
           loadingInitial: true,
