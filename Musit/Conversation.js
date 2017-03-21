@@ -126,6 +126,7 @@ class Conversation extends Component {
       editing: false, 
       spotifyResults: ds.cloneWithRows([]),
       soundCloudResults: ds.cloneWithRows([]),
+      YouTubeResults: ds.cloneWithRows([]),
       userSource: ds.cloneWithRows([]),
       recommendation: {}, 
       rec: props.prepopulatedMessage === undefined ? undefined : props.prepopulatedMessage,
@@ -373,9 +374,16 @@ renderMessageText(props) {
 
     var url = "https://api.spotify.com/v1/search?q=" + query.text + "&type=track";
     var spotifyResponse = fetch(url).then((response) => response.json())
+    
+    var googleAPIKey = 'AIzaSyCpLgHV2G4wcwNN3zkEdQWf9L_3HTJYpnY';
+    var youtubeURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + googleAPIKey + '&q=' + query.text;
+    var youtubeResponse = fetch(youtubeURL).then((response) => response.json())
+
     var mergedTracks = []
     const placeholderImage = "https://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/032013/soundcloud_logo_0.png?itok=xO8Oaxwr"
-    Promise.all([soundCloudResponse, spotifyResponse]).then(values => {
+
+
+    Promise.all([soundCloudResponse, spotifyResponse, youtubeResponse]).then(values => {
       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1._id !== r2._id});
       // SoundCloud
       var soundCloudTracks = values[0];
@@ -390,10 +398,25 @@ renderMessageText(props) {
         track.external_urls = {}
         track.external_urls.spotify = track.permalink_url
       })
+
       var spotifyTracks = values[1].tracks.items;
+
+      var youtubeTracks = values[2].items;
+      youtubeTracks.map(function(track){
+        track.album = {};
+        track.album.images = [{}];
+        track.album.images[0].url = track.snippet.thumbnails.default.url;
+        track.name = track.snippet.title;
+        track.artists = [{}];
+        track.artists[0].name = track.snippet.channelTitle;
+        track._id = track.id.videoId
+        track.external_urls = {}
+        track.external_urls.spotify = 'https://www.youtube.com/watch?v=' + track.id.videoId;
+      })
       this.setState({
         spotifyResults: ds.cloneWithRows(spotifyTracks),
-        soundCloudResults: ds.cloneWithRows(soundCloudTracks)
+        soundCloudResults: ds.cloneWithRows(soundCloudTracks),
+        YouTubeResults: ds.cloneWithRows(youtubeTracks)
       })
     })
   }
@@ -594,6 +617,7 @@ renderMessageText(props) {
     if(this.parent.state.recChosen || this.parent.state.start) return null; 
     let spotifyData = this.parent.state.spotifyResults;
     let soundCloudData = this.parent.state.soundCloudResults;
+    let YouTubeData = this.parent.state.YouTubeResults;
     return(
       <ScrollableTabView tabBarActiveTextColor={'#2977B2'} tabBarUnderlineStyle={{backgroundColor:'#2977B2'}} tabBarTextStyle={{fontFamily: 'Avenir'}} tabBarInactiveTextColor={'#bdc3c7'} style={{height: 215}} locked={true} contentProps={{keyboardShouldPersistTaps:"always"}}>
         <View tabLabel="Spotify">
@@ -612,6 +636,16 @@ renderMessageText(props) {
             style={{ backgroundColor: '#FBFBFB' }}
             enableEmptySections={true}
             dataSource={soundCloudData}
+            renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
+            scrollEnabled={true}
+        />
+        </View>
+        <View tabLabel="YouTube">
+          <ListView
+            keyboardShouldPersistTaps="always"
+            style={{ backgroundColor: '#FBFBFB' }}
+            enableEmptySections={true}
+            dataSource={YouTubeData}
             renderRow={(data, sectionID, rowID) => <Result {...data} row={rowID} parent={this.parent} navigator={this.parent.props.navigator} onDonePress={() => this.onDonePressSong()}/>}
             scrollEnabled={true}
         />
