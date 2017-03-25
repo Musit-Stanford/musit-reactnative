@@ -56,8 +56,8 @@ class Result extends Component {
   
   render () {
     let uri = '';
-    if(this.props.album.images[0].url !== undefined) {
-      uri = this.props.album.images[0].url;
+    if(this.props.image !== undefined) {
+      uri = this.props.image;
     }
 
     return (
@@ -68,10 +68,10 @@ class Result extends Component {
         <Image source={{ uri: uri }} style={styles.photo} />
         <View style={{ flexDirection: 'column' }}>
           <Text style={styles.trackName}>
-            {`${this.props.name}`}
+            {`${this.props.track}`}
           </Text>
           <Text style={styles.artistName}>
-            {`${this.props.artists[0].name}`}
+            {`${this.props.artist}`}
           </Text>
         </View>
       </TouchableOpacity>

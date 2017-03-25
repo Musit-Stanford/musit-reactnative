@@ -12,6 +12,7 @@ import {
   Linking,
   NavigatorIOS,
   Alert,
+  ActionSheetIOS
 } from 'react-native'
 import Contact from './Contact'
 import Result from './Result'
@@ -101,6 +102,17 @@ function getMergedArray(arr1, arr2) {
   }
   return mergedArray.reverse();
 }
+
+var BUTTONS = [
+  'What a classic!',
+  "It's lit!",
+  'Forward',
+  'Cancel',
+];
+var CLASSIC_INDEX = 0;
+var LIT_INDEX = 1;
+var FORWARD_INDEX = 2;
+var CANCEL_INDEX = 3;
 
 class Conversation extends Component {
 
@@ -244,10 +256,10 @@ class Conversation extends Component {
         _id: this.props.firebase.auth().currentUser.uid,
         avatar: this.state.userPhoto
       },
-      image: this.state.rec.album.images[0].url,
-      track: this.state.rec.name,
-      artist: this.state.rec.artists[0].name,
-      url: this.state.rec.external_urls.spotify
+      image: this.state.rec.image,
+      track: this.state.rec.track,
+      artist: this.state.rec.artist,
+      url: this.state.rec.url
     }
     let result = []
     result.push(message); 
@@ -382,36 +394,41 @@ renderMessageText(props) {
     var mergedTracks = []
     const placeholderImage = "https://www.brandsoftheworld.com/sites/default/files/styles/logo-thumbnail/public/032013/soundcloud_logo_0.png?itok=xO8Oaxwr"
 
+    // What a song needs to look like
+    var song = {
+      artist: "Chance The Rapper",
+      track: "No Problems",
+      image: "https://.com",
+      url: "https://open.spotify.com" ,
+      _id: "Don't know if I actually need this..."
+    }
 
     Promise.all([soundCloudResponse, spotifyResponse, youtubeResponse]).then(values => {
       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1._id !== r2._id});
       // SoundCloud
       var soundCloudTracks = values[0];
       soundCloudTracks.map(function(track){
-        track.album = {};
-        track.album.images = [{}];
-        track.album.images[0].url = track.artwork_url === null ? placeholderImage : track.artwork_url;
-        track.name = track.title;
-        track.artists = [{}];
-        track.artists[0].name = track.user.username;
-        track._id = track.id
-        track.external_urls = {}
-        track.external_urls.spotify = track.permalink_url
+        track.image = track.artwork_url === null ? placeholderImage : track.artwork_url;
+        track.track = track.title;
+        track.artist = track.user.username;
+        track.url = track.permalink_url;
+        track._id = track.id;
       })
 
       var spotifyTracks = values[1].tracks.items;
-
+      spotifyTracks.map(function(track) {
+        track.image = track.album.images[0].url;
+        track.track = track.name;
+        track.artist = track.artists[0].name;
+        track.url = track.external_urls.spotify;
+      })
       var youtubeTracks = values[2].items;
       youtubeTracks.map(function(track){
-        track.album = {};
-        track.album.images = [{}];
-        track.album.images[0].url = track.snippet.thumbnails.default.url;
-        track.name = track.snippet.title;
-        track.artists = [{}];
-        track.artists[0].name = track.snippet.channelTitle;
+        track.image = track.snippet.thumbnails.default.url;
+        track.track = track.snippet.title;
+        track.artist = track.snippet.channelTitle;
+        track.url = 'https://www.youtube.com/watch?v=' + track.id.videoId;
         track._id = track.id.videoId
-        track.external_urls = {}
-        track.external_urls.spotify = 'https://www.youtube.com/watch?v=' + track.id.videoId;
       })
       this.setState({
         spotifyResults: ds.cloneWithRows(spotifyTracks),
@@ -487,10 +504,10 @@ renderMessageText(props) {
         onPress={() => {this.removeRec()}}
         activeOpacity={75 / 100}>
         <Text style={{color:'white', fontFamily: 'Avenir', fontSize: 14, marginTop: 30, marginLeft: 15}}>X</Text>
-        <Image source={{ uri: this.state.rec.album.images[0].url }} style={styles.photo} />
+        <Image source={{ uri: this.state.rec.image }} style={styles.photo} />
         <View style={{ flexDirection:'column' }}>
-          <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 20, fontSize: 18 }}>{this.state.rec.name}</Text>
-          <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 4, fontSize: 12 }}>{this.state.rec.artists[0].name}</Text>
+          <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 20, fontSize: 18 }}>{this.state.rec.track}</Text>
+          <Text style={{ backgroundColor: 'rgba(0,0,0,0)', fontFamily:'Avenir', color:'white', marginLeft: 85, marginTop: 4, fontSize: 12 }}>{this.state.rec.artist}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -532,7 +549,7 @@ renderMessageText(props) {
           activeOpacity={75 / 100}>
           <Text style={{color:'#0076FF', fontFamily: 'Avenir', fontSize: 14, marginTop: 14, marginLeft:65}}>Remove</Text>
           {this.parent.state.rec ? (
-          <Image source={{ uri: this.parent.state.rec.album.images[0].url }} style={{ 
+          <Image source={{ uri: this.parent.state.rec.image }} style={{ 
             height: 30,
             width: 30,
             borderRadius: 5,
@@ -544,6 +561,27 @@ renderMessageText(props) {
       </View>
     );
   }
+
+  showActionSheet(message) {
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: BUTTONS,
+      cancelButtonIndex: CANCEL_INDEX,
+    },
+    (buttonIndex) => {
+      switch(buttonIndex) {
+        case LIT_INDEX:
+          console.log("LIT");
+          break;
+        case CLASSIC_INDEX:
+          console.log("CLASSIC");
+          break;
+        case FORWARD_INDEX:
+          this.forwardTrack(message);
+        default:
+          break;
+      }
+    });
+  };
   
   renderMessageImage(props) {
     const message = props.currentMessage;
@@ -559,7 +597,8 @@ renderMessageText(props) {
       <TouchableOpacity
         activeOpacity={75 / 100}
         style={{ flexDirection: 'row' }}
-        onPress={() => this.parent.openTrack(uri)}>
+        onPress={() => this.parent.openTrack(uri)}
+        onLongPress={() => {this.parent.showActionSheet(props.currentMessage)}}>
         <Image 
           style={{
             width: 60,
