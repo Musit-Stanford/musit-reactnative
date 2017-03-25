@@ -77,7 +77,17 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flex: 1,
-  }
+  },
+  reactionLabel: {
+    textAlign: 'right',
+    color: 'white',
+    backgroundColor: 'rgba(255,255,255,.1)',
+    fontSize: 12,
+    marginRight: 10,
+    fontWeight: 'normal',
+    fontFamily: 'Avenir',
+  }, 
+  reactionContainer: {}
 });
 
 function getMergedArray(arr1, arr2) {
@@ -562,7 +572,20 @@ renderMessageText(props) {
     );
   }
 
+  sendReaction(user, reaction, messageId) {
+    let database = this.props.firebase.database();
+    let reactionRef = database.ref("/messages/" + messageId + "/reactions");
+    reactionRef.push({
+      user: user,
+      reaction: reaction,
+      timestamp: Date.now(),
+      createdAt: new Date()
+    })
+  }
+
   showActionSheet(message) {
+    let user = this.props.firebase.auth().currentUser.displayName;
+    let messageId = message.id;
     ActionSheetIOS.showActionSheetWithOptions({
       options: BUTTONS,
       cancelButtonIndex: CANCEL_INDEX,
@@ -570,10 +593,10 @@ renderMessageText(props) {
     (buttonIndex) => {
       switch(buttonIndex) {
         case LIT_INDEX:
-          console.log("LIT");
+          this.sendReaction(user, BUTTONS[LIT_INDEX], messageId);
           break;
         case CLASSIC_INDEX:
-          console.log("CLASSIC");
+          this.sendReaction(user, BUTTONS[LIT_INDEX], messageId);
           break;
         case FORWARD_INDEX:
           this.forwardTrack(message);
@@ -631,6 +654,7 @@ renderMessageText(props) {
             }}>
             {artist}
           </Text>
+          <ReactionList reactions={message.reactions}/>
         </View>
       </TouchableOpacity>
     );
@@ -765,6 +789,34 @@ renderMessageText(props) {
           )}
       </View>
     )
+  }
+}
+
+class Reaction extends Component {
+  render() {
+    return (
+      <Text style={styles.reactionLabel}>{this.props.user}: {this.props.reaction}</Text>
+    );
+  }
+}
+
+class ReactionList extends Component {
+  render() {
+    var reactions = [];
+    var lastCategory = null;
+    if (this.props.reactions === undefined) {
+      reactions.push(<Text>No Reactions yet!</Text>)
+    } else {
+      Object.keys(this.props.reactions).forEach((reactionKey) => {
+        var reaction = this.props.reactions[reactionKey];
+        reactions.push(<Reaction user={reaction.user} reaction={reaction.reaction} key={reactionKey} />);
+      });
+    }
+    return (
+      <View>
+      {reactions}
+      </View>
+    );
   }
 }
 
