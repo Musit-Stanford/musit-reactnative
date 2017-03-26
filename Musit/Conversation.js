@@ -137,7 +137,8 @@ class Conversation extends Component {
     this.state = {
       ds: ds,
       allUsers: [],
-      messages: [],
+      giftedChatMessageDataSource: [],
+      messages: {},
       friends: users,
       start: true,
       selectedFriends: [],
@@ -210,11 +211,34 @@ class Conversation extends Component {
       database.ref("messages/" + messageKeySnapshot.key).once("value", (messageDataSnapshot) => {
         var message = messageDataSnapshot.val();
         message.id = messageDataSnapshot.key;
+        this.state.messages[message.id] = message;
         this.setState((previousState) => {
-          var newMessages = previousState.messages.concat(message);
           return {
-            messages: GiftedChat.append(previousState.messages, [message]),
+            giftedChatMessageDataSource: [message].concat(previousState.giftedChatMessageDataSource),
           };
+        })
+        database.ref("messages/" + message.id + "/reactions").orderByChild('timestamp').startAt(Date.now()).on("child_added", (reactionDataSnapshot, previousKey) => {
+          console.log(message);
+          var messageKey = message.id;
+          message = this.state.messages[messageKey];
+          if (message.reactions === undefined) {
+            message.reactions = {};
+          }
+          message.reactions[reactionDataSnapshot.key] = reactionDataSnapshot.val();
+          this.setState((previousState) => {
+            let newState = []
+            for (var i = 0; i < previousState.giftedChatMessageDataSource.length; i++) {
+              let message = previousState.giftedChatMessageDataSource[i];
+              if (message.id === messageKey) {
+                console.log();
+                message.reactions[reactionDataSnapshot.key] = reactionDataSnapshot.val();
+              }
+              newState.push(message)
+            }
+            return {
+              giftedChatMessageDataSource: newState,
+            };
+          });
         });
       });
     });
@@ -596,7 +620,7 @@ renderMessageText(props) {
           this.sendReaction(user, BUTTONS[LIT_INDEX], messageId);
           break;
         case CLASSIC_INDEX:
-          this.sendReaction(user, BUTTONS[LIT_INDEX], messageId);
+          this.sendReaction(user, BUTTONS[CLASSIC_INDEX], messageId);
           break;
         case FORWARD_INDEX:
           this.forwardTrack(message);
@@ -773,7 +797,7 @@ renderMessageText(props) {
             <GiftedChat
               keyboardShouldPersistTaps="always"
               parent={this}
-              messages={this.state.messages}
+              messages={this.state.giftedChatMessageDataSource}
               onSend={this.onSend}
               isAnimated={true}
               enableEmptySections={true}
@@ -805,7 +829,7 @@ class ReactionList extends Component {
     var reactions = [];
     var lastCategory = null;
     if (this.props.reactions === undefined) {
-      reactions.push(<Text>No Reactions yet!</Text>)
+      reactions.push(<Text key="1">No Reactions yet!</Text>)
     } else {
       Object.keys(this.props.reactions).forEach((reactionKey) => {
         var reaction = this.props.reactions[reactionKey];
