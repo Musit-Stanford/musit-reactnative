@@ -1,4 +1,4 @@
-# musit-reactnative
+# Musit
 
 Find our app on the AppStore! https://itunes.apple.com/us/app/musit/id1214581293?mt=8
 
