@@ -827,7 +827,7 @@ class ReactionList extends Component {
     var reactions = [];
     var lastCategory = null;
     if (this.props.reactions === undefined) {
-      reactions.push(<Text key="1">No Reactions yet!</Text>)
+      return null;
     } else {
       Object.keys(this.props.reactions).forEach((reactionKey) => {
         var reaction = this.props.reactions[reactionKey];
