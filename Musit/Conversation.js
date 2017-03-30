@@ -220,7 +220,6 @@ class Conversation extends Component {
         database.ref("messages/" + message.id + "/reactions").orderByChild('timestamp').startAt(Date.now()).on("child_added", (reactionDataSnapshot, previousKey) => {
           console.log(message);
           var messageKey = message.id;
-          message = this.state.messages[messageKey];
           if (message.reactions === undefined) {
             message.reactions = {};
           }
@@ -749,7 +748,6 @@ renderMessageText(props) {
         prompt = this.props.name; 
         let name = this.props.name; 
         nameOutput = name;
-        console.log(name.length);
         if(name.length > 50) {
           name = name.split(",");
           let length = name.length - 1;
